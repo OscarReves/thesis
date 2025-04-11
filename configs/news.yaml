@@ -1,0 +1,3 @@
+documents_path: data/news/scraped_articles_week1_2025.json
+index_path: data/news/index.faiss
+embedder_name: gpt2

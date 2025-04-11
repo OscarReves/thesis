@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+data/
+results/
+production_env/
+*.egg-info/
+.env
+.vscode/
+.ipynb_checkpoints/
