@@ -1,1 +1,2 @@
 from .retrieval import test_retrieval
+from .qa_with_retrieval import test_qa_with_retrieval

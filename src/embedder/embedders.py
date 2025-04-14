@@ -5,7 +5,7 @@ import numpy as np
 
 class GPT2Embedder:
     def __init__(self, model_name="gpt2"):
-        self.tokenizer = AutoTokenizer.from_pretrained(model_name) # BERT, mBERT, etc.
+        self.tokenizer = AutoTokenizer.from_pretrained(model_name) 
         self.tokenizer.pad_token = self.tokenizer.eos_token
         self.model = AutoModel.from_pretrained(model_name)
 

@@ -7,3 +7,4 @@ production_env/
 .env
 .vscode/
 .ipynb_checkpoints/
+.DS_store
