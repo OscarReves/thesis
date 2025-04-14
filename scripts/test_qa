@@ -20,5 +20,5 @@ module load python/3.9.6
 source production_env/bin/activate
 
 # Run program 
-python -u production/qa_with_retrieval.py
+python -u scripts/test_qa.py
 
