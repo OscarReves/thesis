@@ -33,7 +33,7 @@ class GPT2Embedder:
         return np.array(all_embeddings, dtype=np.float32)
 
 class E5Embedder:
-    def __init__(self, device, model_name="intfloat/multilingual-e5-large-instruct"):
+    def __init__(self, device, model_name='intfloat/multilingual-e5-large-instruct'):
         self.tokenizer = AutoTokenizer.from_pretrained(model_name) 
         self.model = AutoModel.from_pretrained(model_name)
         self.device = torch.device(device)
@@ -53,11 +53,9 @@ class E5Embedder:
             with torch.no_grad():
                 output = self.model(**tokens).last_hidden_state
                 attention_mask = tokens["attention_mask"].unsqueeze(-1).expand(output.size())
-                summed = torch.sum(output * attention_mask, dim=1) 
+                summed = torch.sum(output * attention_mask, dim=1)
                 counts = torch.clamp(attention_mask.sum(dim=1), min=1e-9)
-                embeddings = summed / counts # mean pooling
+                embeddings = summed / counts
                 all_embeddings.extend(embeddings.cpu().numpy())
 
         return np.array(all_embeddings, dtype=np.float32)
-
-
