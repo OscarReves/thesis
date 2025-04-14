@@ -4,6 +4,7 @@ data/
 results/
 keys/
 production_env/
+models/
 *.egg-info/
 .env
 .vscode/

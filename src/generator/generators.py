@@ -53,8 +53,15 @@ class GPT2Generator():
 class NousHermesMistral2Generator():
     # fix the naming scheme and start working with inheritance 
     def __init__(self, model_name="NousResearch/Nous-Hermes-2-Mistral-7B-DPO"):
-        self.tokenizer = AutoTokenizer.from_pretrained(model_name) 
-        self.model = AutoModelForCausalLM.from_pretrained(model_name)
+        model_path = 'models/nous-hermes'
+        print("Loading model from local directory...")
+        self.tokenizer = AutoTokenizer.from_pretrained(model_path, local_files_only=True)
+        self.model = AutoModelForCausalLM.from_pretrained(
+            model_path,
+            torch_dtype=torch.float16,
+            device_map="auto",
+            local_files_only=True
+        )
 
     def generate_answer(self, question, context, max_new_tokens=32):
         # this is a little hacky, but leave it for now 
