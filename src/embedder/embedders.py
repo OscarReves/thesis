@@ -37,11 +37,11 @@ class E5Embedder:
         self.tokenizer = AutoTokenizer.from_pretrained(model_name) 
         self.model = AutoModel.from_pretrained(model_name)
         self.device = torch.device(device)
+        self.model.to(device)
 
     def encode(self, documents, batch_size=32):
         device = self.device
         self.model.eval()
-        self.model.to(device)
 
         texts = [f"passage: {t}" for t in documents['body']]
         all_embeddings = []

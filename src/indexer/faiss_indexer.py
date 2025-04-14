@@ -1,3 +1,5 @@
+import faiss
+
 class FaissIndexer:
     def __init__(self, embedder, index_path):
         self.embedder = embedder  # BERT, mBERT, etc.
@@ -5,8 +7,8 @@ class FaissIndexer:
 
     def index_documents(self, documents):
         embeddings = self.embedder.encode(documents)
+        faiss.normalize_L2(embeddings)
         # Build and save FAISS index
-        import faiss
         dim = self.embedder.model.config.hidden_size
         index = faiss.IndexFlatL2(dim)
         index.add(embeddings)
