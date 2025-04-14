@@ -1,7 +1,8 @@
-from .embedders import GPT2Embedder
+from .embedders import GPT2Embedder, E5Embedder
 
 EMBEDDER_REGISTRY = {
-    "gpt2": GPT2Embedder,
+    "gpt2"  : GPT2Embedder,
+    "e5"    : E5Embedder,
 }
 
 def get_embedder(name, **kwargs):
