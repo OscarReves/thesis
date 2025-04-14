@@ -3,5 +3,5 @@ questions_path: data/news/questions_week1_2025.jsonl
 index_path: data/news/index.faiss
 retriever_name: gpt2
 save_path: results/qa_with_retrieval_news_week1_2025
-device: gpu
+device: cuda
 generator_name: gpt2
