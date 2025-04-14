@@ -1,7 +1,8 @@
-from .retrievers import GPT2Retriever
+from .retrievers import GPT2Retriever, E5Retriever
 
 RETRIEVER_REGISTRY = {
-    "gpt2": GPT2Retriever,
+    "gpt2"  : GPT2Retriever,
+    "e5"    : E5Retriever,
 }
 
 def get_retriever(name, **kwargs):

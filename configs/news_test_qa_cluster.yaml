@@ -2,7 +2,7 @@ documents_path: data/news/scraped_articles_week1_2025.json
 questions_path: data/news/questions_week1_2025.jsonl
 index_path: data/news/index.faiss
 embedder_name: e5
-retriever_name: gpt2
+retriever_name: e5
 save_path: results/qa_with_retrieval_news_week1_2025
 device: cuda
-generator_name: gpt2
+generator_name: nous-hermes-mistral
