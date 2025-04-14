@@ -2,9 +2,10 @@ __pycache__/
 *.pyc
 data/
 results/
+keys/
 production_env/
 *.egg-info/
 .env
 .vscode/
 .ipynb_checkpoints/
-.DS_store
+.DS_Store
