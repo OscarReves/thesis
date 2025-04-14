@@ -14,9 +14,10 @@ def main(config_path):
     docs_path = config["documents_path"]
     index_path = config["index_path"]
     embedder_name = config["embedder_name"]
+    device = config['device']
 
     documents = load_documents(docs_path)
-    embedder = get_embedder(embedder_name)
+    embedder = get_embedder(name = embedder_name, device = device)
     indexer = FaissIndexer(embedder=embedder, index_path=index_path)
     indexer.index_documents(documents)
 

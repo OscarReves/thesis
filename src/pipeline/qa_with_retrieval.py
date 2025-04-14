@@ -21,4 +21,4 @@ def test_qa_with_retrieval(question_dataset, retriever, generator, save_path, ba
     
     print(f"Saving {len(results)} results to {save_path}")
     with open(save_path, 'w') as fp:
-        json.dump(results, fp, indent=2, ensure_ascii=False)
+        json.dump(results, fp, indent=2, ensure_ascii=False) 
