@@ -59,3 +59,35 @@ class E5Embedder:
                 all_embeddings.extend(embeddings.cpu().numpy())
 
         return np.array(all_embeddings, dtype=np.float32)
+
+class BertTinyEmbedder:
+    def __init__(self, device, model_name='prajjwal1/bert-tiny'):
+        self.tokenizer = AutoTokenizer.from_pretrained(model_name) 
+        self.model = AutoModel.from_pretrained(model_name)
+        self.device = torch.device(device)
+        self.model.to(device)
+
+    def encode(self, documents, batch_size=32):
+        device = self.device
+        self.model.eval()
+
+        texts = [f"passage: {t}" for t in documents['body']]
+        all_embeddings = []
+
+        for i in tqdm(range(0, len(texts), batch_size), desc="Encoding"):
+            batch = texts[i:i+batch_size]
+            tokens = self.tokenizer(
+                batch, 
+                padding=True, 
+                truncation=True, 
+                max_length=512,
+                return_tensors="pt"
+                ).to(device)
+
+            with torch.no_grad():
+                output = self.model(**tokens).last_hidden_state
+                cls_embeddings = output[:, 0, :]
+                all_embeddings.extend(cls_embeddings.cpu().numpy())
+
+        return np.array(all_embeddings, dtype=np.float32)
+

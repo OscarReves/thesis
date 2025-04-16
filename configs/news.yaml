@@ -1,4 +1,4 @@
-documents_path: data/news/scraped_articles_week1_2025.json
-index_path: data/news/index.faiss
-embedder_name: gpt2
+documents_path: data/news/week1_2025/articles.json
+index_path: data/news/week1_2025/index.faiss
+embedder_name: bert-tiny
 device: mps

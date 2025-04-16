@@ -1,0 +1,8 @@
+documents_path: data/news/week2_2025/articles.json
+questions_path: data/news/week2_2025/questions.jsonl
+index_path: data/news/week2_2025/index.faiss
+embedder_name: e5
+retriever_name: e5
+save_path: results/qa_with_retrieval_news_week2_2025
+device: cuda
+generator_name: nous-hermes-mistral

@@ -16,9 +16,16 @@ def main(config_path):
     embedder_name = config["embedder_name"]
     device = config['device']
 
+    print("Loading documents...")
     documents = load_documents(docs_path)
+    
+    print(f"Initializing embedder ({embedder_name})...")
     embedder = get_embedder(name = embedder_name, device = device)
+    
+    print("Loading indexer...")
     indexer = FaissIndexer(embedder=embedder, index_path=index_path)
+    
+    print("Indexing documents...")
     indexer.index_documents(documents)
 
     print(f"Index built and saved to {index_path}")
