@@ -1,9 +1,11 @@
 import json
 def test_qa_with_retrieval(question_dataset, retriever, generator, save_path, batch_size = 16):
+    # still needs batching 
+    
     results = []
     for sample in question_dataset:
         question = sample['question']
-        context = retriever.retrieve_titles([question])[0]
+        context = retriever.retrieve([question])[0]
         
         # you need to also add a method for MC-answering with neg log likelihood
         answer = generator.generate_answer(question,context)
@@ -14,6 +16,7 @@ def test_qa_with_retrieval(question_dataset, retriever, generator, save_path, ba
 
         result = {
             "question"          :   question,
+            "context"           :   context, 
             "generated_answer"  :   answer,
             "reference_answer"  :   reference_answer
             } 
