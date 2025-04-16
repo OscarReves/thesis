@@ -1,4 +1,5 @@
 from datasets import load_dataset
+import json
 
 def load_documents(path):
     dataset = load_dataset("json", data_files=path, split='train')
@@ -8,3 +9,8 @@ def load_documents(path):
 def load_questions(path):
     dataset = load_dataset("json",data_files=path, field=None, split='train')
     return dataset
+
+def save_as_json(data, path):
+    print(f"Saving {len(data)} results to {path}")
+    with open(path, 'w') as fp:
+        json.dump(data, fp, indent=2, ensure_ascii=False) 

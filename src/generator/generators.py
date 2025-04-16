@@ -65,7 +65,7 @@ class NousHermesMistral2Generator():
 
     def generate_answer(self, question, context, max_new_tokens=64):
         # this is a little hacky, but leave it for now 
-        return self.generate_batch([question],[context])
+        return self.generate_batch([question],[context], max_new_tokens=max_new_tokens)
     
     def generate_batch(self, questions, contexts, max_new_tokens=64):
         system_prompt = (
@@ -77,7 +77,7 @@ class NousHermesMistral2Generator():
         prompts = [
             self.tokenizer.apply_chat_template([
                 {"role": "system", "content": system_prompt},
-                {"role": "user", "content": f"Besvar følgende spørgsmål ud fra kontektst:\nKontekst: {c}\nSpørgsmål: {q}"}
+                {"role": "user", "content": f"Besvar følgende spørgsmål ud fra kontekst:\nKontekst: {c}\nSpørgsmål: {q}"}
             ], tokenize=False, add_generation_prompt=True)
             for q, c in zip(questions, contexts)
         ]

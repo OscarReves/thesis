@@ -1,4 +1,6 @@
 documents_path: data/news/week1_2025/articles.json
 index_path: data/news/week1_2025/index.faiss
+chunked_path: data/news/week1_2025/chunked_articles.json
+tokenizer_name: prajjwal1/bert-tiny
 embedder_name: bert-tiny
 device: mps
