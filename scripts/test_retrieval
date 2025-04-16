@@ -20,5 +20,5 @@ module load python/3.9.6
 source production_env/bin/activate
 
 # Run program 
-python3 -m scripts.test_retrieval --config configs/news_test_qa_cluster.yaml
+python3 -m scripts.test_retrieval --config configs/news_test_qa_cluster_week2.yaml
 
