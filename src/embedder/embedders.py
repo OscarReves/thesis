@@ -37,7 +37,10 @@ class E5Embedder:
         self.tokenizer = AutoTokenizer.from_pretrained(model_name) 
         self.model = AutoModel.from_pretrained(model_name)
         self.device = torch.device(device)
+        if 'cuda' in device and not torch.cuda.is_available():
+            raise RuntimeError(f"CUDA requested but not available on this system (device={device})")
         self.model.to(device)
+
 
     def encode(self, documents, batch_size=32):
         device = self.device

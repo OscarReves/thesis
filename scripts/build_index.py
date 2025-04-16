@@ -19,7 +19,7 @@ def main(config_path):
     print("Loading documents...")
     documents = load_documents(docs_path)
     
-    print(f"Initializing embedder ({embedder_name})...")
+    print(f"Initializing embedder ({embedder_name})...", flush=True)
     embedder = get_embedder(name = embedder_name, device = device)
     
     print("Loading indexer...")
