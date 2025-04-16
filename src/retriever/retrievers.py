@@ -90,7 +90,7 @@ class E5Retriever:
         return [
             # consider returning a list instead and joining somewhere else
             # likewise, consider mapping the index to documents with an ID
-            [self.contexts[idx] for idx in indices]
+            "\n\n".join([self.contexts[idx] for idx in indices])
             for indices in I
         ]
     

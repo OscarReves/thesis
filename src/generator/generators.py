@@ -63,11 +63,11 @@ class NousHermesMistral2Generator():
             local_files_only=True
         )
 
-    def generate_answer(self, question, context, max_new_tokens=32):
+    def generate_answer(self, question, context, max_new_tokens=64):
         # this is a little hacky, but leave it for now 
         return self.generate_batch([question],[context])
     
-    def generate_batch(self, questions, contexts, max_new_tokens=32):
+    def generate_batch(self, questions, contexts, max_new_tokens=64):
         system_prompt = (
             "You are a helpful assistant. You respond to questions in Danish. "
             "Respond briefly and accurately. Do not generate any extra questions or superfluous text. "
