@@ -5,7 +5,7 @@ from datasets import load_from_disk
 import torch.nn.functional as F
 
 class GPT2Retriever:
-    def __init__(self, index_path, documents, device=None, text_field='body'):
+    def __init__(self, index_path, documents, device=None, text_field='text'):
         model_name = 'gpt2'
         self.device = torch.device(device)
 
@@ -21,7 +21,7 @@ class GPT2Retriever:
         # Load dataset and extract text field
         self.dataset = documents  # or load_dataset(...)
         self.contexts = self.dataset[text_field]      # list of texts
-        self.titles = self.dataset['title']
+        self.titles = self.dataset['id']
 
     def embed(self, texts):
         inputs = self.tokenizer(texts, padding=True, truncation=True, return_tensors="pt").to(self.device)
@@ -56,7 +56,7 @@ class GPT2Retriever:
         ]        
 
 class E5Retriever:
-    def __init__(self, index_path, documents, device=None, text_field='body'):
+    def __init__(self, index_path, documents, device=None, text_field='text'):
         model_name = 'intfloat/multilingual-e5-large-instruct'
         self.device = torch.device(device)
 
@@ -72,7 +72,7 @@ class E5Retriever:
         # Load dataset and extract text field
         self.dataset = documents  # or load_dataset(...)
         self.contexts = self.dataset[text_field]      # list of texts
-        self.titles = self.dataset['title']
+        self.titles = self.dataset['id']
 
     def embed(self, texts):
         inputs = self.tokenizer(texts, padding=True, truncation=True, return_tensors="pt").to(self.device)
