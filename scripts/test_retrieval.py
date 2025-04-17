@@ -9,7 +9,7 @@ def main(config_path):
         config = yaml.safe_load(f)
 
     questions_path = config['questions_path']
-    documents_path = config['documents_path']
+    documents_path = config['chunked_path']
     index_path = config['index_path']
     retriever_name = config['retriever_name']
     device = config['device']
