@@ -1,9 +1,15 @@
 from datasets import load_dataset
 import json
 
-def load_documents(path):
+def load_raw_articles(path):
+    # for loading raw articles after scraping
     dataset = load_dataset("json", data_files=path, split='train')
     dataset = dataset.filter(lambda x: x['error'] is None) # filter away articles where scraping failed
+    return dataset
+
+def load_documents(path):
+    # for loading chunked documents
+    dataset = load_dataset("json", data_files=path, split='train')
     return dataset
 
 def load_questions(path):
@@ -12,5 +18,5 @@ def load_questions(path):
 
 def save_as_json(data, path):
     print(f"Saving {len(data)} results to {path}")
-    with open(path, 'w') as fp:
-        json.dump(data, fp, indent=2, ensure_ascii=False) 
+    with open(path, 'w', encoding='utf-8') as fp:
+        json.dump(data.to_list(), fp, indent=2, ensure_ascii=False) 

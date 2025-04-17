@@ -15,7 +15,7 @@ class GPT2Embedder:
         self.model.eval()
         self.model.to(device)
 
-        texts = [f"passage: {t}" for t in documents['body']]
+        texts = [f"passage: {t}" for t in documents['text']]
         all_embeddings = []
 
         for i in tqdm(range(0, len(texts), batch_size), desc="Encoding"):
@@ -46,7 +46,7 @@ class E5Embedder:
         device = self.device
         self.model.eval()
 
-        texts = [f"passage: {t}" for t in documents['body']]
+        texts = [f"passage: {t}" for t in documents['text']]
         all_embeddings = []
 
         for i in tqdm(range(0, len(texts), batch_size), desc="Encoding"):
@@ -74,7 +74,7 @@ class BertTinyEmbedder:
         device = self.device
         self.model.eval()
 
-        texts = [f"passage: {t}" for t in documents['body']]
+        texts = [f"passage: {t}" for t in documents['text']]
         all_embeddings = []
 
         for i in tqdm(range(0, len(texts), batch_size), desc="Encoding"):

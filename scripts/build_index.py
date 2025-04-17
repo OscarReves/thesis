@@ -11,7 +11,7 @@ def main(config_path):
     with open(config_path, "r") as f:
         config = yaml.safe_load(f)
 
-    docs_path = config["documents_path"]
+    docs_path = config["chunked_path"] # load chunked documents
     index_path = config["index_path"]
     embedder_name = config["embedder_name"]
     device = config['device']
