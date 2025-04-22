@@ -11,13 +11,14 @@ def main(config_path):
     answers_path = config['answers_path']
     evaluator_name = config['evaluator_name']
     save_path = config['evaluation_path']
+    device = config['device']
 
     answers = load_documents(answers_path)
-    evaluator = get_evaluator(evaluator_name)
+    evaluator = get_evaluator(evaluator_name, device=device)
 
     evaluate_answers(
+        answer_dataset = answers,
         evaluator = evaluator,
-        answers = answers,
         save_path = save_path
         )
 

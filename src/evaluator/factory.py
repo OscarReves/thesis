@@ -1,4 +1,4 @@
-from evaluators import GPT2Evaluator
+from .evaluators import GPT2Evaluator
 
 EVALUATOR_REGISTRY = {
     "gpt2": GPT2Evaluator,

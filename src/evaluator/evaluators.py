@@ -3,15 +3,22 @@ import torch
 from tqdm import tqdm
 import numpy as np
 
-def GPT2Evaluator():
-    def __init__(self, model_name="distilgpt2"):
+class GPT2Evaluator():
+    def __init__(self, device, model_name="gpt2"):
+        self.device = torch.device(device)
         self.tokenizer = AutoTokenizer.from_pretrained(model_name) 
         self.tokenizer.pad_token = self.tokenizer.eos_token
-        self.model = AutoModelForCausalLM.from_pretrained(model_name)
+        self.tokenizer.chat_template = """
+        {% for message in messages %}
+        {{ message['role'] }}: {{ message['content'] }}
+        {% endfor %}
+        """ # added to make gpt2 compatible with apply_chat_template
+        self.model = AutoModelForCausalLM.from_pretrained(model_name).to(self.device)
+        print(f"Loaded model {model_name} on device {self.model.device}")
 
-    def evaluate_answer(self, question, context, max_new_tokens=32):
+    def evaluate_answer(self, question, generated_answer, reference_answer, max_new_tokens=32):
         # this is a little hacky, but leave it for now 
-        return self.generate_batch([question],[context])
+        return self.evaluate_batch([question],[generated_answer],[reference_answer])
     
     def evaluate_batch(self, questions, generated_answers, reference_answers, max_new_tokens=256):
         system_prompt = (
