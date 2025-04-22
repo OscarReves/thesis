@@ -1,7 +1,8 @@
-from .evaluators import GPT2Evaluator
+from .evaluators import GPT2Evaluator, NousHermesMistralEvaluator
 
 EVALUATOR_REGISTRY = {
     "tiny-gpt2": GPT2Evaluator,
+    "nous-hermes-mistral": NousHermesMistralEvaluator
 }
 
 def get_evaluator(name, **kwargs):

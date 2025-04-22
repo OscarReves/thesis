@@ -1,0 +1,24 @@
+#!/bin/bash
+#The partition is the queue you want to run on. standard is gpu and can be ommitted.
+#SBATCH -p gpu
+#SBATCH --job-name=MyJob
+#number of independent tasks we are going to start in this script
+#SBATCH --output=results.out   # %j will be replaced with the job ID
+#SBATCH --ntasks=1
+#number of cpus we want to allocate for each program
+#SBATCH --cpus-per-task=4
+#SBATCH --gres=gpu:titanrtx:1
+#Note that a program will be killed once it exceeds this time!
+#SBATCH --time=0-00:30:00
+#Skipping many options! see man sbatch
+# From here on, we can start our program
+
+# Load python
+module load python/3.9.6
+
+# Activate the virtual environment
+source production_env/bin/activate
+
+# Run program 
+python3 -m scripts.evaluate --config configs/test_evaluation_cluster.yaml
+
