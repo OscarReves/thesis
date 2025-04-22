@@ -4,7 +4,7 @@ from tqdm import tqdm
 import numpy as np
 
 class GPT2Evaluator():
-    def __init__(self, device, model_name="sshleifer/tiny-gpt2"):
+    def __init__(self, device='mps', model_name="sshleifer/tiny-gpt2"):
         self.device = torch.device(device)
         self.tokenizer = AutoTokenizer.from_pretrained(model_name) 
         self.tokenizer.pad_token = self.tokenizer.eos_token
