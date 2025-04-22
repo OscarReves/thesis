@@ -15,7 +15,7 @@ def main(config_path):
     index_path = config['index_path']
     retriever_name = config['retriever_name']
     device = config['device']
-    save_path = config['save_path']
+    save_path = config['qa_save_path']
     generator_name = config['generator_name']
 
     documents = load_documents(documents_path)

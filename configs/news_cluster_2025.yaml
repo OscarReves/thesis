@@ -5,6 +5,7 @@ index_path: data/news/2025/index.faiss
 tokenizer_name: intfloat/multilingual-e5-large-instruct
 embedder_name: e5
 retriever_name: e5
-save_path: results/qa_with_retrieval_news_week2_2025
+retrieval_save_path: results/retrieval_2025
+qa_save_path: results/qa_2025
 device: cuda
 generator_name: nous-hermes-mistral
