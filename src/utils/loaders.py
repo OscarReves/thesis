@@ -23,6 +23,7 @@ def load_questions(path, silent=False):
     return dataset
 
 def save_as_json(data, path):
-    print(f"Saving {len(data)} results to {path}")
+    print(f"Saving {len(data)} results to {path}...")
     with open(path, 'w', encoding='utf-8') as fp:
         json.dump(data.to_list(), fp, indent=2, ensure_ascii=False) 
+    print(f"{len(data)} results saved to {path}")
