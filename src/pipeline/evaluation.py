@@ -25,6 +25,6 @@ def evaluate_answers(answer_dataset, evaluator, save_path, batch_size=16):
                 "evaluation"       : evaluation
             })
 
-    print(f"Saving {len(results)} results to {save_path}")
     with open(save_path, 'w') as fp:
         json.dump(results, fp, indent=2, ensure_ascii=False)
+    print(f"{len(results)} results saved to {save_path}")
