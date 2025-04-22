@@ -1,4 +1,5 @@
 answers_path: results/qa_2025
-evaluator_name: gpt2
+evaluator_name: tiny-gpt2
 evaluation_path: results/evaluation_test
 device: mps
+batch_size: 16
