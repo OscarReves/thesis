@@ -1,4 +1,0 @@
-answers_path: results/qa_2025
-evaluator_name: nous-hermes-mistral-binary
-evaluation_path: results/evaluation_test_binary
-batch_size: 8
