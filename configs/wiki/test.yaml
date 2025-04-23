@@ -3,4 +3,4 @@ tokenizer_name: intfloat/multilingual-e5-large-instruct
 chunked_path: data/wiki/chunked/00
 embedder_name: e5
 index_path: data/wiki/embedded/00
-device: gpu
+device: cuda
