@@ -17,12 +17,13 @@ def chunk_sample(batch, tokenizer):
         all_texts.extend(chunks)
     return {"id": all_ids, "text": all_texts}
 
-# Chunk dataset 
 def chunk_dataset(dataset, tokenizer):
+    # chunks a dataset and returns as a dataset
     chunked = dataset.map(
     chunk_sample,
     fn_kwargs= {"tokenizer" : tokenizer},
     remove_columns=dataset.column_names,
-    batched=True,  # or True if your chunker supports batching
+    batched=True,  
     )
     return chunked
+

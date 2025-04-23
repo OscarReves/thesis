@@ -2,12 +2,21 @@ from datasets import load_dataset
 import json
 
 def load_raw_articles(path, silent=False):
-    # for loading raw articles after scraping
+    # for loading raw news articles after scraping
     dataset = load_dataset("json", data_files=path, split='train')
     dataset = dataset.filter(lambda x: x['error'] is None) # filter away articles where scraping failed
     if not silent:
         print(f"{len(dataset)} documents loaded")
     return dataset
+
+def load_wiki_articles(path, silent=False):
+    # for loading wiki articles before chunking
+    dataset = load_dataset("json", data_files=path, split='train')
+    dataset = dataset.rename_column('text','body')
+    if not silent:
+        print(f"{len(dataset)} documents loaded")
+    return dataset
+
 
 def load_documents(path, silent=False):
     # for loading chunked documents
