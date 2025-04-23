@@ -5,6 +5,7 @@ results/
 keys/
 production_env/
 models/
+notebooks/
 *.egg-info/
 .env
 .vscode/
