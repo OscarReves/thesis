@@ -43,6 +43,34 @@ class GPT2Retriever:
             for indices in I
         ]
     
+    def retrieve_with_uids(self, questions, top_k=5):
+        queries = [f"query: {q}" for q in questions]
+        q_embs = self.embed(queries)
+        faiss.normalize_L2(q_embs)
+        D, I = self.index.search(q_embs, top_k)
+        return [
+            # consider returning a list instead and joining somewhere else
+            # likewise, consider mapping the index to documents with an ID
+            "\n\n".join([self.select_by_uids(uid)['text'] for uid in uids])
+            for uids in I
+        ]
+    
+    def retrieve_with_uids(self, questions, top_k=5):
+        queries = [f"query: {q}" for q in questions]
+        q_embs = self.embed(queries)
+        faiss.normalize_L2(q_embs)
+        D, I = self.index.search(q_embs, top_k)
+        return [
+            # consider returning a list instead and joining somewhere else
+            # likewise, consider mapping the index to documents with an ID
+            "\n\n".join([self.select_by_uids(uid)['id'] for uid in uids])
+            for uids in I
+        ]
+
+    def select_by_uids(self, uids):
+        subset = self.dataset.filter(lambda example: example["uid"] in set(uids))
+        return subset
+
     def retrieve_titles(self, questions, top_k=5):
         queries = [f"query: {q}" for q in questions]
         q_embs = self.embed(queries)

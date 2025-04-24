@@ -1,5 +1,6 @@
 import faiss
 from src.utils import load_documents
+import numpy as np
 
 class FaissIndexer:
     def __init__(self, embedder, index_path):
@@ -17,11 +18,15 @@ class FaissIndexer:
 
     def index_directory(self, document_paths):
         paths = [str(p) for p in document_paths]
-        dataset = load_documents(paths)
+        dataset = load_documents(paths)  # Should return a Dataset with 'uid' column
         embeddings = self.embedder.encode(dataset)
         faiss.normalize_L2(embeddings)
-        # Build and save FAISS index
+
         dim = self.embedder.model.config.hidden_size
-        index = faiss.IndexFlatL2(dim)
-        index.add(embeddings)
+        base_index = faiss.IndexFlatL2(dim)
+        index = faiss.IndexIDMap(base_index)
+
+        uids = np.array(dataset["uid"], dtype=np.int64)
+        index.add_with_ids(embeddings, uids)
+
         faiss.write_index(index, self.index_path)
