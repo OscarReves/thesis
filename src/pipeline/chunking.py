@@ -5,7 +5,6 @@ import json
 from src.utils import load_wiki_file_paths, load_wiki_articles, chunk_dataset
 from tqdm import tqdm
 from datasets import disable_progress_bar
-from uuid import uuid4
 
 
 
@@ -27,21 +26,23 @@ def chunk_multiple(dump_dir, out_dir, tokenizer_name):
     disable_progress_bar()
     file_paths = load_wiki_file_paths(dump_dir)
 
+    uid_counter = 0
+
     for file_path in tqdm(file_paths, desc="Chunking files"):
         rel_path = file_path.relative_to(dump_dir)  # e.g., AA/wiki_03
         out_path = Path(out_dir) / rel_path.with_suffix(".jsonl")
 
         out_path.parent.mkdir(parents=True, exist_ok=True)
 
-        if out_path.exists():
-            continue  # Skip already processed
-
         documents = load_wiki_articles(str(file_path), silent=True)
         chunked = chunk_dataset(documents, tokenizer)
 
-        # Add a uid to each chunk
-        chunked = chunked.map(lambda example: {"uid": str(uuid4())})
-
+        # Assign incremental integer UIDs
+        num_chunks = len(chunked)
+        uids = list(range(uid_counter, uid_counter + num_chunks))
+        chunked = chunked.add_column("uid", uids)
+        uid_counter += num_chunks
+        
         chunked.to_json(out_path)
 
     print(f"{len(file_paths)} saved in {out_dir}")
