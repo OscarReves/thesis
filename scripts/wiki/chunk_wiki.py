@@ -1,28 +1,26 @@
 import argparse
 import yaml
-from src.utils import load_wiki_articles
-from src.pipeline import chunk_and_save
+from src.utils import load_wiki_file_paths
+from src.pipeline import chunk_multiple
 import warnings
 from urllib3.exceptions import NotOpenSSLWarning
 warnings.filterwarnings("ignore", category=NotOpenSSLWarning)
 
 def main(config_path):
+    # chunks a dir full of wiki files 
     with open(config_path, "r") as f:
         config = yaml.safe_load(f)
 
-    docs_path = config["documents_path"]
+    dump_path = config["dump_path"] # path to parent directory containing wiki files from dump
     tokenizer_name = config["tokenizer_name"]
-    save_path = config['chunked_path']
+    out_path = config["chunked_path"]
 
-    print("Loading documents...")
-    documents = load_wiki_articles(docs_path)
-    
-    print("Chunking documents...")
-    # this should be expanded to inlcude arguments for chunk size etc
-    # also, consider not chunking based on the tokenizer 
-    chunk_and_save(documents, tokenizer_name, save_path)
-
-    print(f"Chunked documents saved to {save_path}")
+    # iterate through all wiki files
+    chunk_multiple(
+        dump_dir=dump_path, 
+        out_dir=out_path,
+        tokenizer_name=tokenizer_name,  # implement this 
+    )
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

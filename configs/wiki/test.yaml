@@ -1,6 +1,7 @@
 documents_path: data/wiki/wiki_00
 tokenizer_name: intfloat/multilingual-e5-large-instruct
-chunked_path: data/wiki/chunked/00
+chunked_path: data/wiki/chunked
 embedder_name: e5
 index_path: data/wiki/embedded/00
 device: cuda
+dump_path: data/wiki/dump

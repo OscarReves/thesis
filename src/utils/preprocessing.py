@@ -23,7 +23,7 @@ def chunk_dataset(dataset, tokenizer):
     chunk_sample,
     fn_kwargs= {"tokenizer" : tokenizer},
     remove_columns=dataset.column_names,
-    batched=True,  
+    batched=True,
     )
     return chunked
 
