@@ -1,4 +1,5 @@
 import faiss
+from src.utils import load_documents
 
 class FaissIndexer:
     def __init__(self, embedder, index_path):
@@ -7,6 +8,17 @@ class FaissIndexer:
 
     def index_documents(self, documents):
         embeddings = self.embedder.encode(documents)
+        faiss.normalize_L2(embeddings)
+        # Build and save FAISS index
+        dim = self.embedder.model.config.hidden_size
+        index = faiss.IndexFlatL2(dim)
+        index.add(embeddings)
+        faiss.write_index(index, self.index_path)
+
+    def index_directory(self, document_paths):
+        paths = [str(p) for p in document_paths]
+        dataset = load_documents(paths)
+        embeddings = self.embedder.encode(dataset)
         faiss.normalize_L2(embeddings)
         # Build and save FAISS index
         dim = self.embedder.model.config.hidden_size

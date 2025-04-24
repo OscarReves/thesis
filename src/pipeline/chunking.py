@@ -5,6 +5,8 @@ import json
 from src.utils import load_wiki_file_paths, load_wiki_articles, chunk_dataset
 from tqdm import tqdm
 from datasets import disable_progress_bar
+from uuid import uuid4
+
 
 
 def chunk_and_save(documents, tokenizer_name, save_path):
@@ -17,7 +19,6 @@ def chunk_and_save(documents, tokenizer_name, save_path):
 
     chunked.to_json(save_path) # removed lines=False
     #save_as_json(data=chunked,path=save_path)
-
 
 def chunk_multiple(dump_dir, out_dir, tokenizer_name):
     # chunks and saves multiple wiki dump files
@@ -37,6 +38,9 @@ def chunk_multiple(dump_dir, out_dir, tokenizer_name):
 
         documents = load_wiki_articles(str(file_path), silent=True)
         chunked = chunk_dataset(documents, tokenizer)
+
+        # Add a uid to each chunk
+        chunked = chunked.map(lambda example: {"uid": str(uuid4())})
 
         chunked.to_json(out_path)
 
