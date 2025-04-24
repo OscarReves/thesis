@@ -3,5 +3,6 @@ tokenizer_name: intfloat/multilingual-e5-large-instruct
 chunked_path: data/wiki/chunked
 embedder_name: bert-tiny
 index_path: data/wiki/embedded/00
+retriever_name: bert-tiny
 device: mps
 dump_path: data/wiki/dump

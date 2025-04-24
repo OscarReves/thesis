@@ -39,6 +39,12 @@ def load_documents(path, silent=False):
         print(f"{len(dataset)} documents loaded")
     return dataset
 
+def load_documents_from_directory(document_paths, silent=False):
+    # for loading chunked documents
+    paths = [str(p) for p in document_paths]
+    return load_documents(paths, silent=silent)
+
+
 def load_questions(path, silent=False):
     dataset = load_dataset("json",data_files=path, field=None, split='train')
     if not silent:
