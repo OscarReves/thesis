@@ -1,7 +1,7 @@
 from datasets import Dataset
 
 def chunk_text(text, tokenizer, chunk_size=256, stride=32):
-    tokens = tokenizer(text, return_tensors="pt", truncation=False)["input_ids"][0]
+    tokens = tokenizer.encode(text, add_special_tokens=False)
     chunks = [
         tokens[i:i+chunk_size]
         for i in range(0, len(tokens), chunk_size - stride)

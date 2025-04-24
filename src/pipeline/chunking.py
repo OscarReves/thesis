@@ -28,7 +28,7 @@ def chunk_multiple(dump_dir, out_dir, tokenizer_name):
 
     for file_path in tqdm(file_paths, desc="Chunking files"):
         rel_path = file_path.relative_to(dump_dir)  # e.g., AA/wiki_03
-        out_path = Path(out_dir) / rel_path.with_suffix(".json")
+        out_path = Path(out_dir) / rel_path.with_suffix(".jsonl")
 
         out_path.parent.mkdir(parents=True, exist_ok=True)
 
