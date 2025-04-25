@@ -1,4 +1,4 @@
-from datasets import load_dataset
+from datasets import load_dataset, Dataset
 import json
 from pathlib import Path
 
@@ -29,6 +29,22 @@ def load_wiki_file_paths(dump_dir_path="data/wiki/dump", silent=False):
         print(f"Found {len(file_paths)} wiki files under {dump_dir_path}")
 
     return file_paths
+
+def load_squad(path):
+    data = load_documents(path)['data'][0]
+    records = []
+
+    for entry in data:
+        for para in entry.get("paragraphs", []):
+            for qa in para.get("qas", []):
+                question = qa.get("question")
+                answers = [a["text"] for a in qa.get("answers", [])]
+                records.append({
+                    "question": question,
+                    "answers": answers
+                })
+
+    return Dataset.from_list(records)
 
 # == For loading processed data == 
 

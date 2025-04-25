@@ -132,49 +132,6 @@ class BertTinyRetriever:
             for indices in I
         ]
     
-    def retrieve_uids(self, questions, top_k=5):
-        print("ATTEMPTING UID RETRIEVAL...")
-        print("ENCODING QUERIES...")
-        queries = [f"query: {q}" for q in questions]
-        q_embs = self.embed(queries)
-        print("NORMALIZING QUERY EMBEDDINGS...")
-        faiss.normalize_L2(q_embs)
-        print(q_embs.shape, q_embs.dtype)
-        print("Index dimension:", self.index.d)
-        print("PERFORMING INDEX SEARCH...")
-        D, I = self.index.search(q_embs, top_k)
-        print("INDEX SEARCH COMPLETED")
-        return I
-
-    def retrieve_single_uid(self, question, top_k=5):
-        print("ATTEMPTING UID RETRIEVAL...")
-        print("ENCODING QUERIES...")
-        query = f"query: {question}" 
-        print("NORMALIZING QUERY EMBEDDINGS...")
-        q_embs = self.embed(query)
-        faiss.normalize_L2(q_embs)
-        print(q_embs.shape, q_embs.dtype)
-        print("Index dimension:", self.index.d)
-        
-        import numpy as np
-        test_q = np.random.rand(1, 128).astype("float32")
-        faiss.normalize_L2(test_q)
-        
-        print("PERFORMING INDEX SEARCH...")
-        D, I = self.index.search(test_q, top_k)
-        print("INDEX SEARCH COMPLETED")
-        return I
-    
-    def uid_sanity_test(self):
-        import numpy as np
-        del self.index
-        gc.collect()
-        index = faiss.read_index("data/wiki/embedded/00")
-        query = np.random.rand(1, 128).astype("float32")
-        faiss.normalize_L2(query)
-        D, I = index.search(query, 5)
-        print(I)
-
     def retrieve_with_uid(self, questions, top_k=5):
         queries = [f"query: {q}" for q in questions]
         q_embs = self.embed(queries)
@@ -197,7 +154,8 @@ class BertTinyRetriever:
         for uids in I:
             subset = self.select_by_uids(uids)
             titles = subset["id"]  # grab list of titles
-            results.append("\n\n".join(titles))  # join actual strings
+            results.append(titles
+                           )  
         
         return results
 
