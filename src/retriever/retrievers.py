@@ -273,7 +273,26 @@ class E5Retriever:
             # likewise, consider mapping the index to documents with an ID
             [self.titles[idx] for idx in indices]
             for indices in I
-        ]        
+        ]
+
+    def retrieve_titles_with_uid(self, questions, top_k=5):
+        queries = [f"query: {q}" for q in questions]
+        q_embs = self.embed(queries)
+        faiss.normalize_L2(q_embs)
+        D, I = self.index.search(q_embs, top_k)
+        
+        results = []
+        for uids in I:
+            subset = self.select_by_uids(uids)
+            titles = subset["id"]  # grab list of titles
+            results.append("\n\n".join(titles))  # join actual strings
+        
+        return results
+
+
+    def select_by_uids(self, uids):
+        uids_set = set(map(int, uids))  # just in case they're np.int64
+        return self.dataset.filter(lambda x: x["uid"] in uids_set)        
 
 class DummyRetriever():
     def __init__(self, index_path, documents, device=None, text_field='text'):
