@@ -1,7 +1,7 @@
 import yaml
 from src.utils import load_documents_from_directory, load_questions
 from src.retriever import get_retriever
-from src.pipeline import test_retrieve_single_uid
+from src.pipeline import test_retrieval_with_uid
 import argparse 
 import faiss
 import numpy as np
@@ -32,7 +32,11 @@ def main(config_path):
          device = device
          )
 
-    retriever.uid_sanity_test()
+    test_retrieval_with_uid(
+        question_dataset = question_dataset,
+        retriever = retriever,
+        save_path = save_path
+        )
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
