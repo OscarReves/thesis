@@ -3,6 +3,7 @@ import torch
 import faiss
 from datasets import load_from_disk
 import os
+import torch.nn.functional as F
 
 class GPT2Retriever:
     def __init__(self, index_path, documents, device=None, text_field='text'):
@@ -220,9 +221,10 @@ class BertTinyRetriever:
 
 class E5Retriever:
     def __init__(self, index_path, documents, device=None, text_field='text'):
-        import torch
         model_name = 'intfloat/multilingual-e5-large-instruct'
         self.device = torch.device(device)
+
+        print(f"Loaded model {model_name} on device {self.device}")
 
         # Load model
         self.tokenizer = AutoTokenizer.from_pretrained(model_name)

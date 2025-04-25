@@ -21,10 +21,6 @@ def main(config_path):
     documents = load_documents_from_directory(documents_path)
     question_dataset = load_questions(questions_path)
 
-    index = faiss.read_index(index_path)
-    print(index.ntotal)
-    print(type(index))  # Should be IndexIDMap or similar if using add_with_ids
-
     retriever = get_retriever(
          retriever_name,
          documents = documents,
