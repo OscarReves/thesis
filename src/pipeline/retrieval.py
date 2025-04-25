@@ -1,5 +1,5 @@
 import json
-import tqdm 
+from tqdm import tqdm 
 
 def test_retrieval(question_dataset, retriever, save_path, batch_size = 16):
     results = []
@@ -17,7 +17,6 @@ def test_retrieval(question_dataset, retriever, save_path, batch_size = 16):
     print(f"Saving {len(results)} results to {save_path}")
     with open(save_path, 'w') as fp:
         json.dump(results, fp, indent=2, ensure_ascii=False)
-
 
 def test_retrieval_with_uid(question_dataset, retriever, save_path, batch_size = 16):
     print(f"Testing uid based retrieval...")
