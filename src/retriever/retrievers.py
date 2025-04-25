@@ -243,7 +243,7 @@ class E5Retriever:
         for uids in I:
             subset = self.select_by_uids(uids)
             titles = subset["id"]  # grab list of titles
-            results.append("\n\n".join(titles))  # join actual strings
+            results.append(titles)  # join actual strings
         
         return results
 
