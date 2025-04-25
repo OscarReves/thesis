@@ -2,7 +2,7 @@ from transformers import AutoTokenizer, AutoModel
 import torch
 import faiss
 from datasets import load_from_disk
-import torch.nn.functional as F
+import os
 
 class GPT2Retriever:
     def __init__(self, index_path, documents, device=None, text_field='text'):
@@ -85,23 +85,31 @@ class GPT2Retriever:
 
 
 class BertTinyRetriever:
-    def __init__(self, index_path, documents, device=None, text_field='text'):
+    def __init__(self, index_path, documents, device='cpu', text_field='text'):
         model_name = 'prajjwal1/bert-tiny'
+        if device == "mps" and not torch.backends.mps.is_available():
+            device = "cpu"
         self.device = torch.device(device)
 
         # Load model
         self.tokenizer = AutoTokenizer.from_pretrained(model_name)
-        if self.tokenizer.pad_token == None:
-            self.tokenizer.pad_token = self.tokenizer.eos_token
+        self.tokenizer.model_max_length = 512  # manually set a safe default
+        if self.tokenizer.pad_token is None:
+            self.tokenizer.pad_token = self.tokenizer.eos_token or "[PAD]"
         self.model = AutoModel.from_pretrained(model_name).to(self.device)
 
         # Load FAISS index
+        if not os.path.exists(index_path):
+            raise FileNotFoundError(f"FAISS index not found at: {index_path}")
         self.index = faiss.read_index(index_path)
+
 
         # Load dataset and extract text field
         self.dataset = documents  # or load_dataset(...)
         self.contexts = self.dataset[text_field]      # list of texts
         self.titles = self.dataset['id']
+
+        print(f"Loaded model {model_name}")
 
     def embed(self, texts):
         inputs = self.tokenizer(texts, padding=True, truncation=True, return_tensors="pt").to(self.device)
@@ -123,6 +131,49 @@ class BertTinyRetriever:
             for indices in I
         ]
     
+    def retrieve_uids(self, questions, top_k=5):
+        print("ATTEMPTING UID RETRIEVAL...")
+        print("ENCODING QUERIES...")
+        queries = [f"query: {q}" for q in questions]
+        q_embs = self.embed(queries)
+        print("NORMALIZING QUERY EMBEDDINGS...")
+        faiss.normalize_L2(q_embs)
+        print(q_embs.shape, q_embs.dtype)
+        print("Index dimension:", self.index.d)
+        print("PERFORMING INDEX SEARCH...")
+        D, I = self.index.search(q_embs, top_k)
+        print("INDEX SEARCH COMPLETED")
+        return I
+
+    def retrieve_single_uid(self, question, top_k=5):
+        print("ATTEMPTING UID RETRIEVAL...")
+        print("ENCODING QUERIES...")
+        query = f"query: {question}" 
+        print("NORMALIZING QUERY EMBEDDINGS...")
+        q_embs = self.embed(query)
+        faiss.normalize_L2(q_embs)
+        print(q_embs.shape, q_embs.dtype)
+        print("Index dimension:", self.index.d)
+        
+        import numpy as np
+        test_q = np.random.rand(1, 128).astype("float32")
+        faiss.normalize_L2(test_q)
+        
+        print("PERFORMING INDEX SEARCH...")
+        D, I = self.index.search(test_q, top_k)
+        print("INDEX SEARCH COMPLETED")
+        return I
+    
+    def uid_sanity_test(self):
+        import numpy as np
+        del self.index
+        gc.collect()
+        index = faiss.read_index("data/wiki/embedded/00")
+        query = np.random.rand(1, 128).astype("float32")
+        faiss.normalize_L2(query)
+        D, I = index.search(query, 5)
+        print(I)
+
     def retrieve_with_uid(self, questions, top_k=5):
         queries = [f"query: {q}" for q in questions]
         q_embs = self.embed(queries)
@@ -140,16 +191,20 @@ class BertTinyRetriever:
         q_embs = self.embed(queries)
         faiss.normalize_L2(q_embs)
         D, I = self.index.search(q_embs, top_k)
-        return [
-            # consider returning a list instead and joining somewhere else
-            # likewise, consider mapping the index to documents with an ID
-            "\n\n".join([self.select_by_uids(uid)['id'] for uid in uids])
-            for uids in I
-        ]
+        
+        results = []
+        for uids in I:
+            subset = self.select_by_uids(uids)
+            titles = subset["id"]  # grab list of titles
+            results.append("\n\n".join(titles))  # join actual strings
+        
+        return results
+
 
     def select_by_uids(self, uids):
-        subset = self.dataset.filter(lambda example: example["uid"] in set(uids))
-        return subset
+        uids_set = set(map(int, uids))  # just in case they're np.int64
+        return self.dataset.filter(lambda x: x["uid"] in uids_set)
+
 
     def retrieve_titles(self, questions, top_k=5):
         queries = [f"query: {q}" for q in questions]
@@ -165,6 +220,7 @@ class BertTinyRetriever:
 
 class E5Retriever:
     def __init__(self, index_path, documents, device=None, text_field='text'):
+        import torch
         model_name = 'intfloat/multilingual-e5-large-instruct'
         self.device = torch.device(device)
 
@@ -175,7 +231,10 @@ class E5Retriever:
         self.model = AutoModel.from_pretrained(model_name).to(self.device)
 
         # Load FAISS index
+        if not os.path.exists(index_path):
+            raise FileNotFoundError(f"FAISS index not found at: {index_path}")
         self.index = faiss.read_index(index_path)
+
 
         # Load dataset and extract text field
         self.dataset = documents  # or load_dataset(...)
@@ -213,3 +272,18 @@ class E5Retriever:
             [self.titles[idx] for idx in indices]
             for indices in I
         ]        
+
+class DummyRetriever():
+    def __init__(self, index_path, documents, device=None, text_field='text'):
+        print("I am a stupid retriever and I don't initialize anything")
+        print("If you get a segfault when running my only method the issue has to do with the global state")
+
+    def uid_sanity_test(self):
+        import numpy as np
+        index = faiss.read_index("data/wiki/index/index.faiss")
+        query = np.random.rand(1, 128).astype("float32")
+        faiss.normalize_L2(query)
+        D, I = index.search(query, 5)
+        print(I)
+
+

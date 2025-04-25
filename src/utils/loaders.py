@@ -39,8 +39,9 @@ def load_documents(path, silent=False):
         print(f"{len(dataset)} documents loaded")
     return dataset
 
-def load_documents_from_directory(document_paths, silent=False):
+def load_documents_from_directory(documents_dir, silent=False):
     # for loading chunked documents
+    document_paths = load_wiki_file_paths(documents_dir)
     paths = [str(p) for p in document_paths]
     return load_documents(paths, silent=silent)
 

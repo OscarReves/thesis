@@ -1,8 +1,11 @@
 import yaml
 from src.utils import load_documents_from_directory, load_questions
 from src.retriever import get_retriever
-from src.pipeline import test_retrieval_with_uid
+from src.pipeline import test_retrieve_single_uid
 import argparse 
+import faiss
+import numpy as np
+
 
 def main(config_path):
     with open(config_path, "r") as f:
@@ -17,14 +20,19 @@ def main(config_path):
     
     documents = load_documents_from_directory(documents_path)
     question_dataset = load_questions(questions_path)
-    retriever = get_retriever(
-        retriever_name,
-        documents = documents,
-        index_path = index_path,
-        device = device
-        )
 
-    test_retrieval_with_uid(question_dataset, retriever, save_path)
+    index = faiss.read_index(index_path)
+    print(index.ntotal)
+    print(type(index))  # Should be IndexIDMap or similar if using add_with_ids
+
+    retriever = get_retriever(
+         retriever_name,
+         documents = documents,
+         index_path = index_path,
+         device = device
+         )
+
+    retriever.uid_sanity_test()
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
