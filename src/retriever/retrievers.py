@@ -4,6 +4,8 @@ import faiss
 from datasets import load_from_disk
 import os
 import torch.nn.functional as F
+from datasets.utils.logging import disable_progress_bar
+
 
 class GPT2Retriever:
     def __init__(self, index_path, documents, device=None, text_field='text'):
@@ -250,9 +252,10 @@ class E5Retriever:
 
     def select_by_uids(self, uids):
         uids_set = set(map(int, uids))  # just in case they're np.int64
+        disable_progress_bar()
         return self.dataset.filter(
-            lambda x: x["uid"] in uids_set,
-            disable_tqdm=True)        
+            lambda x: x["uid"] in uids_set
+        )        
 
 class DummyRetriever():
     def __init__(self, index_path, documents, device=None, text_field='text'):
