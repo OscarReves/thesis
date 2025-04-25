@@ -20,7 +20,7 @@ def test_retrieval_with_uid(question_dataset, retriever, save_path, batch_size =
     results = []
     for sample in question_dataset:
         question = sample['question']
-        context = retriever.retrieve_single_uid([question])
+        context = retriever.retrieve_titles_with_uid([question])
         result = {
             "question"  :   question,
             "context"   :   context
