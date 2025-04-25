@@ -16,10 +16,10 @@ class FaissIndexer:
         index.add(embeddings)
         faiss.write_index(index, self.index_path)
 
-    def index_directory(self, document_paths):
+    def index_directory(self, document_paths, batch_size):
         paths = [str(p) for p in document_paths]
         dataset = load_documents(paths)  # Should return a Dataset with 'uid' column
-        embeddings = self.embedder.encode(dataset)
+        embeddings = self.embedder.encode(dataset,batch_size)
         faiss.normalize_L2(embeddings)
 
         dim = self.embedder.model.config.hidden_size

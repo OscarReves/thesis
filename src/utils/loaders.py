@@ -31,7 +31,7 @@ def load_wiki_file_paths(dump_dir_path="data/wiki/dump", silent=False):
     return file_paths
 
 def load_squad(path):
-    data = load_documents(path)['data'][0]
+    data = load_documents(path, silent=True)['data'][0]
     records = []
 
     for entry in data:
@@ -44,6 +44,7 @@ def load_squad(path):
                     "answers": answers
                 })
 
+    print(f"Loaded {len(records)} questions")
     return Dataset.from_list(records)
 
 # == For loading processed data == 

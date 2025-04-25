@@ -15,6 +15,7 @@ def main(config_path):
     index_path = config["index_path"]
     embedder_name = config["embedder_name"]
     device = config['device']
+    batch_size = config['batch_size']
 
     print("Loading document paths...")
     document_paths = load_wiki_file_paths(docs_path)
@@ -26,7 +27,7 @@ def main(config_path):
     indexer = FaissIndexer(embedder=embedder, index_path=index_path)
     
     print("Indexing documents...")
-    indexer.index_directory(document_paths)
+    indexer.index_directory(document_paths, batch_size=batch_size)
 
     print(f"Index built and saved to {index_path}")
 
