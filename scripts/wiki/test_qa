@@ -20,5 +20,5 @@ module load python/3.9.6
 source production_env/bin/activate
 
 # Run program 
-python3 -m -u scripts.wiki.test_qa --config configs/wiki/cluster_test.yaml
+python3 -u -m scripts.wiki.test_qa --config configs/wiki/cluster_test.yaml
 
