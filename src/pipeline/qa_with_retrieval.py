@@ -37,7 +37,7 @@ def test_qa_with_retrieval_wiki(question_dataset, retriever, generator, save_pat
         answer = generator.generate_answer(question,context)
         
         # this method for retrieving the answer needs to be generalized across datasets somehow
-        reference_answer = sample['questions'][0] # currently just looks at first answer
+        reference_answer = sample['answers'][0] # currently just looks at first answer
 
         result = {
             "question"          :   question,
