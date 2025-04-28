@@ -68,15 +68,14 @@ def test_qa_with_retrieval_wiki(question_dataset, retriever, generator, save_pat
         # this method for retrieving the answer needs to be generalized across datasets somehow
         reference_answers = batch['answers'] 
 
-        result = [{
+        results.extend([{
             "question"          :   q,
             "context"           :   c,
             "generated_answer"  :   a,
             "reference_answer"  :   ra
-            } for q, c, a, ra in zip(questions,contexts,answers, reference_answers)]
+            } for q, c, a, ra in zip(questions,contexts,answers, reference_answers)])
         
-        results.append(result)
-    
+        
     print(f"Saving {len(results)} results to {save_path}")
     with open(save_path, 'w') as fp:
         json.dump(results, fp, indent=2, ensure_ascii=False) 
