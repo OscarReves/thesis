@@ -17,6 +17,7 @@ def main(config_path):
     device = config['device']
     save_path = config['qa_save_path']
     generator_name = config['generator_name']
+    max_samples = config['n_questions']
 
     print("Loading documents...")
     documents = load_documents_from_directory(documents_path)
@@ -40,7 +41,8 @@ def main(config_path):
         question_dataset = question_dataset, 
         retriever = retriever, 
         generator = generator,
-        save_path = save_path)
+        save_path = save_path,
+        max_samples=max_samples)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
