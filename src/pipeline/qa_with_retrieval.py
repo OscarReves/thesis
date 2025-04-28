@@ -63,7 +63,7 @@ def test_qa_with_retrieval_wiki(question_dataset, retriever, generator, save_pat
         questions = batch['question']
         contexts = retriever.retrieve([questions])
         
-        answers = generator.generate_bnatch(questions,contexts)
+        answers = generator.generate_batch(questions,contexts)
         
         # this method for retrieving the answer needs to be generalized across datasets somehow
         reference_answers = batch['answers'] 
