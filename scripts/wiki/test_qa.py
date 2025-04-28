@@ -18,16 +18,24 @@ def main(config_path):
     save_path = config['qa_save_path']
     generator_name = config['generator_name']
 
+    print("Loading documents...")
     documents = load_documents_from_directory(documents_path)
+    
+    print("Loading questions...")
     question_dataset = load_squad(questions_path)
+    
+    print("Loading retriever...")
     retriever = get_retriever(
         retriever_name,
         documents = documents,
         index_path = index_path,
         device = device
         )
+    
+    print("Loading gernerator...")
     generator = get_generator(generator_name)
 
+    print("Testing qa with retrieval...")
     test_qa_with_retrieval(
         question_dataset = question_dataset, 
         retriever = retriever, 
