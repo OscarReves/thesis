@@ -11,3 +11,7 @@ retrieval_save_path: results/wiki/retrieval_test
 batch_size: 2048
 qa_save_path: results/wiki/qa_test
 generator_name: nous-hermes-mistral
+evaluator_name: nous-hermes-mistral
+eval_batch_size: 4
+answers_path: results/wiki/qa_test
+evaluation_path: results/wiki/evaluation_test
