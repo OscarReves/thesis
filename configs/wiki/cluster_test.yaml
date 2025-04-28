@@ -9,3 +9,5 @@ dump_path: data/wiki/dump/
 questions_path: data/squad/dev-v1.1-da.json
 retrieval_save_path: results/wiki/retrieval_test
 batch_size: 2048
+qa_save_path: results/wiki/qa_test
+generator_name: nous-hermes-mistral

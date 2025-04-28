@@ -1,7 +1,9 @@
 import json
-def test_qa_with_retrieval(question_dataset, retriever, generator, save_path, batch_size = 16):
+def test_qa_with_retrieval(question_dataset, retriever, generator, save_path, batch_size = 16, max_samples=100):
     # still needs batching 
-    
+    question_dataset=question_dataset[max_samples]
+
+
     results = []
     for sample in question_dataset:
         question = sample['question']
