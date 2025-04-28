@@ -32,7 +32,7 @@ def main(config_path):
         device = device
         )
     
-    print("Loading gernerator...")
+    print("Loading generator...")
     generator = get_generator(generator_name)
 
     print("Testing qa with retrieval...")
