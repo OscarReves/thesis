@@ -3,7 +3,6 @@ def test_qa_with_retrieval(question_dataset, retriever, generator, save_path, ba
     # still needs batching 
     question_dataset=question_dataset[max_samples]
 
-
     results = []
     for sample in question_dataset:
         question = sample['question']

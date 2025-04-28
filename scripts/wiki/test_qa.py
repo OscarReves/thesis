@@ -1,5 +1,5 @@
 import yaml
-from src.utils import load_documents, load_questions
+from src.utils import load_documents_from_directory, load_squad
 from src.retriever import get_retriever
 from src.generator import get_generator
 from src.pipeline import test_qa_with_retrieval
@@ -18,8 +18,8 @@ def main(config_path):
     save_path = config['qa_save_path']
     generator_name = config['generator_name']
 
-    documents = load_documents(documents_path)
-    question_dataset = load_questions(questions_path)
+    documents = load_documents_from_directory(documents_path)
+    question_dataset = load_squad(questions_path)
     retriever = get_retriever(
         retriever_name,
         documents = documents,
