@@ -2,7 +2,7 @@ import yaml
 from src.utils import load_documents_from_directory, load_squad
 from src.retriever import get_retriever
 from src.generator import get_generator
-from src.pipeline import test_qa_with_retrieval
+from src.pipeline import test_qa_with_retrieval_wiki
 import argparse 
 
 def main(config_path):
@@ -36,7 +36,7 @@ def main(config_path):
     generator = get_generator(generator_name)
 
     print("Testing qa with retrieval...")
-    test_qa_with_retrieval(
+    test_qa_with_retrieval_wiki(
         question_dataset = question_dataset, 
         retriever = retriever, 
         generator = generator,
