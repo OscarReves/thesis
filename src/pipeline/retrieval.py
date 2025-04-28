@@ -38,6 +38,7 @@ def test_retrieval_with_uid(question_dataset, retriever, save_path, max_samples=
 def test_batched_retrieval_with_uid(question_dataset, retriever, save_path, batch_size = 16, max_samples=1600):
     print(f"Testing uid based retrieval with batching...")
     results = []
+    question_dataset = question_dataset.select(range(max_samples))
     for i in (tqdm(range(0, len(question_dataset), batch_size), desc="Retrieving context")):
         batch = question_dataset[i:i+batch_size]
         questions = batch['question']
