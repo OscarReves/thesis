@@ -21,6 +21,7 @@ def chunk_and_save(documents, tokenizer_name, save_path):
 
 def chunk_multiple(dump_dir, out_dir, tokenizer_name):
     # chunks and saves multiple wiki dump files
+    # you should absolutely parallelize this 
     print(f"Loading tokenizer {tokenizer_name}...")
     tokenizer = AutoTokenizer.from_pretrained(tokenizer_name)
     disable_progress_bar()
@@ -45,4 +46,4 @@ def chunk_multiple(dump_dir, out_dir, tokenizer_name):
         
         chunked.to_json(out_path)
 
-    print(f"{len(file_paths)} saved in {out_dir}")
+    print(f"{len(file_paths)} files saved in {out_dir}")

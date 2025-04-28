@@ -5,7 +5,7 @@ embedder_name: e5
 index_path: data/wiki/index/index.faiss
 retriever_name: e5
 device: cuda
-dump_path: data/wiki/dump
+dump_path: data/wiki/dump/
 questions_path: data/squad/dev-v1.1-da.json
 retrieval_save_path: results/wiki/retrieval_test
 batch_size: 2048
