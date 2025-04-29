@@ -17,9 +17,10 @@ def main(config_path):
     retriever_name = config['retriever_name']
     device = config['device']
     save_path = config['retrieval_save_path']
-    
+    questions_with_title = config['squad_questions_with_title']
+
     documents = load_documents_from_directory(documents_path)
-    question_dataset = load_squad(questions_path)
+    question_dataset = load_squad(questions_path, prepend_with_title=questions_with_title)
 
     retriever = get_retriever(
          retriever_name,
