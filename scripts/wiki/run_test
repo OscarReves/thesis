@@ -4,7 +4,7 @@
 #SBATCH --job-name=MyJob
 #number of independent tasks we are going to start in this script
 #SBATCH --output=results.out   # %j will be replaced with the job ID
-#SBATCH --ntasks=4
+#SBATCH --ntasks=1
 #number of cpus we want to allocate for each program
 #SBATCH --cpus-per-task=4
 #SBATCH --gres=gpu:titanrtx:1
