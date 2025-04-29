@@ -4,7 +4,7 @@
 #SBATCH --job-name=MyJob
 #number of independent tasks we are going to start in this script
 #SBATCH --output=results.out   # %j will be replaced with the job ID
-#SBATCH --ntasks=2
+#SBATCH --ntasks=1 
 #number of cpus we want to allocate for each program
 #SBATCH --cpus-per-task=4
 #SBATCH --gres=gpu:titanrtx:1
@@ -22,6 +22,6 @@ source production_env/bin/activate
 # Run program 
 python3 -u -m scripts.wiki.test_retrieval --config configs/wiki/cluster_test.yaml
 python3 -u -m scripts.wiki.test_qa --config configs/wiki/cluster_test.yaml
-#python3 -u -m scripts.wiki.evaluate --config configs/wiki/cluster_test.yaml
-#python3 -u -m scripts.score --config configs/wiki/cluster_test.yaml
+python3 -u -m scripts.wiki.evaluate --config configs/wiki/cluster_test.yaml
+python3 -u -m scripts.score --config configs/wiki/cluster_test.yaml
 
