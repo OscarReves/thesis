@@ -17,6 +17,8 @@ def main(config_path):
     retriever_name = config['retriever_name']
     device = config['device']
     save_path = config['retrieval_save_path']
+    batch_size = config['eval_batch_size']
+    max_samples = config['n_questions']
     questions_with_title = config['squad_questions_with_title']
 
     documents = load_documents_from_directory(documents_path)
@@ -32,7 +34,9 @@ def main(config_path):
     test_batched_retrieval_with_uid(
         question_dataset = question_dataset,
         retriever = retriever,
-        save_path = save_path
+        save_path = save_path,
+        batch_size=batch_size,
+        max_samples=max_samples
         )
 
 if __name__ == "__main__":
