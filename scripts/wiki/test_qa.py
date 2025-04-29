@@ -18,6 +18,7 @@ def main(config_path):
     save_path = config['qa_save_path']
     generator_name = config['generator_name']
     max_samples = config['n_questions']
+    batch_size = config['eval_batch_size']
 
     print("Loading documents...")
     documents = load_documents_from_directory(documents_path)
@@ -42,7 +43,8 @@ def main(config_path):
         retriever = retriever, 
         generator = generator,
         save_path = save_path,
-        max_samples=max_samples)
+        max_samples=max_samples,
+        batch_size=batch_size)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
