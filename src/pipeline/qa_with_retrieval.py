@@ -53,7 +53,8 @@ def test_qa_with_retrieval_wiki(question_dataset, retriever, generator, save_pat
     with open(save_path, 'w') as fp:
         json.dump(results, fp, indent=2, ensure_ascii=False) 
 
-def test_qa_with_retrieval_wiki(question_dataset, retriever, generator, save_path, batch_size = 16, max_samples=100):
+def test_qa_with_retrieval_wiki(question_dataset, retriever, generator, save_path, 
+                                batch_size = 16, max_samples=100):
     # still needs batching 
     question_dataset=question_dataset.select(range(max_samples))
     results = []
@@ -61,7 +62,7 @@ def test_qa_with_retrieval_wiki(question_dataset, retriever, generator, save_pat
                    desc=f"Answering questions in batches of {batch_size}")):
         batch = question_dataset[i:i+batch_size]
         questions = batch['question']
-        contexts = retriever.retrieve(questions)
+        contexts = retriever.retrieve([questions])
         
         answers = generator.generate_batch(questions,contexts)
         

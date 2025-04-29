@@ -19,12 +19,13 @@ def main(config_path):
     generator_name = config['generator_name']
     max_samples = config['n_questions']
     batch_size = config['eval_batch_size']
+    questions_with_title = config['squad_questions_with_title']
 
     print("Loading documents...")
     documents = load_documents_from_directory(documents_path)
     
     print("Loading questions...")
-    question_dataset = load_squad(questions_path)
+    question_dataset = load_squad(questions_path, prepend_with_title=questions_with_title)
     
     print("Loading retriever...")
     retriever = get_retriever(
