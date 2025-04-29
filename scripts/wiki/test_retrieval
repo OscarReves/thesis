@@ -1,7 +1,7 @@
 #!/bin/bash
 #The partition is the queue you want to run on. standard is gpu and can be ommitted.
 #SBATCH -p gpu
-#SBATCH --job-name=MyJob
+#SBATCH --job-name=test_retrieval
 #number of independent tasks we are going to start in this script
 #SBATCH --output=results.out   # %j will be replaced with the job ID
 #SBATCH --ntasks=1
