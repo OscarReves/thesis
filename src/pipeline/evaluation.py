@@ -4,7 +4,8 @@ from src.utils import batch_iterator
 def evaluate_answers(answer_dataset, evaluator, save_path, batch_size=16):
     results = []
 
-    for batch in batch_iterator(answer_dataset, batch_size):
+    for batch in batch_iterator(answer_dataset, batch_size, 
+                                description=f"Evaluating answers in batches of {batch_size}"):
         
         # Now access fields directly (vectorized or individually)
         questions = batch["question"]
