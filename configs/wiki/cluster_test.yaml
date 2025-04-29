@@ -10,10 +10,10 @@ questions_path: data/squad/dev-v1.1-da.json
 retrieval_save_path: results/wiki/retrieval_test
 batch_size: 2048
 qa_save_path: results/wiki/qa_test
-n_questions: 1000
+n_questions: 5000
 generator_name: nous-hermes-mistral
 evaluator_name: nous-hermes-mistral-binary
-eval_batch_size: 4
+eval_batch_size: 64
 answers_path: results/wiki/qa_test
 evaluation_path: results/wiki/evaluation_test
 squad_questions_with_title: True
