@@ -6,7 +6,7 @@
 #SBATCH --output=results.out   # %j will be replaced with the job ID
 #SBATCH --ntasks=1
 #number of cpus we want to allocate for each program
-#SBATCH --cpus-per-task=4
+#SBATCH --cpus-per-task=1
 #SBATCH --gres=gpu:titanrtx:1
 #Note that a program will be killed once it exceeds this time!
 #SBATCH --time=0-00:30:00

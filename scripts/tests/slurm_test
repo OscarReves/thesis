@@ -1,0 +1,10 @@
+#!/bin/bash
+#SBATCH -p gpu
+#SBATCH --job-name=sanity_test
+#SBATCH --output=results.out
+#SBATCH --ntasks=1
+#SBATCH --time=0-00:01:00
+
+echo "SLURM is working!"
+hostname
+nvidia-smi
