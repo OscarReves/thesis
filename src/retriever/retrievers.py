@@ -223,6 +223,20 @@ class E5Retriever:
             for indices in I
         ]
     
+    def retrieve_with_uid(self, questions, top_k=5):
+        queries = [f"query: {q}" for q in questions]
+        q_embs = self.embed(queries)
+        faiss.normalize_L2(q_embs)
+        D, I = self.index.search(q_embs, top_k)
+        
+        results = []
+        for uids in I:
+            subset = self.select_by_uids(uids)
+            contexts = subset["text"]  # grab list of titles
+            results.append(contexts)  # join actual strings
+        
+        return results
+    
     def retrieve_titles(self, questions, top_k=5):
         queries = [f"query: {q}" for q in questions]
         q_embs = self.embed(queries)

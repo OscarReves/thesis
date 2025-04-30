@@ -62,7 +62,7 @@ def test_qa_with_retrieval_wiki(question_dataset, retriever, generator, save_pat
                    desc=f"Answering questions in batches of {batch_size}")):
         batch = question_dataset[i:i+batch_size]
         questions = batch['question']
-        contexts = retriever.retrieve([questions])
+        contexts = retriever.retrieve_by_uid([questions])
         
         answers = generator.generate_batch(questions,contexts)
         
