@@ -4,8 +4,7 @@
 #SBATCH --output=results.out
 #SBATCH --ntasks=1
 #SBATCH --time=0-00:01:00
-#SBATCH --gres=gpu:titanrtx:1
-
+#SBATCH --gres=gpu:1
 
 echo "SLURM is working!"
 hostname
