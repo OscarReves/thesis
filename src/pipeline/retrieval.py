@@ -42,7 +42,7 @@ def test_batched_retrieval_with_uid(question_dataset, retriever, save_path, batc
     for i in (tqdm(range(0, len(question_dataset), batch_size), desc=f"Retrieving context in batches of {batch_size}")):
         batch = question_dataset[i:i+batch_size]
         questions = batch['question']
-        contexts = retriever.retrieve_titles_with_uid([questions])
+        contexts = retriever.retrieve_titles_with_uid(questions)
         results.extend([
             {"question": q, "contexts": c}
             for q,c in zip(questions,contexts)
