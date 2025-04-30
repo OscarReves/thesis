@@ -13,7 +13,7 @@ qa_save_path: results/wiki/qa_test
 n_questions: 1000
 generator_name: nous-hermes-mistral
 evaluator_name: nous-hermes-mistral-binary
-eval_batch_size: 64
+eval_batch_size: 4
 answers_path: results/wiki/qa_test
 evaluation_path: results/wiki/evaluation_test
 squad_questions_with_title: True
