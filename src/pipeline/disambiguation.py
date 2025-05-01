@@ -6,7 +6,8 @@ def rewrite_questions(question_dataset, generator, save_path, batch_size=16, max
     results = []
 
     for batch in batch_iterator(question_dataset, batch_size, 
-                                description=f"Rewriting questions in batches of {batch_size}"):
+                                description=f"Rewriting questions in batches of {batch_size}",
+                                max_samples=max_samples):
         
         # Now access fields directly (vectorized or individually)
         questions = batch["question"]
