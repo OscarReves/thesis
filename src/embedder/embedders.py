@@ -48,7 +48,8 @@ class E5Embedder:
         all_embeddings = []
 
         with torch.inference_mode():
-            for i in range(0, len(texts), batch_size):
+            for i in tqdm(range(0, len(texts), batch_size), desc=
+                          f"Encoding chunks in batches of {batch_size}"):
                 batch = texts[i:i+batch_size]
                 tokens = self.tokenizer(batch, padding=True, truncation=True, return_tensors="pt").to(self.device)
                 output = self.model(**tokens).last_hidden_state
