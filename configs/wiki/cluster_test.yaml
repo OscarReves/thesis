@@ -8,7 +8,7 @@ device: cuda
 dump_path: data/wiki/dump/
 questions_path: data/squad/dev-v1.1-da.json
 retrieval_save_path: results/wiki/retrieval_test
-batch_size: 2048
+batch_size: 1024
 qa_save_path: results/wiki/qa_test
 n_questions: 1000
 generator_name: nous-hermes-mistral
