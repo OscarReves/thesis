@@ -10,7 +10,7 @@ def rewrite_questions(question_dataset, generator, save_path, batch_size=16, max
         
         # Now access fields directly (vectorized or individually)
         questions = batch["question"]
-        contexts = batch["contexts"]
+        contexts = batch["context"]
 
         rewritten_questions = generator.rewrite_questions(
             questions=questions,
