@@ -40,9 +40,11 @@ def load_squad(path, prepend_with_title=False, with_context=False):
             context = para.get("context")
             for qa in para.get("qas", []):
                 question = qa.get("question")
+                if prepend_with_title == True:
+                    question = article_title + " - " + question
                 answers = [a["text"] for a in qa.get("answers", [])]
                 records.append({
-                    "question": article_title + " - " + question,
+                    "question": question,
                     "answers": answers,
                     **({"context": context} if with_context else {})
                 })
