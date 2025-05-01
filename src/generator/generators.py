@@ -115,7 +115,7 @@ class NousHermesMistral2Generator():
             self.tokenizer.apply_chat_template([
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": f"""
-                You are an expert question question disambiguator.
+                You are an expert question disambiguator.
                 Using the context, rewrite the following question so that it would be unambiguous in the absence of the context.
                 The question should be answerable as a stand-alone question, but should not include the answer. 
 
