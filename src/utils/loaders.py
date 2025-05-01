@@ -54,7 +54,7 @@ def load_squad(path, prepend_with_title=False, with_context=False):
 
 def load_squad_rewritten(path, silent=False):
     dataset = load_dataset("json",data_files=path, field=None, split='train')
-    dataset = dataset.rename_column("original_question","question")
+    dataset = dataset.rename_column("rewritten_question","question")
     if not silent:
         print(f"{len(dataset)} questions loaded")
     return dataset
