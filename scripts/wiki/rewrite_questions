@@ -20,4 +20,4 @@ module load python/3.9.6
 source production_env/bin/activate
 
 # Run program 
-python3 -u -m scripts.rewrite_questions --config configs/wiki/rewrite_questions.yaml
+python3 -u -m scripts.wiki.rewrite_questions --config configs/wiki/rewrite_questions.yaml
