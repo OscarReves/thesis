@@ -12,7 +12,8 @@ def main(config_path):
         config = yaml.safe_load(f)
 
     dump_path = config["dump_path"] # path to parent directory containing wiki files from dump
-    tokenizer_name = config["tokenizer_name"]
+    #tokenizer_name = config["tokenizer_name"]
+    tokenizer_name = None
     out_path = config["chunked_path"]
 
     # iterate through all wiki files

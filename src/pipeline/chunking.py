@@ -23,7 +23,11 @@ def chunk_multiple(dump_dir, out_dir, tokenizer_name):
     # chunks and saves multiple wiki dump files
     # you should absolutely parallelize this 
     print(f"Loading tokenizer {tokenizer_name}...")
-    tokenizer = AutoTokenizer.from_pretrained(tokenizer_name)
+    if tokenizer_name:
+        tokenizer = AutoTokenizer.from_pretrained(tokenizer_name)
+    else:
+        tokenizer = None
+    
     disable_progress_bar()
     file_paths = load_wiki_file_paths(dump_dir)
 
