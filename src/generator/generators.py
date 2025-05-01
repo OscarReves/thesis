@@ -104,7 +104,7 @@ class NousHermesMistral2Generator():
         ]
         return outputs
 
-    def rewrite_questions_in_batch(self, questions, contexts, max_new_tokens=256):
+    def rewrite_questions(self, questions, contexts, max_new_tokens=256):
         system_prompt = (
             "You are a helpful assistant. You respond to prompts in Danish. "
             "Respond briefly and accurately. Do not generate any extra questions or superfluous text. "
