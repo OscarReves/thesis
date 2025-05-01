@@ -33,58 +33,34 @@ class GPT2Embedder:
         return np.array(all_embeddings, dtype=np.float32)
 
 class E5Embedder:
-    def __init__(self, device, model_name='intfloat/multilingual-e5-large-instruct'):
-        self.tokenizer = AutoTokenizer.from_pretrained(model_name) 
-        self.model = AutoModel.from_pretrained(model_name)
-        self.device = torch.device(device)
+    def __init__(self, device='cuda', model_name='intfloat/multilingual-e5-large-instruct'):
         if 'cuda' in device and not torch.cuda.is_available():
             raise RuntimeError(f"CUDA requested but not available on this system (device={device})")
-        self.model.to(device)
-
-
-    def encode_old(self, documents, batch_size=32):
-        device = self.device
+        
+        self.device = torch.device(device)
+        self.tokenizer = AutoTokenizer.from_pretrained(model_name)
+        self.model = AutoModel.from_pretrained(model_name, torch_dtype=torch.float16).to(self.device)
         self.model.eval()
+        torch.set_float32_matmul_precision('high')
 
+    def encode(self, documents, batch_size=64):  # bump batch size if your GPU allows
         texts = [f"passage: {t}" for t in documents['text']]
         all_embeddings = []
 
-        for i in tqdm(range(0, len(texts), batch_size), desc="Encoding"):
-            batch = texts[i:i+batch_size]
-            tokens = self.tokenizer(batch, padding=True, truncation=True, return_tensors="pt").to(device)
-
-            with torch.no_grad():
-                output = self.model(**tokens).last_hidden_state
-                attention_mask = tokens["attention_mask"].unsqueeze(-1).expand(output.size())
-                summed = torch.sum(output * attention_mask, dim=1)
-                counts = torch.clamp(attention_mask.sum(dim=1), min=1e-9)
-                embeddings = summed / counts
-                all_embeddings.extend(embeddings.cpu().numpy())
-
-        return np.array(all_embeddings, dtype=np.float32)
-
-    def encode(self, documents, batch_size=32):
-        self.model.eval()
-        texts = [f"passage: {t}" for t in documents['text']]
-        num_texts = len(texts)
-        embedding_dim = self.model.config.hidden_size
-
-        all_embeddings = np.empty((num_texts, embedding_dim), dtype=np.float32)
-
         with torch.inference_mode():
-            for i in tqdm(range(0, num_texts, batch_size), desc="Encoding"):
+            for i in range(0, len(texts), batch_size):
                 batch = texts[i:i+batch_size]
                 tokens = self.tokenizer(batch, padding=True, truncation=True, return_tensors="pt").to(self.device)
                 output = self.model(**tokens).last_hidden_state
 
-                mask = tokens['attention_mask'].unsqueeze(-1).expand(output.shape)
+                mask = tokens['attention_mask'].unsqueeze(-1)
                 summed = torch.sum(output * mask, dim=1)
                 counts = mask.sum(dim=1).clamp(min=1e-9)
                 embeddings = summed / counts
 
-                all_embeddings[i:i+batch_size] = embeddings.cpu().numpy()
+                all_embeddings.append(embeddings)
 
-        return all_embeddings
+        return torch.cat(all_embeddings, dim=0)
 
 class BertTinyEmbedder:
     def __init__(self, device, model_name='prajjwal1/bert-tiny'):
