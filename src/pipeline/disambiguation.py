@@ -18,10 +18,11 @@ def rewrite_questions(question_dataset, generator, save_path, batch_size=16, max
             contexts=contexts
         )
 
-        for sample, rewritten_questions in zip(batch, rewritten_questions):
+        for sample, rewritten_question in zip(batch, rewritten_questions):
             results.append({
-                "question"  : sample['question'],
-                "answers"   : sample['answers']
+                "original_question"     : sample['question'],
+                "rewritten_question"    : rewritten_question,
+                "answers"               : sample['answers']
             })
 
     # you should make a util function for saving 
