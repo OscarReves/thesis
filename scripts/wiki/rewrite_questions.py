@@ -16,7 +16,7 @@ def main(config_path):
     max_samples = config['n_questions']
     batch_size = config['batch_size']
     questions_with_title = config['squad_questions_with_title']
-    save_path = config['rewritten_questions_save_path']
+    save_path = config['save_path']
     
     print("Loading questions...")
     question_dataset = load_squad(questions_path, prepend_with_title=questions_with_title)

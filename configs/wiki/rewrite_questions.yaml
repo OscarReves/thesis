@@ -1,6 +1,6 @@
 device: cuda
 questions_path: data/squad/dev-v1.1-da.json
-rewritten_question_save_path: data/squad/rewritten/test.json
+save_path: data/squad/rewritten/test.json
 batch_size: 8
 n_questions: 100
 generator_name: nous-hermes-mistral
