@@ -25,7 +25,7 @@ def main(config_path):
     documents = load_documents_from_directory(documents_path)
     
     print("Loading questions...")
-    question_dataset = load_squad_rewritten(questions_path, prepend_with_title=questions_with_title)
+    question_dataset = load_squad_rewritten(questions_path)
     
     print("Loading retriever...")
     retriever = get_retriever(
