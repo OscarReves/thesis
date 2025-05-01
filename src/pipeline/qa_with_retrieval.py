@@ -44,11 +44,11 @@ def test_qa_with_retrieval_wiki(question_dataset, retriever, generator, save_pat
         
         start_retrieval = time.time()
         contexts = retriever.retrieve_with_uid(questions)
-        total_retrieval_time += time.time() - start_retrieval
+        total_retrieval_time = time.time() - start_retrieval
         
         start_generation = time.time()
         answers = generator.generate_batch(questions, contexts)
-        total_generation_time += time.time() - start_generation
+        total_generation_time = time.time() - start_generation
         
         reference_answers = batch['answers']
 
