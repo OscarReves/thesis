@@ -30,19 +30,21 @@ def load_wiki_file_paths(dump_dir_path="data/wiki/dump", silent=False):
 
     return file_paths
 
-def load_squad(path, prepend_with_title=False):
+def load_squad(path, prepend_with_title=False, with_context=False):
     data = load_documents(path, silent=True)['data'][0]
     records = []
 
     for entry in data:
         article_title = entry.get("title")
         for para in entry.get("paragraphs", []):
+            context = para.get("context")
             for qa in para.get("qas", []):
                 question = qa.get("question")
                 answers = [a["text"] for a in qa.get("answers", [])]
                 records.append({
                     "question": article_title + " - " + question,
-                    "answers": answers
+                    "answers": answers,
+                    **({"context": context} if with_context else {})
                 })
 
     print(f"Loaded {len(records)} questions")
