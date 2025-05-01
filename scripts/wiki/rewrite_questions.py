@@ -30,6 +30,7 @@ def main(config_path):
         generator=generator,
         save_path=save_path,
         batch_size=batch_size,
+        max_samples=max_samples
     )
 
 
