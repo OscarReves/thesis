@@ -60,8 +60,13 @@ class E5Embedder:
                 embeddings = summed / counts
 
                 all_embeddings.append(embeddings)
+                if i == 2:
+                    break
 
-        return torch.cat(all_embeddings, dim=0)
+        embeddings = torch.cat(all_embeddings, dim=0)
+        embeddings = embeddings.cpu().numpy()
+
+        return embeddings
 
 class BertTinyEmbedder:
     def __init__(self, device, model_name='prajjwal1/bert-tiny'):
