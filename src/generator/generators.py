@@ -107,7 +107,7 @@ class NousHermesMistral2Generator():
     def rewrite_questions(self, questions, contexts, max_new_tokens=256):
         system_prompt = (
             "You are a helpful assistant. You respond to prompts in Danish. "
-            "Respond briefly and accurately. Do not generate any extra questions or superfluous text. "
+            "Respond briefly and accurately."
             "Be as concise as possible."
         )
 
@@ -116,11 +116,12 @@ class NousHermesMistral2Generator():
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": f"""
                 You are an expert question question disambiguator.
-                Using the context, rewrite the following question so that it would be unambiguous in the absence of the context:
+                Using the context, rewrite the following question so that it would be unambiguous in the absence of the context.
+                The question should be answerable as a stand-alone question, but should not include the answer. 
+
+                Context: {c}
                  
-                Kontekst: {c}
-                 
-                Spørgsmål: {q}
+                Question: {q}
                 """}
             ], tokenize=False, add_generation_prompt=True)
             for q, c in zip(questions, contexts)
