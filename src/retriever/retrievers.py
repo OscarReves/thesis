@@ -182,6 +182,7 @@ class BertTinyRetriever:
 class E5Retriever:
     def __init__(self, index_path, documents, device=None, text_field='text'):
         model_name = 'intfloat/multilingual-e5-large-instruct'
+        self.uid_map = {int(row["uid"]): row for row in self.dataset}
         self.device = torch.device(device)
 
         print(f"Loaded model {model_name} on device {self.device}")
