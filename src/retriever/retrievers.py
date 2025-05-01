@@ -1,7 +1,7 @@
 from transformers import AutoTokenizer, AutoModel
 import torch
 import faiss
-from datasets import load_from_disk
+from datasets import load_from_disk, Dataset
 import os
 import torch.nn.functional as F
 from datasets.utils.logging import disable_progress_bar
@@ -265,11 +265,14 @@ class E5Retriever:
 
 
     def select_by_uids(self, uids):
-        uids_set = set(map(int, uids))  # just in case they're np.int64
-        disable_progress_bar()
-        return self.dataset.filter(
-            lambda x: x["uid"] in uids_set
-        )        
+        #uids_set = set(map(int, uids))  # just in case they're np.int64
+        #disable_progress_bar()
+        #return self.dataset.filter(
+        #    lambda x: x["uid"] in uids_set
+        #)
+        rows = [self.uid_map[int(uid)] for uid in uids]
+        return Dataset.from_list(rows)
+        
 
 class DummyRetriever():
     def __init__(self, index_path, documents, device=None, text_field='text'):
