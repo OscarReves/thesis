@@ -2,7 +2,7 @@ import yaml
 from src.utils import load_squad, load_documents, save_squad_contexts
 from src.retriever import get_retriever
 from src.embedder import get_embedder
-from src.pipeline import test_batched_retrieval_with_uid, test_retrieval
+from src.pipeline import test_batched_retrieval_with_uid, test_retrieval, test_retrieval_with_uid
 from src.indexer import FaissIndexer
 import argparse 
 import faiss
@@ -37,13 +37,11 @@ def main(config_path):
     documents = load_documents(squad_context_path)
 
     print("Indexing documents...")
-    indexer.index_documents(documents, batch_size=batch_size)
+    indexer.index_documents_with_uid(documents, batch_size=batch_size)
 
     print(f"Index built and saved to {index_path}")
 
-    documents = load_documents(squad_context_path)
-
-    question_dataset = load_squad(questions_path, prepend_with_title=questions_with_title)
+    question_dataset = load_squad(questions_path, prepend_with_title=questions_with_title, )
 
     retriever = get_retriever(
          retriever_name,
@@ -52,7 +50,7 @@ def main(config_path):
          device = device
          )
 
-    test_retrieval(
+    test_retrieval_with_uid(
         question_dataset = question_dataset,
         retriever = retriever,
         save_path = save_path,

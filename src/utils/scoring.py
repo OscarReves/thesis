@@ -9,3 +9,4 @@ def get_accuracy(dataset):
     correct = dataset.filter(is_correct)
     accuracy = len(correct)/len(dataset)
     return accuracy
+
