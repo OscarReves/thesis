@@ -161,6 +161,15 @@ class BertTinyRetriever:
         
         return results
 
+    def retrieve_uids(self, questions, top_k=5):
+        queries = [f"query: {q}" for q in questions]
+        q_embs = self.embed(queries)
+        faiss.normalize_L2(q_embs)
+        D, I = self.index.search(q_embs, top_k)
+        
+        return I
+
+
 
     def select_by_uids(self, uids):
         uids_set = set(map(int, uids))  # just in case they're np.int64
