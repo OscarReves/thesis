@@ -19,4 +19,4 @@ def retrieval_success(sample):
 
 def get_retrieval_accuracy(dataset):
     # assumes columns retrieved_uids and context_id
-    pass 
+    pass
