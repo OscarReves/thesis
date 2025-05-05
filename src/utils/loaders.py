@@ -34,6 +34,7 @@ def load_wiki_file_paths(dump_dir_path="data/wiki/dump", silent=False):
 def load_squad(path, prepend_with_title=False, with_context=False):
     data = load_documents(path, silent=True)['data'][0]
     records = []
+    context_id_counter = 0
 
     for entry in data:
         article_title = entry.get("title")
@@ -47,8 +48,9 @@ def load_squad(path, prepend_with_title=False, with_context=False):
                 records.append({
                     "question": question,
                     "answers": answers,
-                    **({"context": context, "context_id": i} if with_context else {})
+                    **({"context": context, "context_id": context_id_counter} if with_context else {})
                 })
+                context_id_counter += 1
 
     print(f"Loaded {len(records)} questions")
     return Dataset.from_list(records)
@@ -63,16 +65,18 @@ def load_squad_rewritten(path, silent=False):
 def load_squad_as_kb(path, silent=False):
     data = load_documents(path, silent=True)['data'][0]
     records = []
+    uid_counter = 0
 
     for entry in data:
         article_title = entry.get("title")
-        for i, para in enumerate(entry.get("paragraphs", [])):
+        for para in entry.get("paragraphs", []):
             context = para.get("context")
             records.append({
                     "id" : article_title,
                     "text": context,
-                    "uid" : i
+                    "uid" : uid_counter
                 })
+            uid_counter += 1
 
     print(f"Loaded {len(records)} questions")
     return Dataset.from_list(records)
