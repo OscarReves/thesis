@@ -41,7 +41,7 @@ def main(config_path):
 
     print(f"Index built and saved to {index_path}")
 
-    question_dataset = load_squad(questions_path, prepend_with_title=questions_with_title, )
+    question_dataset = load_squad(questions_path, prepend_with_title=questions_with_title, with_context=True)
 
     retriever = get_retriever(
          retriever_name,
