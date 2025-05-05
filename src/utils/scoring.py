@@ -1,3 +1,5 @@
+# === Question Answering Accuracy ===
+
 def is_correct(sample):
     return sample['evaluation'].split()[0] == '1'
 
@@ -10,5 +12,11 @@ def get_accuracy(dataset):
     accuracy = len(correct)/len(dataset)
     return accuracy
 
+# === Retrieval Accuracy === 
+
+def retrieval_success(sample):
+    return sample['context'] in sample['retrieved_uids']
+
 def get_retrieval_accuracy(dataset):
-    
+    # assumes columns retrieved_uids and context_id
+    pass 
