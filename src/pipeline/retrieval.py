@@ -30,7 +30,7 @@ def test_retrieval_with_uid(question_dataset, retriever, save_path, max_samples=
         result = {
             "question"  :   question,
             "context_id"   :  context_id,
-            "retrieved_uids" : retrieved_uids
+            "retrieved_uids" : retrieved_uids[0]
             } 
         results.append(result)
     
