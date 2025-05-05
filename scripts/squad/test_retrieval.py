@@ -16,7 +16,6 @@ def main(config_path):
     squad_path = config['squad_path']
     squad_context_path = config['squad_context_path']
     questions_path = config['questions_path']
-    documents_path = config['chunked_path']
     index_path = config['index_path']
     retriever_name = config['retriever_name']
     device = config['device']
@@ -27,7 +26,7 @@ def main(config_path):
     embedder_name = config['emebdder_name']
     
     print(f"Preprocessing SQuAD contexts...")
-    save_squad_contexts(load_path=squad_path, save_path=documents_path)
+    save_squad_contexts(load_path=squad_path, save_path=squad_context_path)
 
     print(f"Initializing embedder ({embedder_name})...", flush=True)
     embedder = get_embedder(name = embedder_name, device = device)
@@ -36,11 +35,11 @@ def main(config_path):
     indexer = FaissIndexer(embedder=embedder, index_path=index_path)
     
     print("Indexing documents...")
-    indexer.index_directory(documents_path, batch_size=batch_size)
+    indexer.index_directory(squad_context_path, batch_size=batch_size)
 
     print(f"Index built and saved to {index_path}")
 
-    documents = load_documents(documents_path)
+    documents = load_documents(squad_context_path)
 
     question_dataset = load_squad(questions_path, prepend_with_title=questions_with_title)
 
