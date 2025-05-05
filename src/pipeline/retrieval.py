@@ -18,7 +18,7 @@ def test_retrieval(question_dataset, retriever, save_path, batch_size = 16):
     with open(save_path, 'w') as fp:
         json.dump(results, fp, indent=2, ensure_ascii=False)
 
-def test_retrieval_with_uid(question_dataset, retriever, save_path, max_samples=None):
+def test_retrieval_with_uid(question_dataset, retriever, save_path, max_samples=None, batch_size=16):
     print(f"Testing uid based retrieval...")
     results = []
     if max_samples:
