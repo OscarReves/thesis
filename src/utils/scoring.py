@@ -19,4 +19,6 @@ def retrieval_success(sample):
 
 def get_retrieval_accuracy(dataset):
     # assumes columns retrieved_uids and context_id
-    pass
+    correct = dataset.filter(retrieval_success)
+    accuracy = len(correct)/len(dataset)
+    return accuracy

@@ -279,7 +279,7 @@ class E5Retriever:
         faiss.normalize_L2(q_embs)
         D, I = self.index.search(q_embs, top_k)
         
-        return I
+        return I.tolist()
 
     def select_by_uids(self, uids):
         #uids_set = set(map(int, uids))  # just in case they're np.int64
