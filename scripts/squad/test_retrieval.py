@@ -35,7 +35,7 @@ def main(config_path):
     indexer = FaissIndexer(embedder=embedder, index_path=index_path)
     
     print("Indexing documents...")
-    indexer.index_directory(squad_context_path, batch_size=batch_size)
+    indexer.index_documents_with_uid(squad_context_path, batch_size=batch_size)
 
     print(f"Index built and saved to {index_path}")
 
