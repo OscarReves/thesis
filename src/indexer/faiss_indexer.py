@@ -7,8 +7,8 @@ class FaissIndexer:
         self.embedder = embedder  # BERT, mBERT, etc.
         self.index_path = index_path
 
-    def index_documents(self, documents, with_uid=False):
-        embeddings = self.embedder.encode(documents)
+    def index_documents(self, documents, batch_size=16):
+        embeddings = self.embedder.encode(documents,batch_size)
         faiss.normalize_L2(embeddings)
         # Build and save FAISS index
         dim = self.embedder.model.config.hidden_size
