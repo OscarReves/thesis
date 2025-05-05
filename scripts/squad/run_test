@@ -20,5 +20,5 @@ module load python/3.9.6
 source production_env/bin/activate
 
 # Run program 
-python3 -u -m scripts.squad.test_retrieval --config configs/squad/test_retrieval
+python3 -u -m scripts.squad.test_retrieval --config configs/squad/test_retrieval.yaml
 
