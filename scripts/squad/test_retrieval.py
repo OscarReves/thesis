@@ -51,7 +51,7 @@ def main(config_path):
          device = device
          )
 
-    test_retrieval_with_uid(
+    test_batched_retrieval_with_uid(
         question_dataset = question_dataset,
         retriever = retriever,
         save_path = save_path,
