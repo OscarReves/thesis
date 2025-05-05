@@ -38,10 +38,11 @@ def test_retrieval_with_uid(question_dataset, retriever, save_path, max_samples=
     with open(save_path, 'w') as fp:
         json.dump(results, fp, indent=2, ensure_ascii=False)
 
-def test_batched_retrieval_with_uid(question_dataset, retriever, save_path, batch_size = 16, max_samples=1600):
+def test_batched_retrieval_with_uid(question_dataset, retriever, save_path, batch_size = 16, max_samples=None):
     print(f"Testing uid based retrieval with batching...")
     results = []
-    question_dataset = question_dataset.select(range(max_samples))
+    if max_samples:
+        question_dataset = question_dataset.select(range(max_samples))
     for i in (tqdm(range(0, len(question_dataset), batch_size), desc=f"Retrieving context in batches of {batch_size}")):
         batch = question_dataset[i:i+batch_size]
         questions = batch['question']
@@ -60,10 +61,11 @@ def test_batched_retrieval_with_uid(question_dataset, retriever, save_path, batc
         json.dump(data, fp, indent=2, ensure_ascii=False) 
     print(f"{len(data)} results saved to {path}")
 
-def batched_retrieval_with_uid(question_dataset, retriever, save_path, batch_size = 16, max_samples=1600):
+def batched_retrieval_with_uid(question_dataset, retriever, save_path, batch_size = 16, max_samples=None):
     print(f"Testing uid based retrieval with batching...")
     results = []
-    question_dataset = question_dataset.select(range(max_samples))
+    if max_samples:
+        question_dataset = question_dataset.select(range(max_samples))
     for i in (tqdm(range(0, len(question_dataset), batch_size), desc=f"Retrieving context in batches of {batch_size}")):
         batch = question_dataset[i:i+batch_size]
         questions = batch['question']
