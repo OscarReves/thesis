@@ -1,5 +1,5 @@
 questions_path: data/squad/dev-v1.1-da.json
-contexts_path: data/squad/contexts.json
+contexts_path: data/squad/context/contexts.json
 squad_path: data/squad/dev-v1.1-da.json
 index_path: data/squad/context/index.faiss
 retriever_name: e5
