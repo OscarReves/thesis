@@ -1,6 +1,7 @@
 from datasets import load_dataset, Dataset
 import json
 from pathlib import Path
+import os 
 
 
 # == For loading raw data ==
@@ -102,6 +103,7 @@ def load_questions(path, silent=False):
 # == For saving == 
 
 def save_as_json(data, path):
+    os.makedirs(os.path.dirname(path), exist_ok=True)
     print(f"Saving {len(data)} results to {path}...")
     with open(path, 'w', encoding='utf-8') as fp:
         json.dump(data.to_list(), fp, indent=2, ensure_ascii=False) 

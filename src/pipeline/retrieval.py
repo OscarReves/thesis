@@ -1,5 +1,7 @@
 import json
-from tqdm import tqdm 
+from tqdm import tqdm
+import os 
+from src.utils import save_as_json
 
 def test_retrieval(question_dataset, retriever, save_path, batch_size = 16):
     results = []
@@ -48,6 +50,4 @@ def test_batched_retrieval_with_uid(question_dataset, retriever, save_path, batc
             for q,c in zip(questions,contexts)
         ])
 
-    print(f"Saving {len(results)} results to {save_path}")
-    with open(save_path, 'w') as fp:
-        json.dump(results, fp, indent=2, ensure_ascii=False)
+    save_as_json(results,path=save_path)
