@@ -23,7 +23,7 @@ def main(config_path):
     batch_size = config['batch_size']
     max_samples = config['n_questions']
     questions_with_title = config['squad_questions_with_title']
-    embedder_name = config['emebdder_name']
+    embedder_name = config['embedder_name']
     
     print(f"Preprocessing SQuAD contexts...")
     save_squad_contexts(load_path=squad_path, save_path=squad_context_path)
