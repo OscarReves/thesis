@@ -36,7 +36,7 @@ def load_squad(path, prepend_with_title=False, with_context=False):
 
     for entry in data:
         article_title = entry.get("title")
-        for para in entry.get("paragraphs", []):
+        for i, para in enumerate(entry.get("paragraphs", [])):
             context = para.get("context")
             for qa in para.get("qas", []):
                 question = qa.get("question")
@@ -46,7 +46,7 @@ def load_squad(path, prepend_with_title=False, with_context=False):
                 records.append({
                     "question": question,
                     "answers": answers,
-                    **({"context": context} if with_context else {})
+                    **({"context": context, "context_id": i} if with_context else {})
                 })
 
     print(f"Loaded {len(records)} questions")
@@ -58,6 +58,23 @@ def load_squad_rewritten(path, silent=False):
     if not silent:
         print(f"{len(dataset)} questions loaded")
     return dataset
+
+def load_squad_as_kb(path, silent=False):
+    data = load_documents(path, silent=True)['data'][0]
+    records = []
+
+    for entry in data:
+        article_title = entry.get("title")
+        for i, para in enumerate(entry.get("paragraphs", [])):
+            context = para.get("context")
+            records.append({
+                    "title" : article_title,
+                    "text": context,
+                    "uid" : i
+                })
+
+    print(f"Loaded {len(records)} questions")
+    return Dataset.from_list(records)
 
 # == For loading processed data == 
 

@@ -60,8 +60,6 @@ class E5Embedder:
                 embeddings = summed / counts
 
                 all_embeddings.append(embeddings)
-                if i == 2:
-                    break
 
         embeddings = torch.cat(all_embeddings, dim=0)
         embeddings = embeddings.cpu().numpy()

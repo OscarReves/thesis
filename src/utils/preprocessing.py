@@ -1,4 +1,5 @@
 from datasets import Dataset
+from src.utils import load_squad_as_kb
 
 def chunk_text(text, tokenizer, chunk_size=256, stride=32):
     tokens = tokenizer.encode(text, add_special_tokens=False)
@@ -52,3 +53,9 @@ def chunk_dataset(dataset, tokenizer):
         )
     return chunked
 
+def save_squad_contexts(load_path, save_path):
+    # saves contexts from SQuAD so they are ready to be indexed
+    dataset = load_squad_as_kb(load_path)
+    dataset.to_json(save_path)
+
+    print(f"{len(dataset)} contexts saved in {save_path}")
