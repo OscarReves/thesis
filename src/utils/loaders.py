@@ -68,7 +68,7 @@ def load_squad_as_kb(path, silent=False):
         for i, para in enumerate(entry.get("paragraphs", [])):
             context = para.get("context")
             records.append({
-                    "title" : article_title,
+                    "id" : article_title,
                     "text": context,
                     "uid" : i
                 })
