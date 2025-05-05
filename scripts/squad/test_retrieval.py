@@ -4,6 +4,7 @@ from src.retriever import get_retriever
 from src.embedder import get_embedder
 from src.pipeline import test_batched_retrieval_with_uid, test_retrieval, test_retrieval_with_uid
 from src.indexer import FaissIndexer
+from src.utils import get_retrieval_accuracy
 import argparse 
 import faiss
 import numpy as np
@@ -50,12 +51,15 @@ def main(config_path):
          device = device
          )
 
-    test_batched_retrieval_with_uid(
+    test_retrieval_with_uid(
         question_dataset = question_dataset,
         retriever = retriever,
         save_path = save_path,
         batch_size=batch_size
         )
+    
+    retrieval_results = load_documents(save_path)
+    get_retrieval_accuracy(retrieval_results)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

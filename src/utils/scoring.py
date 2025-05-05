@@ -15,7 +15,8 @@ def get_accuracy(dataset):
 # === Retrieval Accuracy === 
 
 def retrieval_success(sample):
-    return sample['context'] in sample['retrieved_uids']
+    print(type(sample['context_id']), type(sample['retrieved_uids'][0]))
+    return (sample['context_id'] in sample['retrieved_uids'])
 
 def get_retrieval_accuracy(dataset):
     # assumes columns retrieved_uids and context_id

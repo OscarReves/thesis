@@ -25,10 +25,12 @@ def test_retrieval_with_uid(question_dataset, retriever, save_path, max_samples=
         question_dataset = question_dataset.select(range(max_samples))
     for sample in tqdm(question_dataset):
         question = sample['question']
-        context = retriever.retrieve_uids([question])
+        context_id = sample['context_id']
+        retrieved_uids = retriever.retrieve_uids([question])
         result = {
             "question"  :   question,
-            "context"   :   context
+            "context_id"   :  context_id,
+            "retrieved_uids" : retrieved_uids
             } 
         results.append(result)
     
