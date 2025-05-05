@@ -16,8 +16,8 @@ class FaissIndexer:
         index.add(embeddings)
         faiss.write_index(index, self.index_path)
 
-    def index_documents_with_uid(self, documents):
-        embeddings = self.embedder.encode(documents)
+    def index_documents_with_uid(self, documents, batch_size):
+        embeddings = self.embedder.encode(documents,batch_size)
         faiss.normalize_L2(embeddings)
         # Build and save FAISS index
         dim = self.embedder.model.config.hidden_size
