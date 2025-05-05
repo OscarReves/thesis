@@ -50,7 +50,9 @@ def load_squad(path, prepend_with_title=False, with_context=False):
                     "answers": answers,
                     **({"context": context, "context_id": context_id_counter} if with_context else {})
                 })
-                context_id_counter += 1
+            context_id_counter += 1 # if you indent this line incorrectly literally everything breaks
+            # pay attention ffs
+            # 3 hours waster 
 
     print(f"Loaded {len(records)} questions")
     return Dataset.from_list(records)
