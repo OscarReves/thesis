@@ -10,3 +10,5 @@ def get_accuracy(dataset):
     accuracy = len(correct)/len(dataset)
     return accuracy
 
+def get_retrieval_accuracy(dataset):
+    
