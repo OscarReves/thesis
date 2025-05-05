@@ -271,7 +271,7 @@ class E5Retriever:
         #return self.dataset.filter(
         #    lambda x: x["uid"] in uids_set
         #)
-        rows = [self.uid_map[int(uid)] for uid in uids]
+        rows = [self.uid_map[int(uid)] for uid in uids if int(uid) in self.uid_map]
         return Dataset.from_list(rows)
         
 
