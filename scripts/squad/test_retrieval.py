@@ -59,7 +59,9 @@ def main(config_path):
         )
     
     retrieval_results = load_documents(save_path)
-    get_retrieval_accuracy(retrieval_results)
+    accuracy = get_retrieval_accuracy(retrieval_results)
+    print(f"Accuracy: {accuracy:.2f}")
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
