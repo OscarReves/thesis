@@ -1,14 +1,12 @@
 questions_path: data/squad/dev-v1.1-da.json
-contexts_path: data/squad/contexts 
+contexts_path: data/squad/contexts.json
 squad_path: data/squad/dev-v1.1-da.json
 index_path: data/squad/context/index.faiss
 retriever_name: e5
 device: cuda
 qa_save_path: results/squad/qa_test
 generator_name: nous-hermes-mistral
-squad_context_path: data/squad/context/contexts.json
-embedder_name: e5
-retrieval_save_path: results/squad/retrieval_test
 n_questions: 1000
 batch_size: 8
+squad_context_path: data/squad/context/contexts.json
 squad_questions_with_title: False
