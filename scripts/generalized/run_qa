@@ -21,6 +21,6 @@ source production_env/bin/activate
 
 # Run program 
 python3 -u -m scripts.generalized.qa --config configs/generalized/qa_with_squad_contexts.yaml
-python3 -u -m scripts.generalized.qa --config configs/generalized/qa_with_wiki_contexts.yaml
+python3 -u -m scripts.generalized.qa --config configs/generalized/qa_with_wiki.yaml
 
 
