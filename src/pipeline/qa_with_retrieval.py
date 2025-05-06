@@ -1,6 +1,7 @@
 import json
 from tqdm import tqdm
 import time
+from src.utils import save_to_json
 
 def test_qa_with_retrieval(question_dataset, retriever, generator, save_path, batch_size = 16, max_samples=100):
     # still needs batching 
@@ -64,9 +65,7 @@ def test_qa_with_retrieval_wiki(question_dataset, retriever, generator, save_pat
             print(f"Generation time: {total_generation_time:.2f}s")
 
 
-    print(f"\nSaving {len(results)} results to {save_path}")
-    with open(save_path, 'w') as fp:
-        json.dump(results, fp, indent=2, ensure_ascii=False)
+    save_to_json(results, save_path, result_type="answers with context")
 
 def test_qa_no_context(question_dataset, generator, save_path, 
                                 batch_size=16, max_samples=100, silent=True):
@@ -88,7 +87,4 @@ def test_qa_no_context(question_dataset, generator, save_path,
             "reference_answer" : ra
         } for q, a, ra in zip(questions, answers, reference_answers)])
     
-
-    print(f"\nSaving {len(results)} results to {save_path}")
-    with open(save_path, 'w') as fp:
-        json.dump(results, fp, indent=2, ensure_ascii=False)
+    save_to_json(results, save_path, result_type="answers")
