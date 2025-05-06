@@ -11,7 +11,7 @@ def main(config_path):
 
     # in the future clean this up with the double asteriks ** method
     questions_path = config['questions_path']
-    kb_path = config['contexts_path']
+    kb_path = config['kb_path']
     index_path = config['index_path']
     retriever_name = config['retriever_name']
     device = config['device']
