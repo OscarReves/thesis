@@ -1,0 +1,11 @@
+questions_path: data/squad/dev-v1.1-da.json
+question_type: squad
+kb_path: data/squad/context/contexts.json # path to knowledge base
+kb_type: squad
+index_path: data/squad/context/index.faiss
+retriever_name: e5
+device: cuda
+save_path: results/squad/qa_with_squad_contexts
+generator_name: nous-hermes-mistral
+n_questions: 100
+batch_size: 8

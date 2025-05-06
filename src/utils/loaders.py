@@ -31,7 +31,7 @@ def load_wiki_file_paths(dump_dir_path="data/wiki/dump", silent=False):
 
     return file_paths
 
-def load_squad(path, prepend_with_title=False, with_context=False):
+def load_squad(path, prepend_with_title=False, with_context=False, silent=False):
     data = load_documents(path, silent=True)['data'][0]
     records = []
     context_id_counter = 0
@@ -42,7 +42,7 @@ def load_squad(path, prepend_with_title=False, with_context=False):
             context = para.get("context")
             for qa in para.get("qas", []):
                 question = qa.get("question")
-                if prepend_with_title == True:
+                if prepend_with_title:
                     question = article_title + " - " + question
                 answers = [a["text"] for a in qa.get("answers", [])]
                 records.append({
@@ -54,7 +54,8 @@ def load_squad(path, prepend_with_title=False, with_context=False):
             # pay attention ffs
             # 3 hours wasted 
 
-    print(f"Loaded {len(records)} questions")
+    if not silent:
+        print(f"Loaded {len(records)} questions")
     return Dataset.from_list(records)
 
 def load_squad_rewritten(path, silent=False):
@@ -98,13 +99,29 @@ def load_documents_from_directory(documents_dir, silent=False):
     paths = [str(p) for p in document_paths]
     return load_documents(paths, silent=silent)
 
-
 def load_questions(path, silent=False):
     dataset = load_dataset("json",data_files=path, field=None, split='train')
     if not silent:
         print(f"{len(dataset)} questions loaded")
     return dataset
 
+def load_knowledge_base(path, type, silent=False):
+    if type == "squad":
+        return load_documents(path, silent)
+    if type == "wiki":
+        return load_documents_from_directory(path, silent)
+    if type == "news":
+        return load_documents(path, silent)
+
+def load_questions_by_type(path, type, silent=False):
+    if type == "squad":
+        return load_squad(path, silent)
+    if type == "squad_with_title":
+        return load_squad(path, silent=silent, prepend_with_title=True)
+    if type == "squad_rewritten":
+        return load_squad_rewritten(path, silent)
+    if type == "news":
+        return load_questions(path, silent)
 
 # == For saving == 
 
