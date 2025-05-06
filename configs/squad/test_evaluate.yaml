@@ -1,4 +1,4 @@
 answers_path: results/squad/test_qa
 evaluator_name: nous-hermes-mistral-binary
-save_path: results/squad/test_evaluation
+evaluation_path: results/squad/test_evaluation
 eval_batch_size: 8
