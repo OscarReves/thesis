@@ -136,5 +136,5 @@ def save_to_json(data, path, result_type = "results"):
     os.makedirs(os.path.dirname(path), exist_ok=True)
     print(f"Saving {len(data)} {result_type} to {path}...")
     with open(path, 'w', encoding='utf-8') as fp:
-        json.dump(data.to_list(), fp, indent=2, ensure_ascii=False) 
+        json.dump(data, fp, indent=2, ensure_ascii=False) 
     print(f"{len(data)} {result_type} saved to {path}")
