@@ -7,7 +7,7 @@
 #SBATCH --ntasks=1 
 #number of cpus we want to allocate for each program
 #SBATCH --cpus-per-task=4
-#SBATCH --gres=gpu:a100:1
+#SBATCH --gres=gpu:a40:1
 #Note that a program will be killed once it exceeds this time!
 #SBATCH --time=0-00:60:00
 #Skipping many options! see man sbatch
