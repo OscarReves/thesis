@@ -104,6 +104,43 @@ class NousHermesMistral2Generator():
         ]
         return outputs
 
+    def generate_batch_no_context(self, questions, max_new_tokens=128):
+        system_prompt = (
+            "You are a helpful assistant. You respond to questions in Danish. "
+            "Respond briefly and accurately. Do not generate any extra questions or superfluous text. "
+            "Be as concise as possible."
+        )
+
+        prompts = [
+            self.tokenizer.apply_chat_template([
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": f"{q}"}
+            ], tokenize=False, add_generation_prompt=True)
+            for q in questions
+        ]
+
+        inputs = self.tokenizer(prompts, return_tensors="pt", padding=True, truncation=True).to(self.model.device)
+
+        with torch.inference_mode():
+            output_ids = self.model.generate(
+                **inputs,
+                max_new_tokens=max_new_tokens,
+                do_sample=False,
+                num_beams=1,
+                use_cache=True,
+                #temperature=0.7,
+                #top_p=0.9,
+                eos_token_id=self.tokenizer.convert_tokens_to_ids("<|im_end|>"),
+                pad_token_id=self.tokenizer.eos_token_id
+            )
+
+        input_lengths = [len(i) for i in inputs["input_ids"]]
+        outputs = [
+            self.tokenizer.decode(output_ids[i][input_len:], skip_special_tokens=True).strip()
+            for i, input_len in enumerate(input_lengths)
+        ]
+        return outputs
+
     def rewrite_questions(self, questions, contexts, max_new_tokens=256):
         system_prompt = (
             "You are a helpful assistant. You respond to prompts in Danish. "

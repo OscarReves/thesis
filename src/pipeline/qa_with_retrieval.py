@@ -67,3 +67,28 @@ def test_qa_with_retrieval_wiki(question_dataset, retriever, generator, save_pat
     print(f"\nSaving {len(results)} results to {save_path}")
     with open(save_path, 'w') as fp:
         json.dump(results, fp, indent=2, ensure_ascii=False)
+
+def test_qa_no_context(question_dataset, generator, save_path, 
+                                batch_size=16, max_samples=100, silent=True):
+    question_dataset = question_dataset.select(range(max_samples))
+    results = []
+
+    for i in tqdm(range(0, len(question_dataset), batch_size), 
+                  desc=f"Answering questions in batches of {batch_size}"):
+        batch = question_dataset[i:i+batch_size]
+        questions = batch['question']
+        
+        answers = generator.generate_batch_no_context(questions)
+
+        reference_answers = batch['answers']
+
+        results.extend([{
+            "question"         : q,
+            "generated_answer" : a,
+            "reference_answer" : ra
+        } for q, a, ra in zip(questions, answers, reference_answers)])
+    
+
+    print(f"\nSaving {len(results)} results to {save_path}")
+    with open(save_path, 'w') as fp:
+        json.dump(results, fp, indent=2, ensure_ascii=False)

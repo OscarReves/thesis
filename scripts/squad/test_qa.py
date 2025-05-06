@@ -2,7 +2,7 @@ import yaml
 from src.utils import load_documents, load_squad
 from src.retriever import get_retriever
 from src.generator import get_generator
-from src.pipeline import test_qa_with_retrieval_wiki
+from src import pipeline as pipeline_module
 import argparse 
 
 def main(config_path):
@@ -20,6 +20,8 @@ def main(config_path):
     max_samples = config['n_questions']
     batch_size = config['batch_size']
     questions_with_title = config['squad_questions_with_title']
+    pipeline_name = config.get('pipeline', 'test_qa_with_retrieval_wiki')
+
 
     print("Loading documents...")
     documents = load_documents(documents_path)
@@ -39,7 +41,8 @@ def main(config_path):
     generator = get_generator(generator_name)
 
     print("Testing qa with retrieval...")
-    test_qa_with_retrieval_wiki(
+    pipeline_func = getattr(pipeline_module, pipeline_name)
+    pipeline_func(
         question_dataset = question_dataset, 
         retriever = retriever, 
         generator = generator,

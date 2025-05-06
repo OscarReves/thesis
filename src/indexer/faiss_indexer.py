@@ -8,6 +8,7 @@ class FaissIndexer:
         self.index_path = index_path
 
     def index_documents(self, documents, batch_size=16):
+        # indexes a single HF-dataset 
         embeddings = self.embedder.encode(documents,batch_size)
         faiss.normalize_L2(embeddings)
         # Build and save FAISS index
@@ -17,6 +18,7 @@ class FaissIndexer:
         faiss.write_index(index, self.index_path)
 
     def index_documents_with_uid(self, documents, batch_size):
+        # indexes a single HF-dataset with a uid-mapping 
         embeddings = self.embedder.encode(documents,batch_size)
         faiss.normalize_L2(embeddings)
         # Build and save FAISS index
@@ -31,6 +33,7 @@ class FaissIndexer:
 
 
     def index_directory(self, document_paths, batch_size):
+        # faiss indexes all files in document_paths
         paths = [str(p) for p in document_paths]
         dataset = load_documents(paths)  # Should return a Dataset with 'uid' column
         embeddings = self.embedder.encode(dataset,batch_size)
