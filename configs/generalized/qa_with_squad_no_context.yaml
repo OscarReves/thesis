@@ -5,8 +5,8 @@ kb_type: squad
 index_path: data/squad/context/index.faiss
 retriever_name: e5
 device: cuda
-save_path: results/squad/qa_with_squad_contexts
+save_path: results/squad/qa_with_squad_no_contexts
 generator_name: nous-hermes-mistral
 n_questions: 100
 batch_size: 8
-pipeline: test_qa_with_retrieval_wiki
+pipeline: test_qa_no_context

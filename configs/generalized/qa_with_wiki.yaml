@@ -9,3 +9,4 @@ save_path: results/squad/qa_with_wiki_contexts
 generator_name: nous-hermes-mistral
 n_questions: 100
 batch_size: 8
+pipeline: test_qa_with_retrieval_wiki

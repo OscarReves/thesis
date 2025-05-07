@@ -67,7 +67,7 @@ def test_qa_with_retrieval_wiki(question_dataset, retriever, generator, save_pat
 
     save_to_json(results, save_path, result_type="answers with context")
 
-def test_qa_no_context(question_dataset, generator, save_path, 
+def test_qa_no_context(question_dataset, retriever, generator, save_path, 
                                 batch_size=16, max_samples=100, silent=True):
     question_dataset = question_dataset.select(range(max_samples))
     results = []

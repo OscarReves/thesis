@@ -20,7 +20,10 @@ module load python/3.9.6
 source production_env/bin/activate
 
 # Run program 
+python3 -u -m scripts.generalized.qa --config configs/generalized/qa_with_squad_no_context.yaml
 python3 -u -m scripts.generalized.qa --config configs/generalized/qa_with_squad_contexts.yaml
 python3 -u -m scripts.generalized.qa --config configs/generalized/qa_with_wiki.yaml
+python3 -u -m scripts.generalized.qa --config configs/generalized/qa_with_squad_rewritten.yaml
+python3 -u -m scripts.generalized.qa --config configs/generalized/qa_with_squad_rewritten_wiki.yaml
 
 
