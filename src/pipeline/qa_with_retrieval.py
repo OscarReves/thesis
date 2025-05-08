@@ -3,9 +3,10 @@ from tqdm import tqdm
 import time
 from src.utils import save_to_json
 
-def test_qa_with_retrieval(question_dataset, retriever, generator, save_path, batch_size = 16, max_samples=100):
+def test_qa_with_retrieval(question_dataset, retriever, generator, save_path, batch_size = 16, max_samples=None):
     # still needs batching 
-    question_dataset=question_dataset.select(range(max_samples))
+    if max_samples:
+        question_dataset=question_dataset.select(range(max_samples))
     results = []
     for sample in tqdm(question_dataset):
         question = sample['question']
@@ -31,8 +32,9 @@ def test_qa_with_retrieval(question_dataset, retriever, generator, save_path, ba
         json.dump(results, fp, indent=2, ensure_ascii=False) 
 
 def test_qa_with_retrieval_wiki(question_dataset, retriever, generator, save_path, 
-                                batch_size=16, max_samples=100, silent=True):
-    question_dataset = question_dataset.select(range(max_samples))
+                                batch_size=16, max_samples=None, silent=True):
+    if max_samples:
+        question_dataset = question_dataset.select(range(max_samples))
     results = []
     
     total_retrieval_time = 0.0
@@ -68,8 +70,9 @@ def test_qa_with_retrieval_wiki(question_dataset, retriever, generator, save_pat
     save_to_json(results, save_path, result_type="answers with context")
 
 def test_qa_no_context(question_dataset, retriever, generator, save_path, 
-                                batch_size=16, max_samples=100, silent=True):
-    question_dataset = question_dataset.select(range(max_samples))
+                                batch_size=16, max_samples=None, silent=True):
+    if max_samples:
+        question_dataset = question_dataset.select(range(max_samples))
     results = []
 
     for i in tqdm(range(0, len(question_dataset), batch_size), 
