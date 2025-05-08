@@ -10,3 +10,8 @@ generator_name: nous-hermes-mistral
 n_questions: 100
 batch_size: 8
 pipeline: test_qa_no_context
+
+# for evaluation 
+answers_path: results/squad/qa_with_squad_no_contexts
+evaluator_name: nous-hermes-mistral-binary
+evaluation_path: results/squad/evaluation_with_squad_no_contexts
