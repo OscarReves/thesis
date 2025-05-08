@@ -1,8 +1,8 @@
-questions_path: data/squad/dev-v1.1-da.json
+questions_path: data/squad/rewritten/test.json
 question_type: squad_rewritten
-kb_path: data/wiki/chunked # path to knowledge base
-kb_type: squad
-index_path: data/squad/context/index.faiss
+kb_path: data/wiki/chunked/ # path to knowledge base
+kb_type: wiki
+index_path: data/wiki/index/index.faiss
 retriever_name: e5
 device: cuda
 save_path: results/squad/qa_with_squad_rewritten_wiki
