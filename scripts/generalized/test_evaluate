@@ -9,7 +9,7 @@
 #SBATCH --cpus-per-task=1
 #SBATCH --gres=gpu:a40:1
 #Note that a program will be killed once it exceeds this time!
-#SBATCH --time=0-12:00:00
+#SBATCH --time=0-3:00:00
 #Skipping many options! see man sbatch
 # From here on, we can start our program
 
