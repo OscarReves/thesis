@@ -32,7 +32,7 @@ def test_qa_with_retrieval(question_dataset, retriever, generator, save_path, ba
         json.dump(results, fp, indent=2, ensure_ascii=False) 
 
 def test_qa_with_retrieval_wiki(question_dataset, retriever, generator, save_path, 
-                                batch_size=16, max_samples=None, silent=True):
+                                batch_size=16, silent=True, max_samples=None):
     if max_samples:
         question_dataset = question_dataset.select(range(max_samples))
     results = []
