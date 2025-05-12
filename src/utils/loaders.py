@@ -84,6 +84,32 @@ def load_squad_as_kb(path, silent=False):
     print(f"Loaded {len(records)} questions")
     return Dataset.from_list(records)
 
+def load_citizenship_questions(silent=False):
+    dataset = load_dataset("sorenmulli/citizenship-test-da", "default")
+    correct_mapping = {'A': 0, 'B': 1, 'C': 2}
+    records = []
+
+    # re-formats so format is equivalent to news questions
+    for entry in dataset['train']:
+        question = entry['question']
+        options = [entry['option-A'], entry['option-B'], entry['option-C']]
+        correct_idx = correct_mapping[entry['correct']]
+        answer = options[correct_idx]
+        id = entry['index']
+        records.append({
+            "id": id,
+            "question": question,
+            "options": options,
+            "correct_idx": correct_idx,
+            "answer": answer
+        })
+    
+    if not silent:
+        print(f"Loaded {len(records)} questions")
+    return Dataset.from_list(records)
+
+    
+
 # == For loading processed data == 
 
 def load_documents(path, silent=False):
@@ -122,6 +148,8 @@ def load_questions_by_type(path, type, silent=False):
         return load_squad_rewritten(path, silent)
     if type == "news":
         return load_questions(path, silent)
+    if type == "citizenship":
+        return load_citizenship_questions(silent)
 
 # == For saving == 
 

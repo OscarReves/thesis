@@ -2,8 +2,10 @@ __pycache__/
 *.pyc
 data/
 results/
+results_backup/
 keys/
 production_env/
+notebooks/
 models/
 notebooks/
 *.egg-info/
