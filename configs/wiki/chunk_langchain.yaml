@@ -2,3 +2,10 @@ tokenizer_name:
 dump_path: data/wiki/dump
 chunked_path: data/wiki/chunked_2
 chunker_name: langchain
+
+# for embedding 
+index_path: data/wiki/index/index_2.faiss
+embedder_name: e5
+device: cuda
+batch_size: 2048
+
