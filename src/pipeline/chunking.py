@@ -19,14 +19,9 @@ def chunk_and_save(documents, tokenizer_name, save_path):
     chunked.to_json(save_path) # removed lines=False
     #save_as_json(data=chunked,path=save_path)
 
-def chunk_multiple(dump_dir, out_dir, tokenizer_name):
+def chunk_multiple(dump_dir, out_dir, splitter):
     # chunks and saves multiple wiki dump files
     # you should absolutely parallelize this 
-    print(f"Loading tokenizer {tokenizer_name}...")
-    if tokenizer_name:
-        tokenizer = AutoTokenizer.from_pretrained(tokenizer_name)
-    else:
-        tokenizer = None
     
     disable_progress_bar()
     file_paths = load_wiki_file_paths(dump_dir)
@@ -40,7 +35,7 @@ def chunk_multiple(dump_dir, out_dir, tokenizer_name):
         out_path.parent.mkdir(parents=True, exist_ok=True)
 
         documents = load_wiki_articles(str(file_path), silent=True)
-        chunked = chunk_dataset(documents, tokenizer)
+        chunked = chunk_dataset(documents, splitter)
 
         # Assign incremental integer UIDs
         num_chunks = len(chunked)

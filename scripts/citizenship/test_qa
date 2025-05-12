@@ -20,6 +20,6 @@ module load python/3.9.6
 source production_env/bin/activate
 
 # Run program 
-#python3 -u -m scripts.generalized.qa --config configs/citizenship/qa_with_wiki.yaml
+python3 -u -m scripts.generalized.qa --config configs/citizenship/qa_with_wiki.yaml
 python3 -u -m scripts.generalized.evaluate --config configs/citizenship/qa_with_wiki.yaml
 python3 -u -m scripts.generalized.score --config configs/citizenship/qa_with_wiki.yaml

@@ -1,0 +1,4 @@
+tokenizer_name: 
+dump_path: data/wiki/dump
+chunked_path: data/wiki/chunked_2
+chunker_name: langchain
