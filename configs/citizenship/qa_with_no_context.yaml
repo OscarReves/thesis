@@ -5,13 +5,13 @@ kb_type: wiki
 index_path: data/wiki/index/index.faiss
 retriever_name: e5
 device: cuda
-save_path: results/citizenship/qa_with_wiki
+save_path: results/citizenship/qa_with_no_context
 generator_name: nous-hermes-mistral
 n_questions: 
 batch_size: 8
 pipeline: test_qa_no_context
 
 # for evaluation 
-answers_path: results/citizenship/qa_with_wiki
+answers_path: results/citizenship/qa_with_no_context
 evaluator_name: nous-hermes-mistral-binary
-evaluation_path: results/citizenship/evaluation_with_wiki_contexts
+evaluation_path: results/citizenship/evaluation_with_no_context
