@@ -7,5 +7,5 @@ splitter_name: langchain
 index_path: data/wiki/index/index_2.faiss
 embedder_name: e5
 device: cuda
-batch_size: 2048
+batch_size: 1024
 
