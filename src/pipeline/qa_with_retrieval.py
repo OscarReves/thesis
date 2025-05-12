@@ -75,6 +75,11 @@ def test_qa_no_context(question_dataset, retriever, generator, save_path,
         question_dataset = question_dataset.select(range(max_samples))
     results = []
 
+    if 'answers' in question_dataset.column_names:
+        answer_key = 'answers'
+    else:
+        answer_key = 'answer'
+
     for i in tqdm(range(0, len(question_dataset), batch_size), 
                   desc=f"Answering questions in batches of {batch_size}"):
         batch = question_dataset[i:i+batch_size]
@@ -82,7 +87,7 @@ def test_qa_no_context(question_dataset, retriever, generator, save_path,
         
         answers = generator.generate_batch_no_context(questions)
 
-        reference_answers = batch['answers']
+        reference_answers = batch[answer_key]
 
         results.extend([{
             "question"         : q,
