@@ -9,7 +9,7 @@
 #SBATCH --cpus-per-task=1
 #SBATCH --gres=gpu:a40:1
 #Note that a program will be killed once it exceeds this time!
-#SBATCH --time=0-0:15:00
+#SBATCH --time=0-00:15:00
 #Skipping many options! see man sbatch
 # From here on, we can start our program
 
@@ -20,6 +20,6 @@ module load python/3.9.6
 source production_env/bin/activate
 
 # Run program 
-python3 -u -m scripts.generalized.qa --config configs/citizenship/qa_with_wiki.yaml
+#python3 -u -m scripts.generalized.qa --config configs/citizenship/qa_with_wiki.yaml
 python3 -u -m scripts.generalized.evaluate --config configs/citizenship/qa_with_wiki.yaml
 python3 -u -m scripts.generalized.score --config configs/citizenship/qa_with_wiki.yaml
