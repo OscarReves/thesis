@@ -1,8 +1,8 @@
 questions_path: 
 question_type: citizenship
-kb_path: data/wiki/chunked/ # path to knowledge base
+kb_path: data/wiki/chunked_2/ # path to knowledge base
 kb_type: wiki
-index_path: data/wiki/index/index.faiss
+index_path: data/wiki/index/index_2.faiss
 retriever_name: e5
 device: cuda
 save_path: results/citizenship/qa_with_wiki
