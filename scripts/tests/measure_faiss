@@ -1,7 +1,6 @@
 #!/bin/bash
-#SBATCH -p cpu
 #SBATCH --job-name=measure_faiss
-#SBATCH --output=results.out
+#SBATCH --output=test.out
 #SBATCH --ntasks=1
 #SBATCH --time=0-00:05:00
 
