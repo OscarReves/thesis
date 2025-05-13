@@ -1,4 +1,4 @@
-#!/bin/sh 
+#!/bin/bash
 ### General options 
 ### -- specify queue -- 
 #BSUB -q p1
@@ -25,6 +25,7 @@
 #BSUB -e Output.err 
 
 # here follow the commands you want to execute with input.in as the input file
+source ~/miniconda3/etc/profile.d/conda.sh
 conda activate production_env
 python3 -u -m scripts.wiki.chunk_wiki --config configs/wiki/chunk_langchain.yaml
 python3 -u -m scripts.wiki.build_index --config configs/wiki/chunk_langchain.yaml
