@@ -1,15 +1,22 @@
+# Standard python ignores
 __pycache__/
 *.pyc
-data/
-results/
-results_backup/
-keys/
-production_env/
-notebooks/
-models/
-notebooks/
 *.egg-info/
 .env
 .vscode/
 .ipynb_checkpoints/
 .DS_Store
+
+
+# Directories
+data/*
+!data/.gitkeep
+results/*
+!results/.gitkeep
+models/*
+!results/.gitkeeo
+results_backup/
+keys/
+production_env/
+notebooks/
+
