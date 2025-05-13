@@ -45,6 +45,6 @@ def chunk_multiple(dump_dir, out_dir, splitter):
         
         chunked.to_json(out_path)
 
-    #print(f"{len(file_paths)} files saved in {out_dir}")
-    print(f"1 file saved in {out_dir} (TESTING)")
+    print(f"{len(file_paths)} files saved in {out_dir}")
+
     
