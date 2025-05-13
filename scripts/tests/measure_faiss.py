@@ -22,11 +22,10 @@ def measure_index_and_embeddings(
         data_size = get_file_size_mb(data_path)
         print(f"Embeddings (.npz) file size: {data_size:.2f} MB")
 
-        # Optional: load to check shape
-        data = np.load(data_path)
-        embeddings = data["embeddings"]
-        print(f"Embeddings shape: {embeddings.shape}")
-        print(f"Memory (RAM) if loaded: {embeddings.nbytes / (1024 ** 2):.2f} MB")
+        with np.load(data_path, mmap_mode='r') as data:
+            print(list(data.keys()))
+            shape = data['embeddings'].shape
+            print(f"Embeddings shape: {shape}")
     else:
         print(f"Data file not found: {data_path}")
 
