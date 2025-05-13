@@ -1,0 +1,15 @@
+#!/bin/bash
+#SBATCH -p cpu
+#SBATCH --job-name=measure_faiss
+#SBATCH --output=results.out
+#SBATCH --ntasks=1
+#SBATCH --time=0-00:05:00
+
+# Load python
+module load python/3.9.6
+
+# Activate the virtual environment
+source production_env/bin/activate
+
+# Run program 
+python3 -u -m scripts.tests.measure_faiss
