@@ -6,8 +6,8 @@ def get_file_size_mb(path):
     return os.path.getsize(path) / (1024 ** 2)
 
 def measure_index_and_embeddings(
-        index_path="data/wiki/index/index_2.faiss", 
-        data_path="data/wiki/embeddings_backup"
+        index_path="data/wiki/index/index.faiss", 
+        data_path="data/wiki/embeddings_backup.npz"
         ):
     
     print("Measuring file sizes...\n")
