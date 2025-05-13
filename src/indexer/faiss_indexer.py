@@ -84,3 +84,32 @@ class FaissIndexer:
 
         # Optionally save the index
         faiss.write_index(index, self.index_path)
+    
+    def build_index_from_saved_data(
+        data_path='data/wiki/embeddings_backup.npz'
+        index_save_path=self.index_path,
+        batch_size=10000
+        ):
+        # Load saved data
+        print(f"Loading embeddings and uids from: {data_path}")
+        data = np.load(data_path)
+        embeddings = data["embeddings"]
+        uids = data["uids"]
+
+        # Normalize if needed
+        faiss.normalize_L2(embeddings)
+
+        # Initialize index
+        dim = embeddings.shape[1]
+        base_index = faiss.IndexFlatL2(dim)
+        index = faiss.IndexIDMap(base_index)
+
+        # Add in batches
+        for start in range(0, len(embeddings), batch_size):
+            end = start + batch_size
+            index.add_with_ids(embeddings[start:end], uids[start:end])
+            print(f"Indexed batch {start} to {end}")
+
+        # Save index
+        faiss.write_index(index, index_save_path)
+        print(f"FAISS index saved to: {index_save_path}")
