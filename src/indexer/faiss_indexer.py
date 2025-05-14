@@ -87,18 +87,18 @@ class FaissIndexer:
     #     faiss.write_index(index, self.index_path)
     
     def index_directory(self, document_paths, batch_size):
+        # indexes every document in document_paths
+        # to avoid OOM issues, partial indexes are saved then merged
+        index_paths = []
+
         # Load the dataset (assumes memory-mapped HF Dataset)
         paths = [str(p) for p in document_paths]
         dataset = load_documents(paths)  # should return a Dataset with 'uid'
-
-        # Prepare FAISS index
         dim = self.embedder.model.config.hidden_size
-        base_index = faiss.IndexFlatL2(dim)
-        index = faiss.IndexIDMap(base_index)
 
         outer_batch_size = batch_size * 100 # controls how much to hold in memory at once 
 
-        for start in range(0, len(dataset), outer_batch_size): 
+        for i, start in enumerate(tqdm(range(0, len(dataset), outer_batch_size))): 
             end = start + outer_batch_size
             batch = dataset[start:end]
 
@@ -110,15 +110,23 @@ class FaissIndexer:
             uids = np.array(batch["uid"], dtype=np.int64)
 
             # Add to FAISS
+            base_index = faiss.IndexFlatL2(dim)
+            index = faiss.IndexIDMap(base_index)
             index.add_with_ids(embeddings, uids)
+            partial_index_path = f"{self.index_path}_part_{i}.index"
+            faiss.write_index(index, partial_index_path)
+            index_paths.append(partial_index_path)
             print(f"Added docs {start} to {end}")
 
-            # del batch, embeddings, uids
-            # gc.collect()
+            del index
+            gc.collect()
 
         # Save index
-        faiss.write_index(index, self.index_path)
-
+        base_index = faiss.IndexFlatL2(dim)
+        index = faiss.IndexIDMap(base_index)
+        faiss.merge_into(index, [faiss.read_index(path) for path in index_paths])
+        faiss.write_index(index, self.index_path) # this will likely cause OOM errors
+                                                # options are to use sharding or a different index type
 
     def build_index_from_backup_embeddings(
         self,
