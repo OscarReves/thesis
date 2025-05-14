@@ -114,3 +114,4 @@ class FaissIndexer:
         # Save index
         faiss.write_index(index, index_save_path)
         print(f"FAISS index saved to: {index_save_path}")
+
