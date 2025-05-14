@@ -19,7 +19,7 @@ def chunk_and_save(documents, tokenizer_name, save_path):
     chunked.to_json(save_path) # removed lines=False
     #save_as_json(data=chunked,path=save_path)
 
-def chunk_multiple(dump_dir, out_dir, splitter):
+def chunk_multiple(dump_dir, out_dir, splitter, test=False):
     # chunks and saves multiple wiki dump files
     # you should absolutely parallelize this 
     
@@ -45,7 +45,8 @@ def chunk_multiple(dump_dir, out_dir, splitter):
         uid_counter += num_chunks
         
         chunked.to_json(out_path)
-        break # for testing 
+        if test:
+            break
 
     print(f"{len(file_paths)} files saved in {out_dir}")
 
