@@ -76,7 +76,7 @@ class FaissIndexer:
         gc.collect()
 
         # Incrementally add in batches
-        add_batch_size = 10000  # Tune this as needed
+        add_batch_size = 100000  # Tune this as needed
         for start in range(0, len(embeddings), add_batch_size):
             end = start + add_batch_size
             index.add_with_ids(embeddings[start:end], uids[start:end])
@@ -88,7 +88,7 @@ class FaissIndexer:
     def build_index_from_backup_embeddings(
         self,
         data_path='data/wiki/embeddings_backup.npz',
-        batch_size=10000
+        batch_size=100000
             ):
         index_save_path=self.index_path
         # Load saved data
