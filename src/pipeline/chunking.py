@@ -29,6 +29,7 @@ def chunk_multiple(dump_dir, out_dir, splitter):
     uid_counter = 0
 
     for file_path in tqdm(file_paths, desc="Chunking files"):
+        # chunks each file in file_path
         rel_path = file_path.relative_to(dump_dir)  # e.g., AA/wiki_03
         out_path = Path(out_dir) / rel_path.with_suffix(".jsonl")
 

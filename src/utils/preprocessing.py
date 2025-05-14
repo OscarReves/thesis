@@ -44,11 +44,13 @@ def chunk_text_fixed_tokens(text, chunk_size=256, stride = 128):
 #         all_texts.extend(chunks)
 #     return {"id": all_ids, "text": all_texts}
 
-def chunk_sample(batch, splitter):
+def chunk_sample(batch, splitter, prepend_with_title=True):
     all_ids, all_texts = [], []
     for title, body in zip(batch['title'], batch['body']):
         chunks = splitter.split_text(body)
         ids = [f"{title}_{i}" for i in range(len(chunks))]
+        if prepend_with_title:
+            chunks = [f"Title: {title}\n Text: {chunk}" for chunk in chunks]
         all_ids.extend(ids)
         all_texts.extend(chunks)
     return {"id": all_ids, "text": all_texts}

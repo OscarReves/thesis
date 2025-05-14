@@ -1,10 +1,10 @@
 tokenizer_name: 
 dump_path: data/wiki/dump
-chunked_path: data/wiki/chunked
+chunked_path: data/wiki/chunked_with_title
 splitter_name: langchain
 
 # for embedding 
-index_path: data/wiki/index/index.faiss
+index_path: data/wiki/index/index_with_title.faiss
 embedder_name: e5
 device: cuda
 batch_size: 1024
