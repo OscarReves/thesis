@@ -2,7 +2,8 @@ import faiss
 from src.utils import load_documents
 import numpy as np
 import gc
-import tqdm
+from tqdm import tqdm
+
 
 class FaissIndexer:
     def __init__(self, embedder, index_path):
