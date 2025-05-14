@@ -126,7 +126,7 @@ class FaissIndexer:
         base_index = faiss.IndexFlatL2(dim)
         index = faiss.IndexIDMap(base_index)
         faiss.merge_into(index, [faiss.read_index(path) for path in index_paths])
-        faiss.write_index(index, self.index_path) # this will likely cause OOM errors
+        faiss.write_index(index, self.index_path,  shift_ids=False) # this will likely cause OOM errors
                                                 # options are to use sharding or a different index type
 
     def build_index_from_backup_embeddings(
