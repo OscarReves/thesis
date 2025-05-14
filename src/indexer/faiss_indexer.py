@@ -96,8 +96,10 @@ class FaissIndexer:
         base_index = faiss.IndexFlatL2(dim)
         index = faiss.IndexIDMap(base_index)
 
-        for start in range(0, len(dataset), batch_size*100): 
-            end = start + batch_size
+        outer_batch_size = batch_size * 100 # controls how much to hold in memory at once 
+
+        for start in range(0, len(dataset), outer_batch_size): 
+            end = start + outer_batch_size
             batch = dataset[start:end]
 
             # Encode and normalize
