@@ -5,7 +5,6 @@ from datasets import load_from_disk, Dataset
 import os
 import torch.nn.functional as F
 from datasets.utils.logging import disable_progress_bar
-import hnswlib
 
 
 class GPT2Retriever:
