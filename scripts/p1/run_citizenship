@@ -25,7 +25,13 @@
 #BSUB -e Output.err 
 
 # here follow the commands you want to execute with input.in as the input file
+
+# set up conda venv
 source ~/miniconda3/etc/profile.d/conda.sh
 conda activate production_env
-python3 -u -m scripts.wiki.chunk_wiki --config configs/wiki/chunk_langchain.yaml
-python3 -u -m scripts.wiki.build_index --config configs/wiki/chunk_langchain.yaml
+export LD_LIBRARY_PATH=$CONDA_PREFIX/lib:$LD_LIBRARY_PATH
+
+# run scripts 
+python3 -u -m scripts.generalized.qa --config configs/citizenship/qa_with_no_context.yaml
+python3 -u -m scripts.generalized.evaluate --config configs/citizenship/qa_with_no_context.yaml
+python3 -u -m scripts.generalized.score --config configs/citizenship/qa_with_no_context.yaml
