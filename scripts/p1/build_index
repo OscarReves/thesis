@@ -31,3 +31,5 @@ export LD_LIBRARY_PATH=$CONDA_PREFIX/lib:$LD_LIBRARY_PATH
 
 #python3 -u -m scripts.wiki.chunk_wiki --config configs/wiki/chunk_langchain_with_title.yaml
 python3 -u -m scripts.wiki.build_index --config configs/wiki/chunk_langchain_with_title.yaml
+python3 -u -m scripts.wiki.build_index_from_backup_embeddings --config configs/wiki/chunk_langchain.yaml
+
