@@ -16,7 +16,7 @@ index_paths = sorted(
 
 # Create sharded index wrapper
 dim = 768  # or whatever your embedder's dimension is
-index = faiss.IndexShards(dim, threaded=True)
+index = faiss.IndexShards(dim)
 
 # Load each shard into the wrapper
 for path in index_paths:
