@@ -76,7 +76,7 @@ def chunk_sample(batch, splitter, prepend_with_title=True):
 def chunk_dataset(dataset, splitter):
     chunked = dataset.map(
         chunk_sample,
-        fn_kwargs= {"splitter" : splitter},
+        fn_kwargs= {"splitter" : splitter, "prepend_with_title" : True},
         remove_columns=dataset.column_names,
         batched=True
     )

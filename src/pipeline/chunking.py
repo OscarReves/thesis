@@ -45,6 +45,7 @@ def chunk_multiple(dump_dir, out_dir, splitter):
         uid_counter += num_chunks
         
         chunked.to_json(out_path)
+        break # for testing 
 
     print(f"{len(file_paths)} files saved in {out_dir}")
 
