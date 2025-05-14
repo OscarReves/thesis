@@ -21,7 +21,7 @@ index = faiss.read_index(str(index_paths[0]))
 for path in index_paths[1:]:
     print(f"Merging {path.name}")
     shard = faiss.read_index(str(path))
-    faiss.merge_into(index, [shard], shift_ids=False)
+    faiss.merge_into(index, shard, shift_ids=False)
 
 # Save merged index
 faiss.write_index(index, str(output_index_path))
