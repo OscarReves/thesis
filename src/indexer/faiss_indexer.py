@@ -2,6 +2,7 @@ import faiss
 from src.utils import load_documents
 import numpy as np
 import gc
+import tqdm
 
 class FaissIndexer:
     def __init__(self, embedder, index_path):
@@ -50,41 +51,73 @@ class FaissIndexer:
     #     faiss.write_index(index, self.index_path)
 
 
+    # def index_directory(self, document_paths, batch_size):
+    #     # Load document paths
+    #     paths = [str(p) for p in document_paths]
+    #     dataset = load_documents(paths)  # Should return a Dataset with 'uid' column
+
+    #     # Encode all documents
+    #     embeddings = self.embedder.encode(dataset, batch_size)
+    #     faiss.normalize_L2(embeddings)
+
+    #     # Prepare index
+    #     dim = self.embedder.model.config.hidden_size
+    #     base_index = faiss.IndexFlatL2(dim)
+    #     index = faiss.IndexIDMap(base_index)
+
+    #     # Prepare UIDs
+    #     uids = np.array(dataset["uid"], dtype=np.int64)
+
+    #     # Save embeddings in case of crash 
+    #     data_save_path = 'data/wiki/embeddings_backup'
+    #     np.savez(data_save_path, embeddings=embeddings, uids=uids)
+
+    #     # Free unused objects to save RAM
+    #     del dataset
+    #     gc.collect()
+
+    #     # Incrementally add in batches
+    #     add_batch_size = 100000  # Tune this as needed
+    #     for start in range(0, len(embeddings), add_batch_size):
+    #         end = start + add_batch_size
+    #         index.add_with_ids(embeddings[start:end], uids[start:end])
+    #         print(f"Added batch {start} to {end}")
+
+    #     # Optionally save the index
+    #     faiss.write_index(index, self.index_path)
+    
     def index_directory(self, document_paths, batch_size):
-        # Load document paths
+        # Load the dataset (assumes memory-mapped HF Dataset)
         paths = [str(p) for p in document_paths]
-        dataset = load_documents(paths)  # Should return a Dataset with 'uid' column
+        dataset = load_documents(paths)  # should return a Dataset with 'uid'
 
-        # Encode all documents
-        embeddings = self.embedder.encode(dataset, batch_size)
-        faiss.normalize_L2(embeddings)
-
-        # Prepare index
+        # Prepare FAISS index
         dim = self.embedder.model.config.hidden_size
         base_index = faiss.IndexFlatL2(dim)
         index = faiss.IndexIDMap(base_index)
 
-        # Prepare UIDs
-        uids = np.array(dataset["uid"], dtype=np.int64)
+        for start in range(0, len(dataset), batch_size*100): 
+            end = start + batch_size
+            batch = dataset[start:end]
 
-        # Save embeddings in case of crash 
-        data_save_path = 'data/wiki/embeddings_backup'
-        np.savez(data_save_path, embeddings=embeddings, uids=uids)
+            # Encode and normalize
+            embeddings = self.embedder.encode(batch, batch_size=batch_size)  # inner model batch size
+            faiss.normalize_L2(embeddings)
 
-        # Free unused objects to save RAM
-        del dataset
-        gc.collect()
+            # Get UIDs
+            uids = np.array(batch["uid"], dtype=np.int64)
 
-        # Incrementally add in batches
-        add_batch_size = 100000  # Tune this as needed
-        for start in range(0, len(embeddings), add_batch_size):
-            end = start + add_batch_size
-            index.add_with_ids(embeddings[start:end], uids[start:end])
-            print(f"Added batch {start} to {end}")
+            # Add to FAISS
+            index.add_with_ids(embeddings, uids)
+            print(f"Added docs {start} to {end}")
 
-        # Optionally save the index
+            # del batch, embeddings, uids
+            # gc.collect()
+
+        # Save index
         faiss.write_index(index, self.index_path)
-    
+
+
     def build_index_from_backup_embeddings(
         self,
         data_path='data/wiki/embeddings_backup.npz',

@@ -24,7 +24,7 @@ def main(config_path):
     chunk_multiple(
         dump_dir=dump_path, 
         out_dir=out_path,
-        splitter=splitter,  # implement this 
+        splitter=splitter,  
     )
 
 if __name__ == "__main__":
