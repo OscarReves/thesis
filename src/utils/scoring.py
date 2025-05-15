@@ -11,16 +11,33 @@ def is_correct_mc(sample):
     correct_option = sample['reference_answer'][0]
     return chosen_option == correct_option
 
-def get_accuracy(dataset, type='multiple_choice'):
+# def get_accuracy(dataset, type='binary'):
+#     # returns the accuracy for an answer dataset
+#     metrics = {
+#         'binary':   is_correct,
+#         'multiple_choice': is_correct_mc
+#     }
+#     metric = metrics[type]
+#     correct = dataset.filter(metric, batched=False)
+#     accuracy = len(correct)/len(dataset)
+#     return accuracy
+
+def get_accuracy(dataset, type='binary'):
     # returns the accuracy for an answer dataset
     metrics = {
         'binary':   is_correct,
         'multiple_choice': is_correct_mc
     }
     metric = metrics[type]
-    correct = dataset.filter(metric, batched=False)
-    accuracy = len(correct)/len(dataset)
+    correct = 0
+    for sample in dataset:
+        if is_correct(sample):
+            correct += 1
+    
+    accuracy = correct/len(dataset)
     return accuracy
+
+
 
 # === Retrieval Accuracy === 
 
