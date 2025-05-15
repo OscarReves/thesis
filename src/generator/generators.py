@@ -312,13 +312,10 @@ class BaseGenerator:
             tokenizer = AutoTokenizer.from_pretrained(model_name)
             tokenizer.save_pretrained(model_path)
 
-            config = AutoConfig.from_pretrained(model_name)
-            config.save_pretrained(model_path)
-
             model = AutoModelForCausalLM.from_pretrained(model_name)
             model.save_pretrained(model_path)
 
-            del tokenizer, config, model
+            del tokenizer, model
             gc.collect()  # release memory before reloading
             torch.cuda.empty_cache()
 
