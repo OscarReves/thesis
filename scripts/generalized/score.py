@@ -8,6 +8,7 @@ def main(config_path):
 
     answers_path = config['evaluation_path']
     answers = load_documents(answers_path)
+    evaluation_type = config['evaluation_type']
     accuracy = get_accuracy(answers, type='multiple_choice')
     print(f" {answers_path} Accuracy: {accuracy:.2f}")
 
