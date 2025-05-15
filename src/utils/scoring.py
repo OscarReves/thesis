@@ -12,6 +12,22 @@ def get_accuracy(dataset):
     accuracy = len(correct)/len(dataset)
     return accuracy
 
+def is_correct_mc(sample):
+    chosen_option = sample['generated_answer'].split()[0]
+    correct_option = sample['reference_answer'].split()[0]
+    return chosen_option == correct_option
+
+def get_accuracy(dataset, type='binary'):
+    # returns the accuracy for an answer dataset
+    metrics = {
+        'binary':   is_correct,
+        'multiple_chouce': is_correct_mc
+    }
+    metric = metrics[type]
+    correct = dataset.filter(metric)
+    accuracy = len(correct)/len(dataset)
+    return accuracy
+
 # === Retrieval Accuracy === 
 
 def retrieval_success(sample):

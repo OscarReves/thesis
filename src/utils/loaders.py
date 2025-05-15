@@ -96,7 +96,7 @@ def load_citizenship_questions(silent=False):
         correct_idx = correct_mapping[entry['correct']]
         correct = entry['correct']
         answer = options[correct_idx]
-        mc_answer = correct + " " + answer
+        mc_answer = correct + ": " + answer
         id = entry['index']
         records.append({
             "id": id,
