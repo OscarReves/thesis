@@ -299,9 +299,9 @@ class GPT2Generator():
 #         return outputs
 
 class BaseGenerator:
-    def __init__(self, model_name):
+    def __init__(self, model_name, save_name = None):
         base_path = "/dtu/p1/oscrev/models"
-        model_path = os.path.join(base_path, model_name)
+        model_path = os.path.join(base_path, save_name)
 
         if not os.path.exists(model_path):
             print(f"Model not found locally. Downloading {model_name} from Hugging Face...")
@@ -555,7 +555,10 @@ class BaseGenerator:
     
 class NousHermesMistralGenerator(BaseGenerator):
     def __init__(self):
-        super().__init__("NousResearch/Nous-Hermes-2-Mistral-7B-DPO")
+        super().__init__(
+            model_name="NousResearch/Nous-Hermes-2-Mistral-7B-DPO",
+            save_name="nous-hermes-mistral"
+            )
 
 class SuzumeLlama3Generator(BaseGenerator):
     def __init__(self):
