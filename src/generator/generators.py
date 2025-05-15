@@ -320,6 +320,8 @@ class BaseGenerator:
 
             del tokenizer, config, model
             gc.collect()  # release memory before reloading
+            torch.cuda.empty_cache()
+
 
         print(f"Loading model {model_name} from: {model_path}")
         self.tokenizer = AutoTokenizer.from_pretrained(model_path, local_files_only=True)
