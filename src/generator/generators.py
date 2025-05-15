@@ -1,4 +1,4 @@
-from transformers import AutoTokenizer, AutoModelForCausalLM
+from transformers import AutoTokenizer, AutoModelForCausalLM, AutoConfig
 import torch
 from tqdm import tqdm
 import numpy as np
@@ -308,6 +308,7 @@ class BaseGenerator:
             os.makedirs(model_path, exist_ok=True)
             # Download and save
             AutoTokenizer.from_pretrained(model_name).save_pretrained(model_path)
+            AutoConfig.from_pretrained(model_name).save_pretrained(model_path)
             AutoModelForCausalLM.from_pretrained(model_name).save_pretrained(model_path)
 
         print(f"Loading model {model_name} from: {model_path}")
