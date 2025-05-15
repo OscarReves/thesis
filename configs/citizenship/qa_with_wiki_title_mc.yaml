@@ -9,7 +9,7 @@ save_path: results/citizenship/qa_with_wiki_titles_p1_mc
 generator_name: nous-hermes-mistral
 n_questions: 
 batch_size: 8
-pipeline: test_qa_citizenship
+pipeline: qa_citizenship_mc
 
 # for evaluation 
 answers_path: results/citizenship/qa_with_wiki_titles_p1_mc
