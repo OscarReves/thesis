@@ -3,6 +3,8 @@ import torch
 from tqdm import tqdm
 import numpy as np
 import os 
+import gc
+
 
 class GPT2Generator():
     def __init__(self, model_name="gpt2"):
@@ -306,10 +308,18 @@ class BaseGenerator:
         if not os.path.exists(model_path):
             print(f"Model not found locally. Downloading {model_name} from Hugging Face...")
             os.makedirs(model_path, exist_ok=True)
-            # Download and save
-            AutoTokenizer.from_pretrained(model_name).save_pretrained(model_path)
-            AutoConfig.from_pretrained(model_name).save_pretrained(model_path)
-            AutoModelForCausalLM.from_pretrained(model_name).save_pretrained(model_path)
+
+            tokenizer = AutoTokenizer.from_pretrained(model_name)
+            tokenizer.save_pretrained(model_path)
+
+            config = AutoConfig.from_pretrained(model_name)
+            config.save_pretrained(model_path)
+
+            model = AutoModelForCausalLM.from_pretrained(model_name)
+            model.save_pretrained(model_path)
+
+            del tokenizer, config, model
+            gc.collect()  # release memory before reloading
 
         print(f"Loading model {model_name} from: {model_path}")
         self.tokenizer = AutoTokenizer.from_pretrained(model_path, local_files_only=True)
