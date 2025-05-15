@@ -563,8 +563,14 @@ class NousHermesMistralGenerator(BaseGenerator):
 
 class SuzumeLlama3Generator(BaseGenerator):
     def __init__(self):
-        super().__init__("lightblue/suzume-llama-3-8B-multilingual")
+        super().__init__(
+            model_name="lightblue/suzume-llama-3-8B-multilingual",
+            save_name="suzume-llama3"
+            )
 
 class Yi34BGenerator(BaseGenerator):
     def __init__(self):
-        super().__init__("01-ai/Yi-34B-Chat")
+        super().__init__(
+            model_name="01-ai/Yi-34B-Chat",
+            save_name="yi-34b"
+            )
