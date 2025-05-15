@@ -122,3 +122,30 @@ def test_qa_citizenship(question_dataset, retriever, generator, save_path,
         } for q, c, a, ra in zip(questions, contexts, answers, reference_answer)])
     
     save_to_json(results, save_path, result_type="answers with context")
+
+def qa_citizenship_mc(question_dataset, retriever, generator, save_path, 
+                                batch_size=16, silent=True, max_samples=None):
+    if max_samples:
+        question_dataset = question_dataset.select(range(max_samples))
+    results = []
+    
+    for i in tqdm(range(0, len(question_dataset), batch_size), 
+                  desc=f"Answering questions in batches of {batch_size}"):
+        batch = question_dataset[i:i+batch_size]
+        questions = batch['question']
+        options = batch['options']
+
+        contexts = retriever.retrieve_with_uid(questions)
+
+        answers = generator.generate_batch_mc(questions, contexts, options)
+        
+        reference_answer = batch['answer']
+
+        results.extend([{
+            "question"         : q,
+            "context"          : c,
+            "generated_answer" : a,
+            "reference_answer" : ra
+        } for q, c, a, ra in zip(questions, contexts, answers, reference_answer)])
+    
+    save_to_json(results, save_path, result_type="answers with context")

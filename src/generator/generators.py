@@ -103,6 +103,61 @@ class NousHermesMistral2Generator():
             for i, input_len in enumerate(input_lengths)
         ]
         return outputs
+    
+    def generate_batch_mc(self, questions, contexts, options, max_new_tokens=128):
+        # Answer citizenship test multiple choice questions in batches
+        system_prompt = (
+            "You are a helpful assistant. You respond to questions in Danish. "
+            "Respond briefly and accurately. Do not generate any extra questions or superfluous text. "
+            "Be as concise as possible."
+        )
+
+        user_prompts = [
+            (
+                "Svar kun med bogstavet for den rigtige mulighed."
+                "#KONTEKST"
+                f"{c}"
+                "#SPØRGSMÅL"
+                f"{q}"
+                "#SVARMULIGHEDER"
+                f"A: {o[0]}"
+                f"B: {o[1]}"
+                f"C: {o[2]}"
+                "#SVAR"
+                "Svaret er mulighed "
+            )
+            for q, c, o in zip(questions, contexts, options)
+        ]
+
+        prompts = [
+            self.tokenizer.apply_chat_template([
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": up}
+            ], tokenize=False, add_generation_prompt=True)
+            for up in user_prompts
+        ]
+
+        inputs = self.tokenizer(prompts, return_tensors="pt", padding=True, truncation=True).to(self.model.device)
+
+        with torch.inference_mode():
+            output_ids = self.model.generate(
+                **inputs,
+                max_new_tokens=max_new_tokens,
+                do_sample=False,
+                num_beams=1,
+                use_cache=True,
+                #temperature=0.7,
+                #top_p=0.9,
+                eos_token_id=self.tokenizer.convert_tokens_to_ids("<|im_end|>"),
+                pad_token_id=self.tokenizer.eos_token_id
+            )
+
+        input_lengths = [len(i) for i in inputs["input_ids"]]
+        outputs = [
+            self.tokenizer.decode(output_ids[i][input_len:], skip_special_tokens=True).strip()
+            for i, input_len in enumerate(input_lengths)
+        ]
+        return outputs
 
     def generate_batch_no_context(self, questions, max_new_tokens=128):
         system_prompt = (
