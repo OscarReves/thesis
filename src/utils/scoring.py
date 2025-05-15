@@ -6,25 +6,20 @@ def is_correct(sample):
 def is_false(sample):
     return sample['evaluation'].split()[0] == '0'
 
-def get_accuracy(dataset):
-    # returns the accuracy for an answer dataset scored with binary evaluation
-    correct = dataset.filter(is_correct)
-    accuracy = len(correct)/len(dataset)
-    return accuracy
-
 def is_correct_mc(sample):
-    chosen_option = sample['generated_answer'].split()[0]
-    correct_option = sample['reference_answer'].split()[0]
+    chosen_option = sample['generated_answer'][0]
+    correct_option = sample['reference_answer'][0]
+    print(correct_option,chosen_option)
     return chosen_option == correct_option
 
 def get_accuracy(dataset, type='binary'):
     # returns the accuracy for an answer dataset
     metrics = {
         'binary':   is_correct,
-        'multiple_chouce': is_correct_mc
+        'multiple_choice': is_correct_mc
     }
     metric = metrics[type]
-    correct = dataset.filter(metric)
+    correct = dataset.filter(metric, batched=False)
     accuracy = len(correct)/len(dataset)
     return accuracy
 
