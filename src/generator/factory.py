@@ -1,8 +1,9 @@
-from .generators import GPT2Generator, NousHermesMistral2Generator
+from .generators import NousHermesMistralGenerator, SuzumeLlama3Generator, Yi34BGenerator
 
 GENERATOR_REGISTRY = {
-    "gpt2": GPT2Generator,
-    "nous-hermes-mistral" : NousHermesMistral2Generator,
+    "nous-hermes-mistral"   : NousHermesMistralGenerator,
+    "suzume-llama3"         : SuzumeLlama3Generator,
+    "yi-34b"                : Yi34BGenerator
 }
 
 def get_generator(name, **kwargs):
