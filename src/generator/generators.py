@@ -322,6 +322,7 @@ class BaseGenerator:
 
         print(f"Loading model {model_name} from: {model_path}")
         self.tokenizer = AutoTokenizer.from_pretrained(model_path, local_files_only=True)
+        self.tokenizer.padding_side = "left"
         self.model = AutoModelForCausalLM.from_pretrained(
             model_path,
             torch_dtype=torch.float16,
