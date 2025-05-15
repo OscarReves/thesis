@@ -31,7 +31,7 @@ def get_accuracy(dataset, type='binary'):
     metric = metrics[type]
     correct = 0
     for sample in dataset:
-        if is_correct(sample):
+        if metric(sample):
             correct += 1
     
     accuracy = correct/len(dataset)
