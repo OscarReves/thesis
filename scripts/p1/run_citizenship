@@ -14,7 +14,7 @@
 #BSUB -M 30GB 
 ### -- set walltime limit: hh:mm -- 
 #BSUB -W 1:00
-#BSUB -u krf217@alumni.ku.dk
+###BSUB -u krf217@alumni.ku.dk
 ### -- send notification at start -- 
 #BSUB -B 
 ### -- send notification at completion -- 
@@ -33,6 +33,6 @@ export LD_LIBRARY_PATH=$CONDA_PREFIX/lib:$LD_LIBRARY_PATH
 
 # run scripts 
 python3 -u -m scripts.generalized.qa --config configs/citizenship/llama_no_context.yaml
-python3 -u -m scripts.generalized.evaluate --config configs/citizenship/llama_no_context.yaml
-python3 -u -m scripts.generalized.score --config configs/citizenship/llama_no_context.yaml
+#python3 -u -m scripts.generalized.evaluate --config configs/citizenship/llama_no_context.yaml
+#python3 -u -m scripts.generalized.score --config configs/citizenship/llama_no_context.yaml
 
