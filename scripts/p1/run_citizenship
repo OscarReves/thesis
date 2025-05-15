@@ -21,8 +21,8 @@
 #BSUB -N 
 ### -- Specify the output and error file. %J is the job-id -- 
 ### -- -o and -e mean append, -oo and -eo mean overwrite -- 
-#BSUB -o Output.out 
-#BSUB -e Output.err 
+#BSUB -oo Output.out 
+#BSUB -ee Output.err 
 
 # here follow the commands you want to execute with input.in as the input file
 
