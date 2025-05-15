@@ -1,0 +1,17 @@
+questions_path: 
+question_type: citizenship
+kb_path: data/wiki/chunked_with_title/ # path to knowledge base
+kb_type: wiki
+index_path: data/wiki/index/index_with_title.faiss
+retriever_name: e5
+device: cuda
+save_path: results/citizenship/qa_with_wiki_titles_mc
+generator_name: nous-hermes-mistral
+n_questions: 
+batch_size: 8
+pipeline: qa_citizenship_mc
+
+# for evaluation 
+answers_path: results/citizenship/qa_with_wiki_titles_mc
+evaluator_name: nous-hermes-mistral-binary
+evaluation_path: results/citizenship/evaluation_with_wiki_titles_mc
