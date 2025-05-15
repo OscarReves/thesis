@@ -109,12 +109,13 @@ class NousHermesMistral2Generator():
         system_prompt = (
             "You are a helpful assistant. You respond to questions in Danish. "
             "Respond briefly and accurately. Do not generate any extra questions or superfluous text. "
-            "Be as concise as possible."
+            "Be as concise as possible. "
+            "The context may or may not be relevant."
         )
 
         user_prompts = [
             (
-                "Svar kun med bogstavet for den rigtige mulighed."
+                "Givet konteksten, svar kun med bogstavet for den rigtige mulighed."
                 "#KONTEKST"
                 f"{c}"
                 "#SPØRGSMÅL"

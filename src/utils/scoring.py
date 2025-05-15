@@ -9,17 +9,21 @@ def is_false(sample):
 def is_correct_mc(sample):
     chosen_option = sample['generated_answer'][0]
     correct_option = sample['reference_answer'][0]
-    print(correct_option,chosen_option)
     return chosen_option == correct_option
 
-def get_accuracy(dataset, type='binary'):
-    # returns the accuracy for an answer dataset
-    metrics = {
-        'binary':   is_correct,
-        'multiple_choice': is_correct_mc
-    }
-    metric = metrics[type]
-    correct = dataset.filter(metric, batched=False)
+# def get_accuracy(dataset, type='multiple_choice'):
+#     # returns the accuracy for an answer dataset
+#     metrics = {
+#         'binary':   is_correct,
+#         'multiple_choice': is_correct_mc
+#     }
+#     metric = metrics[type]
+#     correct = dataset.filter(metric, batched=False)
+#     accuracy = len(correct)/len(dataset)
+#     return accuracy
+
+def get_accuracy(dataset, type):
+    correct = dataset.filter(is_correct_mc, batched=False)
     accuracy = len(correct)/len(dataset)
     return accuracy
 
