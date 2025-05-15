@@ -94,14 +94,17 @@ def load_citizenship_questions(silent=False):
         question = entry['question']
         options = [entry['option-A'], entry['option-B'], entry['option-C']]
         correct_idx = correct_mapping[entry['correct']]
+        correct = entry['correct']
         answer = options[correct_idx]
+        mc_answer = correct + " " + answer
         id = entry['index']
         records.append({
             "id": id,
             "question": question,
             "options": options,
             "correct_idx": correct_idx,
-            "answer": answer
+            "answer": answer,
+            "mc_answer": mc_answer
         })
     
     if not silent:

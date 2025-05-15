@@ -139,7 +139,7 @@ def qa_citizenship_mc(question_dataset, retriever, generator, save_path,
 
         answers = generator.generate_batch_mc(questions, contexts, options)
         
-        reference_answer = batch['answer']
+        reference_answer = batch['mc_answer']
 
         results.extend([{
             "question"         : q,
