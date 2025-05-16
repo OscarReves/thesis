@@ -41,7 +41,9 @@ def main(config_path):
             index_path = index_path,
             device = device
             )
-        
+    else:
+        retriever = None
+
     print("Loading generator...")
     generator = get_generator(generator_name)
 
