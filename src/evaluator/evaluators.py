@@ -1,21 +1,39 @@
 from transformers import AutoTokenizer, AutoModelForCausalLM
+from src.generator import BaseGenerator
 import torch
 from tqdm import tqdm
 import numpy as np
+import os
 
-class GPT2Evaluator():
-    def __init__(self, device='mps', model_name="sshleifer/tiny-gpt2"):
-        self.device = torch.device(device)
-        self.tokenizer = AutoTokenizer.from_pretrained(model_name) 
-        self.tokenizer.pad_token = self.tokenizer.eos_token
-        self.tokenizer.padding_side= "left"
-        self.tokenizer.chat_template = """
-        {% for message in messages %}
-        {{ message['role'] }}: {{ message['content'] }}
-        {% endfor %}
-        """ # added to make gpt2 compatible with apply_chat_template
-        self.model = AutoModelForCausalLM.from_pretrained(model_name).to(self.device)
-        print(f"Loaded model {model_name} on device {self.model.device}")
+class BaseEvaluator:
+    def __init__(self, model_name, save_name = None):
+        base_path = "/dtu/p1/oscrev/models"
+        model_path = os.path.join(base_path, save_name)
+
+        if not os.path.exists(model_path):
+            print(f"Model not found locally. Downloading {model_name} from Hugging Face...")
+            os.makedirs(model_path, exist_ok=True)
+
+            self.tokenizer = AutoTokenizer.from_pretrained(model_name)
+            self.tokenizer.save_pretrained(model_path)
+
+            self.model = AutoModelForCausalLM.from_pretrained(
+                model_name,
+                torch_dtype=torch.float16,
+                device_map="auto",
+            )
+            self.model.save_pretrained(model_path)
+
+        else:
+            print(f"Loading model {model_name} from: {model_path}")
+            self.tokenizer = AutoTokenizer.from_pretrained(model_path, local_files_only=True)
+            self.tokenizer.padding_side = "left"
+            self.model = AutoModelForCausalLM.from_pretrained(
+                model_path,
+                torch_dtype=torch.float16,
+                device_map="auto",
+                local_files_only=True
+            )
 
     def evaluate_answer(self, question, generated_answer, reference_answer, max_new_tokens=32):
         # this is a little hacky, but leave it for now 
@@ -67,9 +85,9 @@ class GPT2Evaluator():
             self.tokenizer.decode(output_ids[i][input_len:], skip_special_tokens=True).strip()
             for i, input_len in enumerate(input_lengths)
         ]
-        return outputs
-    
-class NousHermesMistralEvaluator():
+
+
+class NousHermesMistralEvaluatorOld():
     def __init__(self, model_name="NousResearch/Nous-Hermes-2-Mistral-7B-DPO"):
         model_path = 'models/nous-hermes'
         print("Loading model from local directory...")
@@ -134,7 +152,7 @@ class NousHermesMistralEvaluator():
         ]
         return outputs
     
-class NousHermesMistralBinary(NousHermesMistralEvaluator):
+class BaseEvaluatorBinary(BaseEvaluator):
     def evaluate_answer(self, question, generated_answer, reference_answer, max_new_tokens=32):
         # this is a little hacky, but leave it for now 
         return self.evaluate_batch([question],[generated_answer],[reference_answer])
@@ -186,3 +204,18 @@ class NousHermesMistralBinary(NousHermesMistralEvaluator):
             for i, input_len in enumerate(input_lengths)
         ]
         return outputs
+    
+class NousHermesMistralEvaluator(BaseEvaluator):
+    def __init__(self):
+        super().__init__(
+            model_name="NousResearch/Nous-Hermes-2-Mistral-7B-DPO",
+            save_name="nous-hermes-mistral"
+            )
+
+class NousHermesMistralBinary(BaseEvaluator):
+    def __init__(self):
+        super().__init__(
+            model_name="NousResearch/Nous-Hermes-2-Mistral-7B-DPO",
+            save_name="nous-hermes-mistral"
+            )
+

@@ -37,7 +37,7 @@ CONFIG_PATH=configs/citizenship/qa_with_wiki_paragraph.yaml
 
 
 # run scripts 
-python3 -u -m scripts.generalized.qa --config $CONFIG_PATH
+#python3 -u -m scripts.generalized.qa --config $CONFIG_PATH
 python3 -u -m scripts.generalized.evaluate --config $CONFIG_PATH
 python3 -u -m scripts.generalized.score --config $CONFIG_PATH
 

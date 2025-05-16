@@ -1,7 +1,6 @@
-from .evaluators import GPT2Evaluator, NousHermesMistralEvaluator, NousHermesMistralBinary
+from .evaluators import NousHermesMistralEvaluator, NousHermesMistralBinary
 
 EVALUATOR_REGISTRY = {
-    "tiny-gpt2": GPT2Evaluator,
     "nous-hermes-mistral": NousHermesMistralEvaluator,
     "nous-hermes-mistral-binary": NousHermesMistralBinary
 }
