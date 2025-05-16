@@ -12,7 +12,7 @@ batch_size: 8
 pipeline: test_qa_citizenship
 
 # for evaluation 
-answers_path: results/citizenship/gemma_wiki_paragraph
+answers_path: results/citizenship/evluation_gemma_wiki_paragraph
 evaluator_name: nous-hermes-mistral-binary
 evaluation_type: binary
-evaluation_path: results/citizenship/gemma_wiki_paragraph
+evaluation_path: results/citizenship/evaluation_gemma_wiki_paragraph
