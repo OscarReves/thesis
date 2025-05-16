@@ -31,8 +31,13 @@ source ~/miniconda3/etc/profile.d/conda.sh
 conda activate production_env
 export LD_LIBRARY_PATH=$CONDA_PREFIX/lib:$LD_LIBRARY_PATH
 
+
+# set config path(s)
+CONFIG_PATH=configs/citizenship/qa_with_wiki_paragraph.yaml
+
+
 # run scripts 
-python3 -u -m scripts.generalized.qa --config configs/citizenship/llama_wiki.yaml
-python3 -u -m scripts.generalized.evaluate --config configs/citizenship/llama_wiki.yaml
-python3 -u -m scripts.generalized.score --config configs/citizenship/llama_wiki.yaml
+python3 -u -m scripts.generalized.qa --config $CONFIG_PATH
+python3 -u -m scripts.generalized.evaluate --config $CONFIG_PATH
+python3 -u -m scripts.generalized.score --config $CONFIG_PATH
 
