@@ -584,3 +584,10 @@ class Yi34BGenerator(BaseGenerator):
             model_name="01-ai/Yi-34B-Chat",
             save_name="yi-34b"
             )
+
+class Gemma9bGenerator(BaseGenerator):
+    def __init__(self):
+        super().__init__(
+            model_name="google/gemma-2-9b-it",
+            save_name="gemma-2-9b-it"
+            )
