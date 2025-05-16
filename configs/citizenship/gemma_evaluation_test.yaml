@@ -13,6 +13,6 @@ pipeline: test_qa_citizenship
 
 # for evaluation 
 answers_path: results/citizenship/gemma_wiki_paragraph
-evaluator_name: nous-hermes-mistral-binary
+evaluator_name: gemma-9b-binary
 evaluation_type: binary
-evaluation_path: results/citizenship/evaluation_gemma_wiki_paragraph
+evaluation_path: results/citizenship/gemma_evaluation_test

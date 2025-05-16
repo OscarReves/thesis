@@ -1,8 +1,9 @@
-from .evaluators import NousHermesMistralEvaluator, NousHermesMistralBinary
+from .evaluators import NousHermesMistralEvaluator, NousHermesMistralBinary, Gemma9bBinary
 
 EVALUATOR_REGISTRY = {
     "nous-hermes-mistral": NousHermesMistralEvaluator,
-    "nous-hermes-mistral-binary": NousHermesMistralBinary
+    "nous-hermes-mistral-binary": NousHermesMistralBinary,
+    "gemma-9b-binary"           : Gemma9bBinary
 }
 
 def get_evaluator(name, **kwargs):
