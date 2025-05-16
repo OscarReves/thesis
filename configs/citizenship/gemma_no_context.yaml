@@ -1,7 +1,7 @@
 questions_path: 
 question_type: citizenship
-kb_path: data/wiki/chunked/ # path to knowledge base
-kb_type: wiki
+kb_path: # path to knowledge base
+kb_type: 
 index_path: data/wiki/index/index.faiss
 retriever_name: e5
 device: cuda

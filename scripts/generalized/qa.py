@@ -23,20 +23,25 @@ def main(config_path):
     question_type = config['question_type']
     pipeline_name = config.get('pipeline', 'test_qa_with_retrieval_wiki')
 
-    print("Loading knowledge base...")
-    documents = load_knowledge_base(kb_path, kb_type) # is now abstracted 
+    if kb_path:
+        print("Loading knowledge base...")
+        documents = load_knowledge_base(kb_path, kb_type) # is now abstracted 
+    else:
+        print("No knowledge base specified...")
+        documents = None
 
     print("Loading questions...")
     question_dataset = load_questions_by_type(questions_path, type = question_type)
 
-    print("Loading retriever...")
-    retriever = get_retriever(
-        retriever_name,
-        documents = documents,
-        index_path = index_path,
-        device = device
-        )
-    
+    if documents:
+        print("Loading retriever...")
+        retriever = get_retriever(
+            retriever_name,
+            documents = documents,
+            index_path = index_path,
+            device = device
+            )
+        
     print("Loading generator...")
     generator = get_generator(generator_name)
 
