@@ -212,7 +212,7 @@ class NousHermesMistralEvaluator(BaseEvaluator):
             save_name="nous-hermes-mistral"
             )
 
-class NousHermesMistralBinary(BaseEvaluator):
+class NousHermesMistralBinary(BaseEvaluatorBinary):
     def __init__(self):
         super().__init__(
             model_name="NousResearch/Nous-Hermes-2-Mistral-7B-DPO",
