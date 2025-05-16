@@ -1,7 +1,8 @@
-from .splitters import LangChainSplitter
+from .splitters import LangChainSplitter, ParagraphSplitter
 
 SPLITTER_REGISTRY = {
-    "langchain" : LangChainSplitter
+    "langchain" : LangChainSplitter,
+    "paragraph" : ParagraphSplitter
 }
 
 def get_splitter(name, **kwargs):

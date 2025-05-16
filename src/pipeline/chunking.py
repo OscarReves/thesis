@@ -35,6 +35,7 @@ def chunk_multiple(dump_dir, out_dir, splitter, test=False):
 
         out_path.parent.mkdir(parents=True, exist_ok=True)
 
+        # Chunk file 
         documents = load_wiki_articles(str(file_path), silent=True)
         chunked = chunk_dataset(documents, splitter)
 
@@ -44,6 +45,7 @@ def chunk_multiple(dump_dir, out_dir, splitter, test=False):
         chunked = chunked.add_column("uid", uids)
         uid_counter += num_chunks
         
+        # Save
         chunked.to_json(out_path)
         if test:
             break

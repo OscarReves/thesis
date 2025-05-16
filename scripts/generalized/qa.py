@@ -41,8 +41,8 @@ def main(config_path):
     generator = get_generator(generator_name)
 
     print("Testing qa with retrieval...")
-    print("Available functions in pipeline_module:", dir(pipeline_module))
-    print("Trying to access:", pipeline_name)
+    #print("Available functions in pipeline_module:", dir(pipeline_module))
+    #print("Trying to access:", pipeline_name)
     pipeline_func = getattr(pipeline_module, pipeline_name)
     pipeline_func(
         question_dataset = question_dataset, 

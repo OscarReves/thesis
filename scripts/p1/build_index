@@ -14,22 +14,20 @@
 #BSUB -M 20GB
 ### -- set walltime limit: hh:mm -- 
 #BSUB -W 1:00
-#BSUB -u krf217@ku.dk
+##BSUB -u krf217@ku.dk
 ### -- send notification at start -- 
-#BSUB -B 
+##BSUB -B 
 ### -- send notification at completion -- 
-#BSUB -N 
+##BSUB -N 
 ### -- Specify the output and error file. %J is the job-id -- 
 ### -- -o and -e mean append, -oo and -eo mean overwrite -- 
-#BSUB -o Output.out 
-#BSUB -e Output.err 
+#BSUB -oo Output.out 
+#BSUB -eo Output.err 
 
 # here follow the commands you want to execute with input.in as the input file
 source ~/miniconda3/etc/profile.d/conda.sh
 conda activate production_env
 export LD_LIBRARY_PATH=$CONDA_PREFIX/lib:$LD_LIBRARY_PATH
 
-#python3 -u -m scripts.wiki.chunk_wiki --config configs/wiki/chunk_langchain_with_title.yaml
-python3 -u -m scripts.wiki.build_index --config configs/wiki/chunk_langchain_with_title.yaml
-#python3 -u -m scripts.wiki.build_index_from_backup_embeddings --config configs/wiki/chunk_langchain_with_title.yaml
-
+python3 -u -m scripts.wiki.chunk_wiki --config configs/wiki/chunk_paragraph.yaml
+python3 -u -m scripts.wiki.build_index --config configs/wiki/chunk_paragraph.yaml

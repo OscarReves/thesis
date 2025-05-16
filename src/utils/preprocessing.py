@@ -47,6 +47,8 @@ def chunk_text_fixed_tokens(text, chunk_size=256, stride = 128):
 def chunk_sample(batch, splitter, prepend_with_title=True):
     all_ids, all_texts = [], []
     for title, body in zip(batch['title'], batch['body']):
+        if not isinstance(body, str):
+            continue  # in case of None
         chunks = splitter.split_text(body)
         ids = [f"{title}_{i}" for i in range(len(chunks))]
         if prepend_with_title:
@@ -73,10 +75,10 @@ def chunk_sample(batch, splitter, prepend_with_title=True):
 #         )
 #     return chunked
 
-def chunk_dataset(dataset, splitter):
+def chunk_dataset(dataset, splitter, prepend_with_title = True):
     chunked = dataset.map(
         chunk_sample,
-        fn_kwargs= {"splitter" : splitter, "prepend_with_title" : True},
+        fn_kwargs= {"splitter" : splitter, "prepend_with_title" : prepend_with_title},
         remove_columns=dataset.column_names,
         batched=True
     )
