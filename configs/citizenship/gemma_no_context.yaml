@@ -1,0 +1,18 @@
+questions_path: 
+question_type: citizenship
+kb_path: data/wiki/chunked/ # path to knowledge base
+kb_type: wiki
+index_path: data/wiki/index/index.faiss
+retriever_name: e5
+device: cuda
+save_path: results/citizenship/gemma_no_context
+generator_name: gemma-9b
+n_questions: 
+batch_size: 8
+pipeline: test_qa_no_context
+
+# for evaluation 
+answers_path: results/citizenship/gemma_no_context
+evaluator_name: nous-hermes-mistral-binary
+evaluation_type: binary
+evaluation_path: results/citizenship/evaluation_gemma_no_context

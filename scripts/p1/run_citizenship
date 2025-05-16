@@ -13,7 +13,7 @@
 ### -- specify that we want the job to get killed if it exceeds 5 GB per core/slot -- 
 #BSUB -M 40GB 
 ### -- set walltime limit: hh:mm -- 
-#BSUB -W 1:00
+#BSUB -W 2:00
 ###BSUB -u krf217@alumni.ku.dk
 ### -- send notification at start -- 
 ###BSUB -B 
@@ -32,12 +32,25 @@ conda activate production_env
 export LD_LIBRARY_PATH=$CONDA_PREFIX/lib:$LD_LIBRARY_PATH
 
 
-# set config path(s)
-CONFIG_PATH=configs/citizenship/qa_with_wiki_paragraph.yaml
+# set config path(s) for open domain QA
+CONFIG_PATH1=configs/citizenship/gemma_no_context.yaml
+CONFIG_PATH2=configs/citizenship/gemma_wiki.yaml
 
+# run the scripts 
+for VAR in CONFIG_PATH1 CONFIG_PATH2; do
+  CONFIG=${!VAR}  # resolve the variable name
+  python3 -u -m scripts.generalized.qa --config "$CONFIG"
+  python3 -u -m scripts.generalized.evaluate --config "$CONFIG"
+  python3 -u -m scripts.generalized.score --config "$CONFIG"
+done
 
-# run scripts 
-#python3 -u -m scripts.generalized.qa --config $CONFIG_PATH
-python3 -u -m scripts.generalized.evaluate --config $CONFIG_PATH
-python3 -u -m scripts.generalized.score --config $CONFIG_PATH
+# set config path(s) for multiple choice QA 
+CONFIG_PATH3=configs/citizenship/gemma_no_context_mc.yaml
+CONFIG_PATH4=configs/citizenship/gemma_wiki_mc.yaml
 
+# run the scripts
+for VAR in CONFIG_PATH3 CONFIG_PATH4; do
+  CONFIG=${!VAR}  # resolve the variable name
+  python3 -u -m scripts.generalized.qa --config "$CONFIG"
+  python3 -u -m scripts.generalized.score --config "$CONFIG"
+done
