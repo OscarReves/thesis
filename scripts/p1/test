@@ -35,5 +35,5 @@ export LD_LIBRARY_PATH=$CONDA_PREFIX/lib:$LD_LIBRARY_PATH
 CONFIG_PATH=configs/citizenship/gemma_test.yaml
 
 # test model 
-python3 -u -m scripts.generalized.init_model --config $CONFIG_PATH
+python3 -u -m scripts.generalized.qa --config $CONFIG_PATH
 
