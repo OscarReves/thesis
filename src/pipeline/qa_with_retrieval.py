@@ -12,10 +12,14 @@ def test_qa_with_retrieval(question_dataset, retriever, generator, save_path, ba
                   desc=f"Answering questions in batches of {batch_size}"):
         batch = question_dataset[i:i+batch_size]
         questions = batch['question']
-
-        contexts = retriever.retrieve(questions)
         
+        start_retrieval = time.time()
+        contexts = retriever.retrieve(questions)
+        total_retrieval_time = time.time() - start_retrieval
+        
+        start_generation = time.time()
         answers = generator.generate_batch(questions, contexts)
+        total_generation_time = time.time() - start_generation
         
         reference_answers = [batch['options'][i][j] for i,j in enumerate(batch['correct_idx'])]
 
@@ -25,6 +29,10 @@ def test_qa_with_retrieval(question_dataset, retriever, generator, save_path, ba
             "generated_answer" : a,
             "reference_answer" : ra
         } for q, c, a, ra in zip(questions, contexts, answers, reference_answers)])
+
+        if not silent:
+            print(f"\nRetrieval time: {total_retrieval_time:.2f}s")
+            print(f"Generation time: {total_generation_time:.2f}s")
     
     save_to_json(results, save_path, result_type="answers with context")
 
