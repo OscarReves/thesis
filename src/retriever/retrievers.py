@@ -45,12 +45,13 @@ class E5Retriever:
         q_embs = self.embed(queries)
         faiss.normalize_L2(q_embs)
         D, I = self.index.search(q_embs, top_k)
-        return [
-            # consider returning a list instead and joining somewhere else
-            # likewise, consider mapping the index to documents with an ID
-            "\n\n".join([self.contexts[idx] for idx in indices])
-            for indices in I
-        ]
+        results = []
+        for idxs in I:
+            subset = self.dataset.select(idxs)
+            contexts = subset["text"]
+            results.append(contexts)
+        
+        return results
     
     def retrieve_with_uid(self, questions, top_k=5):
         queries = [f"query: {q}" for q in questions]
