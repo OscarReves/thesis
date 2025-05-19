@@ -1,0 +1,18 @@
+questions_path: /dtu/p1/2025/questions.jsonl
+question_type: news
+kb_path: /dtu/p1/oscrev/news/2025/chunked_paragraph.jsonl # path to knowledge base
+kb_type: news
+index_path: /dtu/p1/oscrev/news/2025/index_paragraph
+retriever_name: e5
+device: cuda
+save_path: results/news/qa_wiki_paragraph
+generator_name: gemma-9b-it
+n_questions: 
+batch_size: 8
+pipeline: test_qa_with_retrieval_wiki
+
+# for evaluation 
+answers_path: results/news/qa_wiki_paragraph
+evaluator_name: gemma-9b-binary
+evaluation_path: results/news/evaluation_wiki_paragraph
+evaluation_type: binary
