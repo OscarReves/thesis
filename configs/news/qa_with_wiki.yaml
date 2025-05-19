@@ -7,7 +7,7 @@ retriever_name: e5
 device: cuda
 save_path: results/news/qa_wiki_paragraph
 generator_name: gemma-9b
-n_questions: 32
+n_questions: 
 batch_size: 16
 pipeline: test_qa_with_retrieval
 
