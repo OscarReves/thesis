@@ -6,188 +6,6 @@ import os
 import torch.nn.functional as F
 from datasets.utils.logging import disable_progress_bar
 
-
-class GPT2Retriever:
-    def __init__(self, index_path, documents, device=None, text_field='text'):
-        model_name = 'gpt2'
-        self.device = torch.device(device)
-
-        # Load model
-        self.tokenizer = AutoTokenizer.from_pretrained(model_name)
-        if self.tokenizer.pad_token == None:
-            self.tokenizer.pad_token = self.tokenizer.eos_token
-        self.model = AutoModel.from_pretrained(model_name).to(self.device)
-
-        # Load FAISS index
-        self.index = faiss.read_index(index_path)
-
-        # Load dataset and extract text field
-        self.dataset = documents  # or load_dataset(...)
-        self.contexts = self.dataset[text_field]      # list of texts
-        self.titles = self.dataset['id']
-
-    def embed(self, texts):
-        inputs = self.tokenizer(texts, padding=True, truncation=True, return_tensors="pt").to(self.device)
-        with torch.no_grad():
-            output = self.model(**inputs)
-            mask = inputs["attention_mask"].unsqueeze(-1).expand(output.last_hidden_state.size()).float()
-            pooled = (output.last_hidden_state * mask).sum(1) / mask.sum(1)
-            return F.normalize(pooled, p=2, dim=1).cpu().numpy()
-    
-    def retrieve(self, questions, top_k=5):
-        queries = [f"query: {q}" for q in questions]
-        q_embs = self.embed(queries)
-        faiss.normalize_L2(q_embs)
-        D, I = self.index.search(q_embs, top_k)
-        return [
-            # consider returning a list instead and joining somewhere else
-            # likewise, consider mapping the index to documents with an ID
-            "\n\n".join([self.contexts[idx] for idx in indices])
-            for indices in I
-        ]
-    
-    def retrieve_with_uids(self, questions, top_k=5):
-        queries = [f"query: {q}" for q in questions]
-        q_embs = self.embed(queries)
-        faiss.normalize_L2(q_embs)
-        D, I = self.index.search(q_embs, top_k)
-        return [
-            # consider returning a list instead and joining somewhere else
-            # likewise, consider mapping the index to documents with an ID
-            "\n\n".join([self.select_by_uids(uid)['text'] for uid in uids])
-            for uids in I
-        ]
-    
-    def retrieve_with_uids(self, questions, top_k=5):
-        queries = [f"query: {q}" for q in questions]
-        q_embs = self.embed(queries)
-        faiss.normalize_L2(q_embs)
-        D, I = self.index.search(q_embs, top_k)
-        return [
-            # consider returning a list instead and joining somewhere else
-            # likewise, consider mapping the index to documents with an ID
-            "\n\n".join([self.select_by_uids(uid)['id'] for uid in uids])
-            for uids in I
-        ]
-
-    def select_by_uids(self, uids):
-        subset = self.dataset.filter(lambda example: example["uid"] in set(uids))
-        return subset
-
-    def retrieve_titles(self, questions, top_k=5):
-        queries = [f"query: {q}" for q in questions]
-        q_embs = self.embed(queries)
-        faiss.normalize_L2(q_embs)
-        D, I = self.index.search(q_embs, top_k)
-        return [
-            # consider returning a list instead and joining somewhere else
-            # likewise, consider mapping the index to documents with an ID
-            [self.titles[idx] for idx in indices]
-            for indices in I
-        ]        
-
-
-class BertTinyRetriever:
-    def __init__(self, index_path, documents, device='cpu', text_field='text'):
-        model_name = 'prajjwal1/bert-tiny'
-        if device == "mps" and not torch.backends.mps.is_available():
-            device = "cpu"
-        self.device = torch.device(device)
-
-        # Load model
-        self.tokenizer = AutoTokenizer.from_pretrained(model_name)
-        self.tokenizer.model_max_length = 512  # manually set a safe default
-        if self.tokenizer.pad_token is None:
-            self.tokenizer.pad_token = self.tokenizer.eos_token or "[PAD]"
-        self.model = AutoModel.from_pretrained(model_name).to(self.device)
-
-        # Load FAISS index
-        if not os.path.exists(index_path):
-            raise FileNotFoundError(f"FAISS index not found at: {index_path}")
-        self.index = faiss.read_index(index_path)
-
-
-        # Load dataset and extract text field
-        self.dataset = documents  # or load_dataset(...)
-        self.contexts = self.dataset[text_field]      # list of texts
-        self.titles = self.dataset['id']
-
-        print(f"Loaded model {model_name}")
-
-    def embed(self, texts):
-        inputs = self.tokenizer(texts, padding=True, truncation=True, return_tensors="pt").to(self.device)
-        with torch.no_grad():
-            output = self.model(**inputs)
-            mask = inputs["attention_mask"].unsqueeze(-1).expand(output.last_hidden_state.size()).float()
-            pooled = (output.last_hidden_state * mask).sum(1) / mask.sum(1)
-            return F.normalize(pooled, p=2, dim=1).cpu().numpy()
-    
-    def retrieve(self, questions, top_k=5):
-        queries = [f"query: {q}" for q in questions]
-        q_embs = self.embed(queries)
-        faiss.normalize_L2(q_embs)
-        D, I = self.index.search(q_embs, top_k)
-        return [
-            # consider returning a list instead and joining somewhere else
-            # likewise, consider mapping the index to documents with an ID
-            "\n\n".join([self.contexts[idx] for idx in indices])
-            for indices in I
-        ]
-    
-    def retrieve_with_uid(self, questions, top_k=5):
-        queries = [f"query: {q}" for q in questions]
-        q_embs = self.embed(queries)
-        faiss.normalize_L2(q_embs)
-        D, I = self.index.search(q_embs, top_k)
-        return [
-            # consider returning a list instead and joining somewhere else
-            # likewise, consider mapping the index to documents with an ID
-            "\n\n".join([self.select_by_uids(uid)['text'] for uid in uids])
-            for uids in I
-        ]
-    
-    def retrieve_titles_with_uid(self, questions, top_k=5):
-        queries = [f"query: {q}" for q in questions]
-        q_embs = self.embed(queries)
-        faiss.normalize_L2(q_embs)
-        D, I = self.index.search(q_embs, top_k)
-        
-        results = []
-        for uids in I:
-            subset = self.select_by_uids(uids)
-            titles = subset["id"]  # grab list of titles
-            results.append(titles
-                           )  
-        
-        return results
-
-    def retrieve_uids(self, questions, top_k=5):
-        queries = [f"query: {q}" for q in questions]
-        q_embs = self.embed(queries)
-        faiss.normalize_L2(q_embs)
-        D, I = self.index.search(q_embs, top_k)
-        
-        return I
-
-
-
-    def select_by_uids(self, uids):
-        uids_set = set(map(int, uids))  # just in case they're np.int64
-        return self.dataset.filter(lambda x: x["uid"] in uids_set)
-
-
-    def retrieve_titles(self, questions, top_k=5):
-        queries = [f"query: {q}" for q in questions]
-        q_embs = self.embed(queries)
-        faiss.normalize_L2(q_embs)
-        D, I = self.index.search(q_embs, top_k)
-        return [
-            # consider returning a list instead and joining somewhere else
-            # likewise, consider mapping the index to documents with an ID
-            [self.titles[idx] for idx in indices]
-            for indices in I
-        ]       
-
 class E5Retriever:
     def __init__(self, index_path, documents, device=None, text_field='text'):
         model_name = 'intfloat/multilingual-e5-large-instruct'
@@ -211,7 +29,8 @@ class E5Retriever:
         self.dataset = documents  # or load_dataset(...)
         self.contexts = self.dataset[text_field]      # list of texts
         self.titles = self.dataset['id']
-        self.uid_map = {int(row["uid"]): row for row in self.dataset} # construct uid mapping
+        if "uid" in self.dataset.column_names:
+            self.uid_map = {int(row["uid"]): row for row in self.dataset} # construct uid mapping
 
     def embed(self, texts):
         inputs = self.tokenizer(texts, padding=True, truncation=True, return_tensors="pt").to(self.device)
@@ -282,11 +101,6 @@ class E5Retriever:
         return I.tolist()
 
     def select_by_uids(self, uids):
-        #uids_set = set(map(int, uids))  # just in case they're np.int64
-        #disable_progress_bar()
-        #return self.dataset.filter(
-        #    lambda x: x["uid"] in uids_set
-        #)
         rows = [self.uid_map[int(uid)] for uid in uids if int(uid) in self.uid_map]
         return Dataset.from_list(rows)
         
