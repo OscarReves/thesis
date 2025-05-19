@@ -15,3 +15,4 @@ pipeline: test_qa_with_retrieval_wiki
 answers_path: results/squad/qa_with_wiki_contexts
 evaluator_name: nous-hermes-mistral-binary
 evaluation_path: results/squad/evaluation_with_wiki_contexts
+evaluation_type: binary

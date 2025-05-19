@@ -229,17 +229,14 @@ class Gemma9bBinary(BaseEvaluatorBinary):
 
         prompts = [
             self.tokenizer.apply_chat_template([
-                {"role": "user", "content": f"""
-            You are an expert evaluator. Determine whether the following generated answer matches the reference answer. Output 1 for true and 0 for false. 
-                 
-            Question: {q}
-
-            Generated Answer: {ga}
-
-            Reference Answer: {ra}
-
-            Rate the quality (0 or 1) and briefly explain your reasoning.
-            """
+                {"role": "user", "content":( 
+                    "You are an expert evaluator. Determine whether the following generated answer matches the reference answer. Output 1 for true and 0 for false.\n",
+                    "If the generated answer is more specific than the reference answer, but still matches, you should consider it true.\n",
+                    f"Question: {q}\n",
+                    f"Generated Answer: {ga}\n",
+                    f"Reference Answer: {ra}\n",
+                    "Rate the quality (0 or 1) and briefly explain your reasoning.\n"
+                    )
             }
             ], tokenize=False, add_generation_prompt=True)
             for q, ga, ra in zip(questions, generated_answers, reference_answers)
@@ -256,8 +253,8 @@ class Gemma9bBinary(BaseEvaluatorBinary):
                 use_cache=True,
                 #temperature=0.7,
                 #top_p=0.9,
-                eos_token_id=self.tokenizer.convert_tokens_to_ids("<|im_end|>"),
-                pad_token_id=self.tokenizer.eos_token_id
+                #eos_token_id=self.tokenizer.convert_tokens_to_ids("<|im_end|>"),
+                #pad_token_id=self.tokenizer.eos_token_id
             )
 
         input_lengths = [len(i) for i in inputs["input_ids"]]

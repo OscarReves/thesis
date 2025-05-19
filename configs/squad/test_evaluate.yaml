@@ -2,3 +2,4 @@ answers_path: results/squad/qa_test
 evaluator_name: nous-hermes-mistral-binary
 evaluation_path: results/squad/evaluation_test
 eval_batch_size: 8
+evaluation_type: binary

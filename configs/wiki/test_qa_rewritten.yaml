@@ -17,3 +17,4 @@ eval_batch_size: 16
 answers_path: results/wiki/qa_test_rewritten
 evaluation_path: results/wiki/evaluation_test_rewritten
 squad_questions_with_title: False
+evaluation_type: binary
