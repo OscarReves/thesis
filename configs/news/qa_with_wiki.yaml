@@ -1,4 +1,4 @@
-questions_path: /dtu/p1/2025/questions.jsonl
+questions_path: /dtu/p1/oscrev/news/2025/questions.jsonl
 question_type: news
 kb_path: /dtu/p1/oscrev/news/2025/chunked_paragraph.jsonl # path to knowledge base
 kb_type: news
