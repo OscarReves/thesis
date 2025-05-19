@@ -3,7 +3,7 @@ from tqdm import tqdm
 import time
 from src.utils import save_to_json
 
-def test_qa_with_retrieval(question_dataset, retriever, generator, save_path, batch_size = 16, max_samples=None):
+def test_qa_with_retrieval(question_dataset, retriever, generator, save_path, batch_size = 16, max_samples=None, silent=True):
     # still needs batching 
     if max_samples:
         question_dataset=question_dataset.select(range(max_samples))
