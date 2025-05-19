@@ -9,7 +9,7 @@ save_path: results/news/qa_wiki_paragraph
 generator_name: gemma-9b-it
 n_questions: 
 batch_size: 8
-pipeline: test_qa_with_retrieval_wiki
+pipeline: test_qa_with_retrieval
 
 # for evaluation 
 answers_path: results/news/qa_wiki_paragraph
