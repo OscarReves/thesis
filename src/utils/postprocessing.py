@@ -5,4 +5,4 @@ def get_incorrect(answers_path):
     # returns only rows which were incorrect 
     answers = load_documents(answers_path)
     
-    return answers.filter(lambda example: example['evaluation'] == 0)
+    return answers.filter(lambda example: example['evaluation'][0] == "0")

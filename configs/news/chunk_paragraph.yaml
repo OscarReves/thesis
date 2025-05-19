@@ -1,0 +1,10 @@
+docs_path: /dtu/p1/oscrev/news/2025/articles.json
+chunked_path: /dtu/p1/oscrev/news/2025/chunked_paragraph.jsonl
+splitter_name: paragraph
+
+# for embedding 
+index_path: /dtu/p1/oscrev/news/2025/index_paragraph
+embedder_name: e5
+device: cuda
+batch_size: 1024
+

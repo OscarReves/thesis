@@ -8,13 +8,10 @@ from datasets import disable_progress_bar
 
 
 
-def chunk_and_save(documents, tokenizer_name, save_path):
-    
-    print(f"Loading tokenizer {tokenizer_name}...")
-    tokenizer = AutoTokenizer.from_pretrained(tokenizer_name)
+def chunk_and_save(documents, splitter, save_path):
     
     print("Chunking dataset...")
-    chunked = chunk_dataset(documents, tokenizer)
+    chunked = chunk_dataset(documents, splitter)
 
     chunked.to_json(save_path) # removed lines=False
     #save_as_json(data=chunked,path=save_path)
