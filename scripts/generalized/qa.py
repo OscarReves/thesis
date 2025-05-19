@@ -58,7 +58,7 @@ def main(config_path):
         save_path = save_path,
         max_samples=max_samples,
         batch_size=batch_size,
-        silent=True)
+        silent=False)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
