@@ -8,22 +8,24 @@ def test_qa_with_retrieval(question_dataset, retriever, generator, save_path, ba
     if max_samples:
         question_dataset=question_dataset.select(range(max_samples))
     results = []
-    for sample in tqdm(question_dataset):
-        question = sample['question']
-        context = retriever.retrieve([question])[0]
+    for i in tqdm(range(0, len(question_dataset), batch_size), 
+                  desc=f"Answering questions in batches of {batch_size}"):
+        batch = question_dataset[i:i+batch_size]
+        questions = batch['question']
+
+        contexts = retriever.retrieve_with_uid(questions)
         
-        # you need to also add a method for MC-answering with neg log likelihood
-        answer = generator.generate_answer(question,context)
+        answers = generator.generate_batch(questions, contexts)
         
         # this method for retrieving the answer needs to be generalized across datasets somehow
-        ref_idx = sample['correct_idx']
-        reference_answer = sample['options'][ref_idx]
+        ref_idxs = batch['correct_idx']
+        reference_answers = batch['options'][ref_idxs]
 
         result = {
-            "question"          :   question,
-            "context"           :   context, 
-            "generated_answer"  :   answer,
-            "reference_answer"  :   reference_answer
+            "question"          :   questions,
+            "context"           :   contexts, 
+            "generated_answer"  :   answers,
+            "reference_answer"  :   reference_answers
             } 
         results.append(result)
     
