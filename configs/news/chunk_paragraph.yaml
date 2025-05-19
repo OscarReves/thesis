@@ -1,4 +1,4 @@
-docs_path: /dtu/p1/oscrev/news/2025/articles.json
+documents_path: /dtu/p1/oscrev/news/2025/articles.json
 chunked_path: /dtu/p1/oscrev/news/2025/chunked_paragraph.jsonl
 splitter_name: paragraph
 
