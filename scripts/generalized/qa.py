@@ -22,6 +22,7 @@ def main(config_path):
     kb_type = config['kb_type']
     question_type = config['question_type']
     pipeline_name = config.get('pipeline', 'test_qa_with_retrieval_wiki')
+    silent = config.get('silent') # defaults to none 
 
     if kb_path:
         print("Loading knowledge base...")
@@ -58,7 +59,7 @@ def main(config_path):
         save_path = save_path,
         max_samples=max_samples,
         batch_size=batch_size,
-        silent=False)
+        silent=silent)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
