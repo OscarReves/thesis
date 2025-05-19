@@ -19,13 +19,12 @@ def test_qa_with_retrieval(question_dataset, retriever, generator, save_path, ba
         
         reference_answers = [batch['options'][i][j] for i,j in enumerate(batch['correct_idx'])]
 
-        result = {
-            "question"          :   questions,
-            "context"           :   contexts, 
-            "generated_answer"  :   answers,
-            "reference_answer"  :   reference_answers
-            } 
-        results.append(result)
+        results.extend([{
+            "question"         : q,
+            "context"          : c,
+            "generated_answer" : a,
+            "reference_answer" : ra
+        } for q, c, a, ra in zip(questions, contexts, answers, reference_answers)])
     
     save_to_json(results, save_path, result_type="answers with context")
 
