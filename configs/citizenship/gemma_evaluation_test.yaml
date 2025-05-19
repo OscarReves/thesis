@@ -5,14 +5,14 @@ kb_type: wiki
 index_path: /dtu/p1/oscrev/wiki/index/index_paragraph
 retriever_name: e5
 device: cuda
-save_path: results/citizenship/gemma_no_context
+save_path: results/citizenship/gemma_wiki_paragraph
 generator_name: gemma-9b
 n_questions:
 batch_size: 8
 pipeline: test_qa_citizenship
 
 # for evaluation 
-answers_path: results/citizenship/gemma_no_context
+answers_path: results/citizenship/gemma_wiki_paragraph
 evaluator_name: gemma-9b-binary
 evaluation_type: binary
-evaluation_path: results/citizenship/gemma_evaluation_test_no_context
+evaluation_path: results/citizenship/gemma_evaluation_test_wiki_paragraph
