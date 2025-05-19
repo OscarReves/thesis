@@ -27,9 +27,7 @@ def test_qa_with_retrieval(question_dataset, retriever, generator, save_path, ba
             } 
         results.append(result)
     
-    print(f"Saving {len(results)} results to {save_path}")
-    with open(save_path, 'w') as fp:
-        json.dump(results, fp, indent=2, ensure_ascii=False) 
+    save_to_json(results, save_path, result_type="answers with context")
 
 def test_qa_with_retrieval_wiki(question_dataset, retriever, generator, save_path, 
                                 batch_size=16, silent=True, max_samples=None):
