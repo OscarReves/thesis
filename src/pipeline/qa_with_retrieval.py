@@ -4,7 +4,7 @@ import time
 from src.utils import save_to_json
 
 def test_qa_with_retrieval(question_dataset, retriever, generator, save_path, batch_size = 16, max_samples=None, silent=True):
-    # still needs batching 
+    # qa pipeline meant for news questions 
     if max_samples:
         question_dataset=question_dataset.select(range(max_samples))
     results = []
@@ -17,9 +17,7 @@ def test_qa_with_retrieval(question_dataset, retriever, generator, save_path, ba
         
         answers = generator.generate_batch(questions, contexts)
         
-        # this method for retrieving the answer needs to be generalized across datasets somehow
-        ref_idxs = batch['correct_idx']
-        reference_answers = batch['options'][ref_idxs]
+        reference_answers = [batch['options'][i][j] for i,j in enumerate(batch['correct_idx'])]
 
         result = {
             "question"          :   questions,
