@@ -13,7 +13,7 @@ def test_qa_with_retrieval(question_dataset, retriever, generator, save_path, ba
         batch = question_dataset[i:i+batch_size]
         questions = batch['question']
 
-        contexts = retriever.retrieve_with_uid(questions)
+        contexts = retriever.retrieve(questions)
         
         answers = generator.generate_batch(questions, contexts)
         
