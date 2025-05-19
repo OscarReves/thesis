@@ -23,3 +23,5 @@ keys/
 production_env/
 notebooks/*
 
+# Files
+sync_results.sh
