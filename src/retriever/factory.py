@@ -1,8 +1,7 @@
-from .retrievers import GPT2Retriever, E5Retriever, BertTinyRetriever, DummyRetriever
+from .retrievers import E5Retriever, DummyRetriever
 
 RETRIEVER_REGISTRY = {
     "e5"    : E5Retriever,
-    "bert-tiny" : BertTinyRetriever,
     "dummy" : DummyRetriever
 }
 
