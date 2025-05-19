@@ -6,7 +6,7 @@ index_path: /dtu/p1/oscrev/news/2025/index_paragraph
 retriever_name: e5
 device: cuda
 save_path: results/news/qa_wiki_paragraph
-generator_name: gemma-9b-it
+generator_name: gemma-9b
 n_questions: 
 batch_size: 8
 pipeline: test_qa_with_retrieval
