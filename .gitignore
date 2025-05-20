@@ -21,7 +21,8 @@ models/*
 results_backup/
 keys/
 production_env/
-notebooks/*
+notebooks/
+
 
 # Files
 sync_results.sh
