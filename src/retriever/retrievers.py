@@ -202,7 +202,9 @@ class SparseBM25Retriever():
 
     def retrieve_with_uid(self, questions, top_k = 5):
         # this is bad form, but if it works it stays 
-        results = [self.search_sparse_bm25(question, top_k=top_k) for question in questions]
+        # results = [self.search_sparse_bm25(question, top_k=top_k) for question in questions]
+        results = self.search_batch(questions, top_k=top_k)
+        
         return results
 
     def preprocess(self, text):
@@ -261,6 +263,21 @@ class SparseBM25Retriever():
 
         top_indices = np.argsort(scores)[::-1][:top_k]
         return [self.contexts[i] for i in top_indices if scores[i] > 0]
+    
+    def search_batch(self, queries, top_k=5):
+        query_vecs = sp.vstack([
+            self.make_query_vector(self.preprocess(q)) for q in queries
+        ])
+        scores = query_vecs @ self.bm25_matrix.T  # shape: (num_queries, num_docs)
+        results = []
+
+        for row in scores:
+            row = row.toarray().ravel()
+            top_indices = np.argsort(row)[::-1][:top_k]
+            results.append([self.contexts[i] for i in top_indices if row[i] > 0])
+
+        return results
+
 
 
 class DummyRetriever():
