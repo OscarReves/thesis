@@ -180,7 +180,6 @@ class SparseBM25Retriever():
         print(f"Preprocessing {len(self.contexts)} chunks...")
         self.tokenized_contexts = [self.preprocess(doc) for doc in self.contexts]
 
-
         if os.path.exists(index_path):
             print(f"Loading bm25 index from {index_path}...")
             self.load()
@@ -189,8 +188,13 @@ class SparseBM25Retriever():
             self.bm25 = BM25Okapi(self.tokenized_contexts)
             self.save()
 
-        print("Building sparse matrix...")
-        self.bm25_matrix, self.vocab = self.bm25_to_sparse_matrix(self.bm25)
+        if os.path.exists(self.index_path + ".npz") and os.path.exists(self.index_path + ".vocab.pkl"):
+            print(f"Loading sparse matrix from {self.index_path}.npz...")
+            self.load_sparse_matrix()
+        else:
+            print("Building sparse matrix...")
+            self.bm25_matrix, self.vocab = self.bm25_to_sparse_matrix(self.bm25)
+            self.save_sparse_matrix()
 
 
     def retrieve(self, questions, top_k = 5):
@@ -277,6 +281,17 @@ class SparseBM25Retriever():
             results.append([self.contexts[i] for i in top_indices if row[i] > 0])
 
         return results
+
+    def save_sparse_matrix(self):
+        sp.save_npz(self.index_path + ".npz", self.bm25_matrix)
+        with open(self.index_path + ".vocab.pkl", "wb") as f:
+            pickle.dump(self.vocab, f)
+
+    def load_sparse_matrix(self):
+        self.bm25_matrix = sp.load_npz(self.index_path + ".npz")
+        with open(self.index_path + ".vocab.pkl", "rb") as f:
+            self.vocab = pickle.load(f)
+
 
 
 

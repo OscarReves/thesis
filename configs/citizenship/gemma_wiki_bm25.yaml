@@ -8,7 +8,7 @@ device: cuda
 save_path: results/citizenship/gemma_wiki_bm25_test
 generator_name: gemma-9b
 n_questions: 
-batch_size: 32
+batch_size: 64
 pipeline: test_qa_citizenship
 
 # for evaluation 
