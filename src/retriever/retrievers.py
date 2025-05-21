@@ -143,7 +143,7 @@ class BM25Retriever():
     def retrieve_with_uid(self, questions, top_k = 5):
         # this is bad form, but if it works it stays 
         results = [self.get_top_n(
-            self.preprocess(question), self.contexts, n=top_k
+            self.preprocess(question), n=top_k
             ) 
             for question in questions]
         return results
