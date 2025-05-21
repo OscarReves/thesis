@@ -122,7 +122,7 @@ class BM25Retriever():
 
     def retrieve(self, questions, top_k = 5):
         results = [self.bm25.get_top_n(
-            self.process_query(question), self.contexts, n=top_k
+            self.preprocess(question), self.contexts, n=top_k
             ) 
             for question in questions]
         return results
