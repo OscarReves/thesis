@@ -44,7 +44,6 @@ def main(config_path):
     else:
         retriever = None
 
-    print("Testing retrieval...")
     #print("Available functions in pipeline_module:", dir(pipeline_module))
     #print("Trying to access:", pipeline_name)
     pipeline_func = getattr(pipeline_module, pipeline_name)
