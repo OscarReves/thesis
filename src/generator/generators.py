@@ -223,10 +223,10 @@ class Gemma9bGenerator(BaseGenerator):
             model_name="google/gemma-2-9b-it",
             save_name="gemma-2-9b-it"
             )
-        self.eos_token = "</s>"
+        self.eos_token = self.tokenizer.eos_token
 
     # requires its own prompt formatting since the 'system' role is not supported in chat_template    
-    def generate_batch(self, questions, contexts, max_new_tokens=128):
+    def generate_batch(self, questions, contexts, max_new_tokens=32):
         system_prompt = (
             "You are a helpful assistant. You respond to questions in Danish. "
             "Respond briefly and accurately. Do not generate any extra questions or superfluous text. "
@@ -242,7 +242,7 @@ class Gemma9bGenerator(BaseGenerator):
 
         return self.generate_from_prompts(prompts=prompts)
 
-    def generate_batch_mc(self, questions, contexts, options, max_new_tokens=128):
+    def generate_batch_mc(self, questions, contexts, options, max_new_tokens=32):
         # Answer citizenship test multiple choice questions in batches
         system_prompt = (
             "You are a helpful assistant. You respond to questions in Danish. "
@@ -277,7 +277,7 @@ class Gemma9bGenerator(BaseGenerator):
 
         return self.generate_from_prompts(prompts=prompts)
 
-    def generate_batch_mc_no_context(self, questions, options, max_new_tokens=128):
+    def generate_batch_mc_no_context(self, questions, options, max_new_tokens=32):
             # Answer citizenship test multiple choice questions in batches
             system_prompt = (
                 "You are a helpful assistant. You respond to questions in Danish. "
@@ -310,7 +310,7 @@ class Gemma9bGenerator(BaseGenerator):
 
             return self.generate_from_prompts(prompts=prompts)
 
-    def generate_batch_no_context(self, questions, max_new_tokens=128):
+    def generate_batch_no_context(self, questions, max_new_tokens=32):
         system_prompt = (
             "You are a helpful assistant. You respond to questions in Danish. "
             "Respond briefly and accurately. Do not generate any extra questions or superfluous text. "
