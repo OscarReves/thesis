@@ -119,6 +119,7 @@ class BM25Retriever():
         self.dataset = documents  
         self.contexts = self.dataset[text_field]      
         self.titles = self.dataset['id']
+        self.index_path = index_path
 
         # process documents
         print(f"Preprocessing {len(self.contexts)} chunks...")
@@ -173,6 +174,7 @@ class SparseBM25Retriever():
         self.dataset = documents  
         self.contexts = self.dataset[text_field]      
         self.titles = self.dataset['id']
+        self.index_path = index_path
 
         # process documents
         print(f"Preprocessing {len(self.contexts)} chunks...")
