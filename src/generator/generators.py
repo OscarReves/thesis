@@ -10,6 +10,7 @@ class BaseGenerator:
     def __init__(self, model_name, save_name = None):
         base_path = "/dtu/p1/oscrev/models"
         model_path = os.path.join(base_path, save_name)
+        self.eos_token = "<|im_end|>"
 
         if not os.path.exists(model_path):
             print(f"Model not found locally. Downloading {model_name} from Hugging Face...")
@@ -183,7 +184,7 @@ class BaseGenerator:
                 use_cache=True,
                 #temperature=0.7,
                 #top_p=0.9,
-                eos_token_id=self.tokenizer.convert_tokens_to_ids("<|im_end|>"),
+                eos_token_id=self.tokenizer.convert_tokens_to_ids(self.eos_token),
                 pad_token_id=self.tokenizer.eos_token_id
             )
 
@@ -222,6 +223,7 @@ class Gemma9bGenerator(BaseGenerator):
             model_name="google/gemma-2-9b-it",
             save_name="gemma-2-9b-it"
             )
+        self.eos_token = "</s>"
 
     # requires its own prompt formatting since the 'system' role is not supported in chat_template    
     def generate_batch(self, questions, contexts, max_new_tokens=128):
