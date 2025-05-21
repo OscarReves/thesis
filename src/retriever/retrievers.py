@@ -117,9 +117,15 @@ class BM25Retriever():
         self.bm25 = BM25Okapi(documents)
 
     def retrieve(self, questions, top_k = 5):
-        results = [self.bm25.get_top_n(question, self.contexts, n=top_k) for question in questions]
+        results = [self.bm25.get_top_n(
+            self.process_query(question), self.contexts, n=top_k
+            ) 
+            for question in questions]
         return results
-        
+    
+    def process_query(self, query):
+        processed_query = query.split(" ")
+        return processed_query
 
 
 class DummyRetriever():
