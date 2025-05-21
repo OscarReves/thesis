@@ -231,12 +231,12 @@ class SparseBM25Retriever():
 
     def bm25_to_sparse_matrix(self,bm25):
         vocab = {term: i for i, term in enumerate(bm25.idf.keys())}
-        N = len(bm25.corpus)
+        N = len(self.tokenized_contexts)
         V = len(vocab)
 
         rows, cols, data = [], [], []
 
-        for doc_id, doc in enumerate(bm25.corpus):
+        for doc_id, doc in enumerate(self.tokenized_contexts):
             tf = bm25.doc_freqs[doc_id]
             doc_len = bm25.doc_len[doc_id]
 
