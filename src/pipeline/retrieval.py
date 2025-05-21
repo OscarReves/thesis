@@ -3,8 +3,11 @@ from tqdm import tqdm
 import os 
 from src.utils import save_as_json
 
-def test_retrieval(question_dataset, retriever, save_path, batch_size = 16):
+def test_retrieval(question_dataset, retriever, save_path, batch_size = 16, max_samples=None):
+    print(f"Testing retrieval...")
     results = []
+    if max_samples:
+        question_dataset = question_dataset.select(range(max_samples))
     for sample in question_dataset:
         question = sample['question']
         context = retriever.retrieve([question])[0]
