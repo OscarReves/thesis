@@ -1,7 +1,7 @@
 import json
 from tqdm import tqdm
 import os 
-from src.utils import save_as_json
+from src.utils import save_to_json
 
 def test_retrieval(question_dataset, retriever, save_path, batch_size = 16, max_samples=None):
     print(f"Testing retrieval...")
@@ -17,7 +17,7 @@ def test_retrieval(question_dataset, retriever, save_path, batch_size = 16, max_
             } 
         results.append(result)
     
-    save_as_json(results,save_path)
+    save_to_json(results,save_path)
 
 def test_retrieval_with_uid(question_dataset, retriever, save_path, max_samples=None, batch_size=16):
     print(f"Testing uid based retrieval...")
