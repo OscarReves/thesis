@@ -253,7 +253,7 @@ class SparseBM25Retriever():
 
     def search_sparse_bm25(self, query, top_k=5):
         query_tokens = self.preprocess(query)
-        qvec = self.make_query_vector(query_tokens, self.vocab)
+        qvec = self.make_query_vector(query_tokens)
 
         # Compute BM25 relevance scores: dot product with sparse matrix
         scores = qvec @ self.bm25_matrix.T  # shape: (1, num_docs)
