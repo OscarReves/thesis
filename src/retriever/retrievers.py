@@ -229,7 +229,7 @@ class SparseBM25Retriever():
             self.bm25 = pickle.load(f)
 
 
-    def bm25_to_sparse_matrix(bm25):
+    def bm25_to_sparse_matrix(self,bm25):
         vocab = {term: i for i, term in enumerate(bm25.idf.keys())}
         N = len(bm25.corpus)
         V = len(vocab)
