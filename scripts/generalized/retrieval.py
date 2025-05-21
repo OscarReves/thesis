@@ -20,7 +20,7 @@ def main(config_path):
     batch_size = config['batch_size']
     kb_type = config['kb_type']
     question_type = config['question_type']
-    pipeline_name = config.get('pipeline', 'test_retrieval')
+    pipeline_name = 'test_retrieval'
 
 
     if kb_path:
