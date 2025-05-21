@@ -9,7 +9,7 @@ save_path: results/news/retrieval_test_bm25
 # generator_name: gemma-9b
 n_questions:
 batch_size: 16
-pipeline: test_qa_with_retrieval
+pipeline: test_retrieval
 
 # for evaluation 
 # answers_path: results/news/qa_wiki_paragraph
