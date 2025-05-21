@@ -126,7 +126,16 @@ class BM25Retriever():
             ) 
             for question in questions]
         return results
-    
+
+    def retrieve_with_uid(self, questions, top_k = 5):
+        # this is bad form, but if it works it stays 
+        results = [self.bm25.get_top_n(
+            self.preprocess(question), self.contexts, n=top_k
+            ) 
+            for question in questions]
+        return results
+
+
     def preprocess(self, text):
         text = text.lower()
         text = re.sub(r"[^\w\s]", "", text)  # Remove punctuation
