@@ -200,18 +200,9 @@ class SparseBM25Retriever():
             for question in questions]
         return results
 
-    def get_top_n(self, query, n = 5):
-        # uses SciPy and sparse matrices 
-        query_vector = self.make_query_vector(query) # convert query to sparse format
-        contexts = self.search_sparse_bm25(query_vector) # search the sparse matrix
-        return contexts
-
     def retrieve_with_uid(self, questions, top_k = 5):
         # this is bad form, but if it works it stays 
-        results = [self.get_top_n(
-            self.preprocess(question), n=top_k
-            ) 
-            for question in questions]
+        results = [self.search_sparse_bm25(question, top_k=top_k) for question in questions]
         return results
 
     def preprocess(self, text):
@@ -261,7 +252,7 @@ class SparseBM25Retriever():
         return query_vec
 
     def search_sparse_bm25(self, query, top_k=5):
-        query_tokens = query.lower().split()
+        query_tokens = self.preprocess(query)
         qvec = self.make_query_vector(query_tokens, self.vocab)
 
         # Compute BM25 relevance scores: dot product with sparse matrix
