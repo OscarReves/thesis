@@ -115,9 +115,11 @@ class BM25Retriever():
         self.titles = self.dataset['id']
 
         # process documents
+        print(f"Preprocessing {len(self.contexts)} chunks...")
         self.tokenized_contexts = [self.preprocess(doc) for doc in self.contexts]
 
         # build bm25 index spontaneously?
+        print(f"Building bm25 index...")
         self.bm25 = BM25Okapi(self.tokenized_contexts)
 
     def retrieve(self, questions, top_k = 5):
