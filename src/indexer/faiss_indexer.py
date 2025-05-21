@@ -35,101 +35,6 @@ class FaissIndexer:
 
         faiss.write_index(index, self.index_path)
 
-
-    # def index_directory(self, document_paths, batch_size):
-    #     # faiss indexes all files in document_paths
-    #     paths = [str(p) for p in document_paths]
-    #     dataset = load_documents(paths)  # Should return a Dataset with 'uid' column
-    #     embeddings = self.embedder.encode(dataset,batch_size)
-    #     faiss.normalize_L2(embeddings)
-
-    #     dim = self.embedder.model.config.hidden_size
-    #     base_index = faiss.IndexFlatL2(dim)
-    #     index = faiss.IndexIDMap(base_index)
-
-    #     uids = np.array(dataset["uid"], dtype=np.int64)
-    #     index.add_with_ids(embeddings, uids)
-
-    #     faiss.write_index(index, self.index_path)
-
-
-    # def index_directory(self, document_paths, batch_size):
-    #     # Load document paths
-    #     paths = [str(p) for p in document_paths]
-    #     dataset = load_documents(paths)  # Should return a Dataset with 'uid' column
-
-    #     # Encode all documents
-    #     embeddings = self.embedder.encode(dataset, batch_size)
-    #     faiss.normalize_L2(embeddings)
-
-    #     # Prepare index
-    #     dim = self.embedder.model.config.hidden_size
-    #     base_index = faiss.IndexFlatL2(dim)
-    #     index = faiss.IndexIDMap(base_index)
-
-    #     # Prepare UIDs
-    #     uids = np.array(dataset["uid"], dtype=np.int64)
-
-    #     # Save embeddings in case of crash 
-    #     data_save_path = 'data/wiki/embeddings_backup'
-    #     np.savez(data_save_path, embeddings=embeddings, uids=uids)
-
-    #     # Free unused objects to save RAM
-    #     del dataset
-    #     gc.collect()
-
-    #     # Incrementally add in batches
-    #     add_batch_size = 100000  # Tune this as needed
-    #     for start in range(0, len(embeddings), add_batch_size):
-    #         end = start + add_batch_size
-    #         index.add_with_ids(embeddings[start:end], uids[start:end])
-    #         print(f"Added batch {start} to {end}")
-
-    #     # Optionally save the index
-    #     faiss.write_index(index, self.index_path)
-    
-    # def index_directory(self, document_paths, batch_size):
-    #     # indexes every document in document_paths
-    #     # to avoid OOM issues, partial indexes are saved then merged
-    #     index_paths = []
-
-    #     # Load the dataset (assumes memory-mapped HF Dataset)
-    #     paths = [str(p) for p in document_paths]
-    #     dataset = load_documents(paths)  # should return a Dataset with 'uid'
-    #     dim = self.embedder.model.config.hidden_size
-
-    #     outer_batch_size = batch_size * 100 # controls how much to hold in memory at once 
-
-    #     for i, start in enumerate(tqdm(range(0, len(dataset), outer_batch_size))): 
-    #         end = start + outer_batch_size
-    #         batch = dataset[start:end]
-
-    #         # Encode and normalize
-    #         embeddings = self.embedder.encode(batch, batch_size=batch_size)  # inner model batch size
-    #         faiss.normalize_L2(embeddings)
-
-    #         # Get UIDs
-    #         uids = np.array(batch["uid"], dtype=np.int64)
-
-    #         # Add to FAISS
-    #         base_index = faiss.IndexFlatL2(dim)
-    #         index = faiss.IndexIDMap(base_index)
-    #         index.add_with_ids(embeddings, uids)
-    #         partial_index_path = f"{self.index_path}_part_{i}.index"
-    #         faiss.write_index(index, partial_index_path)
-    #         index_paths.append(partial_index_path)
-    #         print(f"Added docs {start} to {end}")
-
-    #         del index
-    #         gc.collect()
-
-    #     # Save index
-    #     base_index = faiss.IndexFlatL2(dim)
-    #     index = faiss.IndexIDMap(base_index)
-    #     faiss.merge_into(index, [faiss.read_index(path) for path in index_paths])
-    #     faiss.write_index(index, self.index_path,  shift_ids=False) # this will likely cause OOM errors
-    #                                             # options are to use sharding or a different index type
-
     def index_directory(self, document_paths, batch_size):
         # Load the dataset (assumes memory-mapped HF Dataset)
         paths = [str(p) for p in document_paths]
@@ -165,7 +70,7 @@ class FaissIndexer:
 
         # Save the full index
         faiss.write_index(index, self.index_path)
-        print(f"✅ Index saved to {self.index_path}")
+        print(f"Index saved to {self.index_path}")
 
 
     def build_index_from_backup_embeddings(

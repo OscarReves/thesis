@@ -1,8 +1,9 @@
-from .retrievers import E5Retriever, DummyRetriever
+from .retrievers import E5Retriever, DummyRetriever, BM25Retriever
 
 RETRIEVER_REGISTRY = {
     "e5"    : E5Retriever,
-    "dummy" : DummyRetriever
+    "dummy" : DummyRetriever,
+    "bm25"  : BM25Retriever
 }
 
 def get_retriever(name, **kwargs):

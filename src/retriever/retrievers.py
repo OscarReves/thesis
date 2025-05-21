@@ -5,6 +5,7 @@ from datasets import load_from_disk, Dataset
 import os
 import torch.nn.functional as F
 from datasets.utils.logging import disable_progress_bar
+from rank_bm25 import BM25Okapi
 
 class E5Retriever:
     def __init__(self, index_path, documents, device=None, text_field='text'):
@@ -104,7 +105,22 @@ class E5Retriever:
     def select_by_uids(self, uids):
         rows = [self.uid_map[int(uid)] for uid in uids if int(uid) in self.uid_map]
         return Dataset.from_list(rows)
+
+
+class BM25Retriever():
+    def __init__(self, index_path, documents, device=None, text_field='text'):
+        self.dataset = documents  
+        self.contexts = self.dataset[text_field]      
+        self.titles = self.dataset['id']
+
+        # build bm25 index spontaneously?
+        self.bm25 = BM25Okapi(documents)
+
+    def retrieve(self, questions, top_k = 5):
+        results = [self.bm25.get_top_n(question, self.contexts, n=top_k) for question in questions]
+        return results
         
+
 
 class DummyRetriever():
     def __init__(self, index_path, documents, device=None, text_field='text'):
