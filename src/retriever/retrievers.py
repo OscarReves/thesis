@@ -11,6 +11,8 @@ import re
 # from gensim.corpora import Dictionary
 # from gensim.similarities import SparseMatrixSimilarity
 import numpy as np
+import pickle
+import scipy.sparse as sp
 
 class E5Retriever:
     def __init__(self, index_path, documents, device=None, text_field='text'):
@@ -122,10 +124,14 @@ class BM25Retriever():
         print(f"Preprocessing {len(self.contexts)} chunks...")
         self.tokenized_contexts = [self.preprocess(doc) for doc in self.contexts]
 
-        # build bm25 index spontaneously?
-        print(f"Building bm25 index...")
-        self.bm25 = BM25Okapi(self.tokenized_contexts)
 
+        if os.path.exists(index_path):
+            self.load()
+        else:
+            print(f"Building bm25 index...")
+            self.bm25 = BM25Okapi(self.tokenized_contexts)
+            self.save()
+    
     def retrieve(self, questions, top_k = 5):
         results = [self.bm25.get_top_n(
             self.preprocess(question), self.contexts, n=top_k
@@ -148,6 +154,63 @@ class BM25Retriever():
             for question in questions]
         return results
 
+    def preprocess(self, text):
+        text = text.lower()
+        text = re.sub(r"[^\w\s]", "", text)  # Remove punctuation
+        tokens = text.split()
+        return tokens
+
+    def save(self):
+        with open(self.index_path, "wb") as f:
+            pickle.dump(self.bm25, f)
+
+    def load(self):
+        with open(self.index_path, "rb") as f:
+            self.bm25 = pickle.load(f)
+
+class SparseBM25Retriever():
+    def __init__(self, index_path, documents, device=None, text_field='text'):
+        self.dataset = documents  
+        self.contexts = self.dataset[text_field]      
+        self.titles = self.dataset['id']
+
+        # process documents
+        print(f"Preprocessing {len(self.contexts)} chunks...")
+        self.tokenized_contexts = [self.preprocess(doc) for doc in self.contexts]
+
+
+        if os.path.exists(index_path):
+            print(f"Loading bm25 index from {index_path}...")
+            self.load()
+        else:
+            print(f"Building bm25 index...")
+            self.bm25 = BM25Okapi(self.tokenized_contexts)
+            self.save()
+
+        print("Building sparse matrix...")
+        self.sparse_matrix, self.vocab = self.bm25_to_sparse_matrix(self.bm25)
+
+
+    def retrieve(self, questions, top_k = 5):
+        results = [self.bm25.get_top_n(
+            self.preprocess(question), self.contexts, n=top_k
+            ) 
+            for question in questions]
+        return results
+
+    def get_top_n(self, query, n = 5):
+        # uses SciPy and sparse matrices 
+        query_vector = self.make_query_vector(query) # convert query to sparse format
+        contexts = self.search_sparse_bm25(query_vector) # search the sparse matrix
+        return contexts
+
+    def retrieve_with_uid(self, questions, top_k = 5):
+        # this is bad form, but if it works it stays 
+        results = [self.get_top_n(
+            self.preprocess(question), n=top_k
+            ) 
+            for question in questions]
+        return results
 
     def preprocess(self, text):
         text = text.lower()
@@ -155,55 +218,57 @@ class BM25Retriever():
         tokens = text.split()
         return tokens
 
-# class GensimBM25Retriever():
-#     def __init__(self, index_path, documents, device=None, text_field='text'):
-#         self.dataset = documents  
-#         self.contexts = self.dataset[text_field]      
-#         self.titles = self.dataset['id']
+    def save(self):
+        with open(self.index_path, "wb") as f:
+            pickle.dump(self.bm25, f)
 
-#         # process documents (lowercase and remove punctuation)
-#         print(f"Preprocessing {len(self.contexts)} chunks...")
-#         self.processed_contexts = [self.preprocess(doc) for doc in self.contexts]
+    def load(self):
+        with open(self.index_path, "rb") as f:
+            self.bm25 = pickle.load(f)
 
-#         # Build the bm25 index
-#         print(f"Building bm25 index with sparse matrices...")
-#         self.bm25 = BM25(self.processed_contexts) # bm25 model
-#         self.dictionary = Dictionary(self.processed_contexts) # define dictionary for bag-of-words conversion
-#         self.corpus = [self.dictionary.doc2bow(doc) for doc in self.processed_contexts] # convert corpus to bow
 
-#         # build index
-#         self.index = SparseMatrixSimilarity(self.corpus, num_features=len(self.dictionary))
+    def bm25_to_sparse_matrix(bm25):
+        vocab = {term: i for i, term in enumerate(bm25.idf.keys())}
+        N = len(bm25.corpus)
+        V = len(vocab)
 
-#     def get_top_n(self, query_bow, n = 5):
-#         scores = self.index[query_bow]
-#         top_n = sorted(enumerate(scores), key=lambda x: x[1], reverse=True)[:n]
-#         return top_n 
+        rows, cols, data = [], [], []
 
-#     def retrieve(self, questions, top_k = 5):
-#         results = [self.get_top_n(
-#             self.preprocess(question), self.contexts, n=top_k
-#             ) 
-#             for question in questions]
-#         return results
+        for doc_id, doc in enumerate(bm25.corpus):
+            tf = bm25.doc_freqs[doc_id]
+            doc_len = bm25.doc_len[doc_id]
 
-#     def retrieve_with_uid(self, questions, top_k = 5):
-#         # this is bad form, but if it works it stays 
-#         results = [self.get_top_n(
-#             self.preprocess(question), self.contexts, n=top_k
-#             ) 
-#             for question in questions]
-#         return results
+            for term, freq in tf.items():
+                if term not in vocab:
+                    continue
 
-#     def process_query(self, query):
-#         lowercased = self.preprocessed(query)
-#         bow = self.dictionary.doc2bow(lowercased)
-#         return bow
+                idf = bm25.idf[term]
+                score = idf * ((freq * (bm25.k1 + 1)) /
+                            (freq + bm25.k1 * (1 - bm25.b + bm25.b * doc_len / bm25.avgdl)))
+                rows.append(doc_id)
+                cols.append(vocab[term])
+                data.append(score)
 
-#     def preprocess(self, text):
-#         text = text.lower()
-#         text = re.sub(r"[^\w\s]", "", text)  # Remove punctuation
-#         tokens = text.split()
-#         return tokens
+        bm25_matrix = sp.csr_matrix((data, (rows, cols)), shape=(N, V))
+        return bm25_matrix, vocab
+        
+    def make_query_vector(self, query_tokens):
+        indices = [self.vocab[t] for t in query_tokens if t in self.vocab]
+        data = [1.0] * len(indices)  # Query as simple 1-hot vector
+        query_vec = sp.csr_matrix((data, ([0]*len(indices), indices)), shape=(1, len(self.vocab)))
+        return query_vec
+
+    def search_sparse_bm25(self, query, top_k=5):
+        query_tokens = query.lower().split()
+        qvec = self.make_query_vector(query_tokens, self.vocab)
+
+        # Compute BM25 relevance scores: dot product with sparse matrix
+        scores = qvec @ self.bm25_matrix.T  # shape: (1, num_docs)
+        scores = scores.toarray().ravel()
+
+        top_indices = np.argsort(scores)[::-1][:top_k]
+        return [self.contexts[i] for i in top_indices if scores[i] > 0]
+
 
 class DummyRetriever():
     def __init__(self, index_path, documents, device=None, text_field='text'):
