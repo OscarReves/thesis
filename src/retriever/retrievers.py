@@ -190,7 +190,7 @@ class SparseBM25Retriever():
             self.save()
 
         print("Building sparse matrix...")
-        self.sparse_matrix, self.vocab = self.bm25_to_sparse_matrix(self.bm25)
+        self.bm25_matrix, self.vocab = self.bm25_to_sparse_matrix(self.bm25)
 
 
     def retrieve(self, questions, top_k = 5):
