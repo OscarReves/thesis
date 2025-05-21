@@ -7,10 +7,10 @@ import torch.nn.functional as F
 from datasets.utils.logging import disable_progress_bar
 from rank_bm25 import BM25Okapi
 import re
-from gensim.summarization.bm25 import BM25
-from gensim.corpora import Dictionary
-from gensim.similarities import SparseMatrixSimilarity
-
+# from gensim.summarization.bm25 import BM25
+# from gensim.corpora import Dictionary
+# from gensim.similarities import SparseMatrixSimilarity
+import numpy as np
 
 class E5Retriever:
     def __init__(self, index_path, documents, device=None, text_field='text'):
@@ -133,9 +133,16 @@ class BM25Retriever():
             for question in questions]
         return results
 
+    def get_top_n(self, query, n = 5):
+        # use numpy instead of built-in top_n method 
+        scores = self.bm25.get_scores(query)
+        top_indices = np.argsort(scores)[::-1][:n]
+        top_docs = [self.contexts[i] for i in top_indices]
+        return top_docs
+
     def retrieve_with_uid(self, questions, top_k = 5):
         # this is bad form, but if it works it stays 
-        results = [self.bm25.get_top_n(
+        results = [self.get_top_n(
             self.preprocess(question), self.contexts, n=top_k
             ) 
             for question in questions]
@@ -148,55 +155,55 @@ class BM25Retriever():
         tokens = text.split()
         return tokens
 
-class GensimBM25Retriever():
-    def __init__(self, index_path, documents, device=None, text_field='text'):
-        self.dataset = documents  
-        self.contexts = self.dataset[text_field]      
-        self.titles = self.dataset['id']
+# class GensimBM25Retriever():
+#     def __init__(self, index_path, documents, device=None, text_field='text'):
+#         self.dataset = documents  
+#         self.contexts = self.dataset[text_field]      
+#         self.titles = self.dataset['id']
 
-        # process documents (lowercase and remove punctuation)
-        print(f"Preprocessing {len(self.contexts)} chunks...")
-        self.processed_contexts = [self.preprocess(doc) for doc in self.contexts]
+#         # process documents (lowercase and remove punctuation)
+#         print(f"Preprocessing {len(self.contexts)} chunks...")
+#         self.processed_contexts = [self.preprocess(doc) for doc in self.contexts]
 
-        # Build the bm25 index
-        print(f"Building bm25 index with sparse matrices...")
-        self.bm25 = BM25(self.processed_contexts) # bm25 model
-        self.dictionary = Dictionary(self.processed_contexts) # define dictionary for bag-of-words conversion
-        self.corpus = [self.dictionary.doc2bow(doc) for doc in self.processed_contexts] # convert corpus to bow
+#         # Build the bm25 index
+#         print(f"Building bm25 index with sparse matrices...")
+#         self.bm25 = BM25(self.processed_contexts) # bm25 model
+#         self.dictionary = Dictionary(self.processed_contexts) # define dictionary for bag-of-words conversion
+#         self.corpus = [self.dictionary.doc2bow(doc) for doc in self.processed_contexts] # convert corpus to bow
 
-        # build index
-        self.index = SparseMatrixSimilarity(self.corpus, num_features=len(self.dictionary))
+#         # build index
+#         self.index = SparseMatrixSimilarity(self.corpus, num_features=len(self.dictionary))
 
-    def get_top_n(self, query_bow, n = 5):
-        scores = self.index[query_bow]
-        top_n = sorted(enumerate(scores), key=lambda x: x[1], reverse=True)[:n]
-        return top_n 
+#     def get_top_n(self, query_bow, n = 5):
+#         scores = self.index[query_bow]
+#         top_n = sorted(enumerate(scores), key=lambda x: x[1], reverse=True)[:n]
+#         return top_n 
 
-    def retrieve(self, questions, top_k = 5):
-        results = [self.get_top_n(
-            self.preprocess(question), self.contexts, n=top_k
-            ) 
-            for question in questions]
-        return results
+#     def retrieve(self, questions, top_k = 5):
+#         results = [self.get_top_n(
+#             self.preprocess(question), self.contexts, n=top_k
+#             ) 
+#             for question in questions]
+#         return results
 
-    def retrieve_with_uid(self, questions, top_k = 5):
-        # this is bad form, but if it works it stays 
-        results = [self.get_top_n(
-            self.preprocess(question), self.contexts, n=top_k
-            ) 
-            for question in questions]
-        return results
+#     def retrieve_with_uid(self, questions, top_k = 5):
+#         # this is bad form, but if it works it stays 
+#         results = [self.get_top_n(
+#             self.preprocess(question), self.contexts, n=top_k
+#             ) 
+#             for question in questions]
+#         return results
 
-    def process_query(self, query):
-        lowercased = self.preprocessed(query)
-        bow = self.dictionary.doc2bow(lowercased)
-        return bow
+#     def process_query(self, query):
+#         lowercased = self.preprocessed(query)
+#         bow = self.dictionary.doc2bow(lowercased)
+#         return bow
 
-    def preprocess(self, text):
-        text = text.lower()
-        text = re.sub(r"[^\w\s]", "", text)  # Remove punctuation
-        tokens = text.split()
-        return tokens
+#     def preprocess(self, text):
+#         text = text.lower()
+#         text = re.sub(r"[^\w\s]", "", text)  # Remove punctuation
+#         tokens = text.split()
+#         return tokens
 
 class DummyRetriever():
     def __init__(self, index_path, documents, device=None, text_field='text'):
