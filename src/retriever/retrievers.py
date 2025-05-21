@@ -6,6 +6,7 @@ import os
 import torch.nn.functional as F
 from datasets.utils.logging import disable_progress_bar
 from rank_bm25 import BM25Okapi
+import re
 
 class E5Retriever:
     def __init__(self, index_path, documents, device=None, text_field='text'):
@@ -113,8 +114,11 @@ class BM25Retriever():
         self.contexts = self.dataset[text_field]      
         self.titles = self.dataset['id']
 
+        # process documents
+        self.tokenized_contexts = [self.preprocess(doc) for doc in self.contexts]
+
         # build bm25 index spontaneously?
-        self.bm25 = BM25Okapi(documents)
+        self.bm25 = BM25Okapi(self.tokenized_contexts)
 
     def retrieve(self, questions, top_k = 5):
         results = [self.bm25.get_top_n(
@@ -123,9 +127,11 @@ class BM25Retriever():
             for question in questions]
         return results
     
-    def process_query(self, query):
-        processed_query = query.split(" ")
-        return processed_query
+    def preprocess(self, text):
+        text = text.lower()
+        text = re.sub(r"[^\w\s]", "", text)  # Remove punctuation
+        tokens = text.split()
+        return tokens
 
 
 class DummyRetriever():
