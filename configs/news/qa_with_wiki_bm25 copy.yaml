@@ -5,14 +5,14 @@ kb_type: news
 index_path: 
 retriever_name: bm25
 device: cuda
-save_path: results/news/qa_wiki_paragraph
+save_path: results/news/qa_wiki_bm25
 generator_name: gemma-9b
 n_questions:
 batch_size: 16
 pipeline: test_qa_with_retrieval
 
 # for evaluation 
-answers_path: results/news/qa_wiki_paragraph
+answers_path: results/news/qa_wiki_bm25
 evaluator_name: gemma-9b-binary
-evaluation_path: results/news/evaluation_wiki_paragraph
+evaluation_path: results/news/evaluation_wiki_bm25
 evaluation_type: binary
