@@ -59,23 +59,24 @@ def main(config_path):
     # Loop through each pipeline function, dynamically building the save-paths 
     # retriever needs to have top_k dynamically adjusted 
 
-    for suffix, pipeline in pipelines.items():
-        # dynamically create the save path eg gemma_no_context
-        file_name = generator_name + suffix
-        folder = Path(save_dir)
-        save_path = folder / file_name
+    for suffix, pipeline_name in pipelines.items():
+        # Create file name like "gemma_no_context"
+        file_name = generator_name + "_" + suffix
+        save_path = Path(save_dir) / file_name
 
-        pipeline_name = pipeline[suffix]
-
+        # Get pipeline function
         pipeline_func = getattr(pipeline_module, pipeline_name)
+
+        # Run pipeline
         pipeline_func(
-            question_dataset = question_dataset, 
-            retriever = retriever, 
-            generator = generator,
-            save_path = save_path,
+            question_dataset=question_dataset,
+            retriever=retriever,
+            generator=generator,
+            save_path=save_path,
             max_samples=max_samples,
             batch_size=batch_size,
-            silent=silent)
+            silent=silent
+        )
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
