@@ -3,7 +3,7 @@
 ### -- specify queue -- 
 #BSUB -q p1
 ### -- set the job Name -- 
-#BSUB -J Test_Run
+#BSUB -J test_retrieval_news
 ### -- ask for number of cores (default: 1) -- 
 #BSUB -n 1
 ### -- specify that the cores must be on the same host -- 
