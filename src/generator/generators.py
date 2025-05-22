@@ -10,7 +10,13 @@ class BaseGenerator:
     def __init__(self, model_name, save_name = None):
         base_path = "/dtu/p1/oscrev/models"
         model_path = os.path.join(base_path, save_name)
+        
         self.eos_token = "<|im_end|>"
+        self.system_prompt = (
+            "You are a helpful assistant. You respond to questions in Danish. "
+            "Respond briefly and accurately. Do not generate any extra questions or superfluous text. "
+            "Be as concise as possible."
+        )
 
         if not os.path.exists(model_path):
             print(f"Model not found locally. Downloading {model_name} from Hugging Face...")
@@ -42,15 +48,15 @@ class BaseGenerator:
         return self.generate_batch([question],[context], max_new_tokens=max_new_tokens)
     
     def generate_batch(self, questions, contexts, max_new_tokens=128):
-        system_prompt = (
-            "You are a helpful assistant. You respond to questions in Danish. "
-            "Respond briefly and accurately. Do not generate any extra questions or superfluous text. "
-            "Be as concise as possible."
-        )
+        # system_prompt = (
+        #     "You are a helpful assistant. You respond to questions in Danish. "
+        #     "Respond briefly and accurately. Do not generate any extra questions or superfluous text. "
+        #     "Be as concise as possible."
+        # )
 
         prompts = [
             self.tokenizer.apply_chat_template([
-                {"role": "system", "content": system_prompt},
+                {"role": "system", "content": self.system_prompt},
                 {"role": "user", "content": f"Besvar følgende spørgsmål ud fra kontekst:\nKontekst: {c}\nSpørgsmål: {q}"}
             ], tokenize=False, add_generation_prompt=True)
             for q, c in zip(questions, contexts)
@@ -216,6 +222,16 @@ class Yi34BGenerator(BaseGenerator):
             model_name="01-ai/Yi-34B-Chat",
             save_name="yi-34b"
             )
+        
+class SnakModel(BaseGenerator):
+    def __init__(self):
+        super().__init__(
+            model_name="NLPnorth/snakmodel-7b-instruct",
+            save_name="snakmodel"
+            )
+        self.eos_token = self.tokenizer.eos_token
+        self.system_prompt = "Du er Snakmodel, skabt af IT-Universitetet i København. Du er en hjælpsom assistent."
+
 
 class Gemma9bGenerator(BaseGenerator):
     def __init__(self):
