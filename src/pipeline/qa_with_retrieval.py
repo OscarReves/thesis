@@ -103,7 +103,7 @@ def test_qa_no_context(question_dataset, retriever, generator, save_path,
     save_to_json(results, save_path, result_type="answers")
 
 def test_qa_citizenship(question_dataset, retriever, generator, save_path, 
-                                batch_size=16, silent=False, max_samples=None):
+                                batch_size=16, silent=True, max_samples=None):
     if max_samples:
         question_dataset = question_dataset.select(range(max_samples))
     results = []

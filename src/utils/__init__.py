@@ -3,4 +3,4 @@ from .preprocessing import chunk_dataset, save_squad_contexts
 from .batch_iterator import batch_iterator
 from .scoring import get_accuracy, get_retrieval_accuracy
 from .loaders import load_knowledge_base, load_questions_by_type, save_to_json
-from .postprocessing import get_incorrect
+from .postprocessing import get_incorrect, get_correct

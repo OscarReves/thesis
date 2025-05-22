@@ -15,11 +15,11 @@ import pickle
 import scipy.sparse as sp
 
 class E5Retriever:
-    def __init__(self, index_path, documents, device=None, text_field='text'):
+    def __init__(self, index_path, documents, device=None, text_field='text', top_k = 5):
         model_name = 'intfloat/multilingual-e5-large-instruct'
         self.device = torch.device(device)
 
-        print(f"Loaded model {model_name} on device {self.device}")
+        print(f"Loaded model {model_name} for top-{top_k} on device {self.device}")
 
         # Load model
         self.tokenizer = AutoTokenizer.from_pretrained(model_name)
@@ -48,11 +48,11 @@ class E5Retriever:
             pooled = (output.last_hidden_state * mask).sum(1) / mask.sum(1)
             return F.normalize(pooled, p=2, dim=1).cpu().numpy()
     
-    def retrieve(self, questions, top_k=5):
+    def retrieve(self, questions):
         queries = [f"query: {q}" for q in questions]
         q_embs = self.embed(queries)
         faiss.normalize_L2(q_embs)
-        D, I = self.index.search(q_embs, top_k)
+        D, I = self.index.search(q_embs, self.top_k)
         results = []
         for idxs in I:
             subset = self.dataset.select(idxs)
@@ -61,11 +61,11 @@ class E5Retriever:
         
         return results
     
-    def retrieve_with_uid(self, questions, top_k=5):
+    def retrieve_with_uid(self, questions):
         queries = [f"query: {q}" for q in questions]
         q_embs = self.embed(queries)
         faiss.normalize_L2(q_embs)
-        D, I = self.index.search(q_embs, top_k)
+        D, I = self.index.search(q_embs, self.top_k)
         
         results = []
         for uids in I:
@@ -75,11 +75,11 @@ class E5Retriever:
         
         return results
     
-    def retrieve_titles(self, questions, top_k=5):
+    def retrieve_titles(self, questions):
         queries = [f"query: {q}" for q in questions]
         q_embs = self.embed(queries)
         faiss.normalize_L2(q_embs)
-        D, I = self.index.search(q_embs, top_k)
+        D, I = self.index.search(q_embs, self.top_k)
         return [
             # consider returning a list instead and joining somewhere else
             # likewise, consider mapping the index to documents with an ID
@@ -87,11 +87,11 @@ class E5Retriever:
             for indices in I
         ]
 
-    def retrieve_titles_with_uid(self, questions, top_k=5):
+    def retrieve_titles_with_uid(self, questions):
         queries = [f"query: {q}" for q in questions]
         q_embs = self.embed(queries)
         faiss.normalize_L2(q_embs)
-        D, I = self.index.search(q_embs, top_k)
+        D, I = self.index.search(q_embs, self.top_k)
         
         results = []
         for uids in I:
@@ -101,11 +101,11 @@ class E5Retriever:
         
         return results
 
-    def retrieve_uids(self, questions, top_k=5):
+    def retrieve_uids(self, questions):
         queries = [f"query: {q}" for q in questions]
         q_embs = self.embed(queries)
         faiss.normalize_L2(q_embs)
-        D, I = self.index.search(q_embs, top_k)
+        D, I = self.index.search(q_embs, self.top_k)
         
         return I.tolist()
 
@@ -115,11 +115,12 @@ class E5Retriever:
 
 
 class BM25Retriever():
-    def __init__(self, index_path, documents, device=None, text_field='text'):
+    def __init__(self, index_path, documents, device=None, text_field='text', top_k = 5):
         self.dataset = documents  
         self.contexts = self.dataset[text_field]      
         self.titles = self.dataset['id']
         self.index_path = index_path
+        self.top_k = top_k
 
         # process documents
         print(f"Preprocessing {len(self.contexts)} chunks...")
@@ -133,7 +134,8 @@ class BM25Retriever():
             self.bm25 = BM25Okapi(self.tokenized_contexts)
             self.save()
     
-    def retrieve(self, questions, top_k = 5):
+    def retrieve(self, questions):
+        top_k = self.top_k
         results = [self.bm25.get_top_n(
             self.preprocess(question), self.contexts, n=top_k
             ) 
@@ -147,10 +149,10 @@ class BM25Retriever():
         top_docs = [self.contexts[i] for i in top_indices]
         return top_docs
 
-    def retrieve_with_uid(self, questions, top_k = 5):
+    def retrieve_with_uid(self, questions):
         # this is bad form, but if it works it stays 
         results = [self.get_top_n(
-            self.preprocess(question), n=top_k
+            self.preprocess(question), n=self.top_k
             ) 
             for question in questions]
         return results
@@ -170,11 +172,12 @@ class BM25Retriever():
             self.bm25 = pickle.load(f)
 
 class SparseBM25Retriever():
-    def __init__(self, index_path, documents, device=None, text_field='text'):
+    def __init__(self, index_path, documents, device=None, text_field='text', top_k = 5):
         self.dataset = documents  
         self.contexts = self.dataset[text_field]      
         self.titles = self.dataset['id']
         self.index_path = index_path
+        self.top_k = top_k
 
         # process documents
         print(f"Preprocessing {len(self.contexts)} chunks...")
@@ -197,17 +200,17 @@ class SparseBM25Retriever():
             self.save_sparse_matrix()
 
 
-    def retrieve(self, questions, top_k = 5):
+    def retrieve(self, questions):
         results = [self.bm25.get_top_n(
-            self.preprocess(question), self.contexts, n=top_k
+            self.preprocess(question), self.contexts, n=self.top_k
             ) 
             for question in questions]
         return results
 
-    def retrieve_with_uid(self, questions, top_k = 5):
+    def retrieve_with_uid(self, questions):
         # this is bad form, but if it works it stays 
         # results = [self.search_sparse_bm25(question, top_k=top_k) for question in questions]
-        results = self.search_batch(questions, top_k=top_k)
+        results = self.search_batch(questions, top_k=self.top_k)
         
         return results
 
@@ -257,7 +260,7 @@ class SparseBM25Retriever():
         query_vec = sp.csr_matrix((data, ([0]*len(indices), indices)), shape=(1, len(self.vocab)))
         return query_vec
 
-    def search_sparse_bm25(self, query, top_k=5):
+    def search_sparse_bm25(self, query):
         query_tokens = self.preprocess(query)
         qvec = self.make_query_vector(query_tokens)
 
@@ -265,10 +268,10 @@ class SparseBM25Retriever():
         scores = qvec @ self.bm25_matrix.T  # shape: (1, num_docs)
         scores = scores.toarray().ravel()
 
-        top_indices = np.argsort(scores)[::-1][:top_k]
+        top_indices = np.argsort(scores)[::-1][:self.top_k]
         return [self.contexts[i] for i in top_indices if scores[i] > 0]
     
-    def search_batch(self, queries, top_k=5):
+    def search_batch(self, queries):
         query_vecs = sp.vstack([
             self.make_query_vector(self.preprocess(q)) for q in queries
         ])
@@ -277,7 +280,7 @@ class SparseBM25Retriever():
 
         for row in scores:
             row = row.toarray().ravel()
-            top_indices = np.argsort(row)[::-1][:top_k]
+            top_indices = np.argsort(row)[::-1][:self.top_k]
             results.append([self.contexts[i] for i in top_indices if row[i] > 0])
 
         return results
