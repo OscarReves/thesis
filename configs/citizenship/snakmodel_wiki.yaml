@@ -7,7 +7,7 @@ retriever_name: e5
 device: cuda
 save_path: results/citizenship/snakmodel_wiki_paragraph
 generator_name: gemma-9b
-n_questions:
+n_questions: 32
 batch_size: 32
 pipeline: test_qa_citizenship
 
