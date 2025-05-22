@@ -223,7 +223,7 @@ class Yi34BGenerator(BaseGenerator):
             save_name="yi-34b"
             )
         
-class SnakModel(BaseGenerator):
+class SnakModelGenerator(BaseGenerator):
     def __init__(self):
         super().__init__(
             model_name="NLPnorth/snakmodel-7b-instruct",
