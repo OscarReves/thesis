@@ -5,12 +5,22 @@ kb_type: news
 index_path: /dtu/p1/oscrev/news/2025/index_paragraph
 retriever_name: e5
 device: cuda
-save_path: results/news/e5_top5
+save_path: results/news/test_qa/
 generator_name: gemma-9b
-n_questions:
+n_questions: 32
 batch_size: 32
-pipeline: test_qa_with_retrieval
 top_k: 5
+
+pipelines:
+  no_context:
+    test_qa_no_context
+  with_context:
+    test_qa_with_retreival
+  no_context_mc:
+    qa_citizenship_mc_no_context
+  with_context_mc:
+    qa_citizenship_mc
+
 
 # for evaluation 
 answers_path: results/news/e5_top5

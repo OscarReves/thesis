@@ -4,6 +4,8 @@ from src.retriever import get_retriever
 from src.generator import get_generator
 from src import pipeline as pipeline_module
 import argparse 
+from pathlib import Path
+
 
 def main(config_path):
     with open(config_path, "r") as f:
@@ -18,13 +20,13 @@ def main(config_path):
     index_path = config['index_path']
     retriever_name = config['retriever_name']
     device = config['device']
-    save_path = config['save_path']
+    save_dir = config['save_path']
     generator_name = config['generator_name']
     max_samples = config['n_questions']
     batch_size = config['batch_size']
     kb_type = config['kb_type']
     question_type = config['question_type']
-    pipeline_name = config.get('pipeline', 'test_qa_with_retrieval_wiki')
+    pipelines = config.get('pipelines')
     silent = config.get('silent') # defaults to none 
     top_k = config.get('top_k', 5)
 
@@ -53,18 +55,27 @@ def main(config_path):
     print("Loading generator...")
     generator = get_generator(generator_name)
 
-    print("Testing qa with retrieval...")
-    #print("Available functions in pipeline_module:", dir(pipeline_module))
-    #print("Trying to access:", pipeline_name)
-    pipeline_func = getattr(pipeline_module, pipeline_name)
-    pipeline_func(
-        question_dataset = question_dataset, 
-        retriever = retriever, 
-        generator = generator,
-        save_path = save_path,
-        max_samples=max_samples,
-        batch_size=batch_size,
-        silent=silent)
+
+    # Loop through each pipeline function, dynamically building the save-paths 
+    # retriever needs to have top_k dynamically adjusted 
+
+    for suffix, pipeline in pipelines.items():
+        # dynamically create the save path eg gemma_no_context
+        file_name = generator_name + suffix
+        folder = Path(save_dir)
+        save_path = folder / file_name
+
+        pipeline_name = pipeline[suffix]
+
+        pipeline_func = getattr(pipeline_module, pipeline_name)
+        pipeline_func(
+            question_dataset = question_dataset, 
+            retriever = retriever, 
+            generator = generator,
+            save_path = save_path,
+            max_samples=max_samples,
+            batch_size=batch_size,
+            silent=silent)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

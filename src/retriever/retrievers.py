@@ -41,6 +41,10 @@ class E5Retriever:
         if "uid" in self.dataset.column_names:
             self.uid_map = {int(row["uid"]): row for row in self.dataset} # construct uid mapping
 
+    def set_top_k(self, top_k):
+        self.top_k = top_k
+
+
     def embed(self, texts):
         inputs = self.tokenizer(texts, padding=True, truncation=True, return_tensors="pt").to(self.device)
         with torch.no_grad():
