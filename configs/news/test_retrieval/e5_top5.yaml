@@ -7,7 +7,7 @@ retriever_name: e5
 device: cuda
 save_path: results/news/e5_top5
 generator_name: gemma-9b
-n_questions: 32
+n_questions:
 batch_size: 32
 pipeline: test_qa_with_retrieval
 top_k: 5

@@ -8,12 +8,12 @@ device: cuda
 save_path: results/news/e5_top10
 generator_name: gemma-9b
 n_questions:
-batch_size: 16
+batch_size: 32
 pipeline: test_qa_with_retrieval
 top_k: 10
 
 # for evaluation 
 answers_path: results/news/e5_top10
 evaluator_name: gemma-9b-binary
-evaluation_path: results/news/evaluation_e5_top5
+evaluation_path: results/news/evaluation_e5_top10
 evaluation_type: binary
