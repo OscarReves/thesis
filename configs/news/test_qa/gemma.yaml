@@ -13,7 +13,7 @@ top_k: 5
 
 pipelines:
   no_context: test_qa_no_context
-  with_context: test_qa_with_retreival
+  with_context: test_qa_with_retrieval
   no_context_mc: qa_citizenship_mc_no_context
   with_context_mc: qa_citizenship_mc
 
