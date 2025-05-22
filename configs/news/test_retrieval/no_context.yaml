@@ -9,7 +9,7 @@ save_path: results/news/no_context
 generator_name: gemma-9b
 n_questions: 
 batch_size: 32
-pipeline: test_qa_with_retrieval
+pipeline: test_qa_no_context
 
 # for evaluation 
 answers_path: results/news/no_context

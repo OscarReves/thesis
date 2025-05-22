@@ -134,6 +134,19 @@ def load_questions(path, silent=False):
         print(f"{len(dataset)} questions loaded")
     return dataset
 
+def load_news(path, silent=False):
+    dataset = load_dataset("json",data_files=path, field=None, split='train')
+    dataset = dataset.map(
+        lambda x: {'answer': x['options'][x['correct_idx']]}
+        )
+    if not silent:
+        print(f"{len(dataset)} questions loaded")
+    return dataset
+
+
+
+
+
 def load_knowledge_base(path, type, silent=False):
     if type == "squad":
         return load_documents(path, silent)
@@ -150,7 +163,7 @@ def load_questions_by_type(path, type, silent=False):
     if type == "squad_rewritten":
         return load_squad_rewritten(path, silent)
     if type == "news":
-        return load_questions(path, silent)
+        return load_news(path, silent)
     if type == "citizenship":
         return load_citizenship_questions(silent)
 
