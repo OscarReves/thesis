@@ -247,6 +247,7 @@ class Gemma9bGenerator(BaseGenerator):
             "You are a helpful assistant. You respond to questions in Danish. "
             "Respond briefly and accurately. Do not generate any extra questions or superfluous text. "
             "Be as concise as possible."
+            "The context may or may not be relevant."
         )
 
         prompts = [

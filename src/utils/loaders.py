@@ -139,6 +139,11 @@ def load_news(path, silent=False):
     dataset = dataset.map(
         lambda x: {'answer': x['options'][x['correct_idx']]}
         )
+    correct_mapping = ['A', 'B', 'C', 'D']
+    dataset = dataset.map(
+        lambda x: {'mc_answer': 
+                   correct_mapping[x['correct_idx']] + ": " + x['options'][x['correct_idx']]}
+        )
     if not silent:
         print(f"{len(dataset)} questions loaded")
     return dataset
