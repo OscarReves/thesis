@@ -1,0 +1,19 @@
+questions_path: 
+question_type: citizenship
+kb_path: /dtu/p1/oscrev/wiki/chunked_paragraph # path to knowledge base
+kb_type: wiki
+index_path: /dtu/p1/oscrev/wiki/index/index_paragraph
+retriever_name: e5
+device: cuda
+save_path: results/test_retrieval/e5_top5
+generator_name: gemma-9b
+n_questions:
+batch_size: 32
+pipeline: test_qa_citizenship
+top_k: 5
+
+# for evaluation 
+answers_path: results/test_retrieval/e5_top5
+evaluator_name: gemma-9b-binary
+evaluation_type: binary
+evaluation_path: results/test_retrieval/evaluation_e5_top5
