@@ -12,14 +12,10 @@ batch_size: 32
 top_k: 5
 
 pipelines:
-  no_context:
-    test_qa_no_context
-  with_context:
-    test_qa_with_retreival
-  no_context_mc:
-    qa_citizenship_mc_no_context
-  with_context_mc:
-    qa_citizenship_mc
+  no_context: test_qa_no_context
+  with_context: test_qa_with_retreival
+  no_context_mc: qa_citizenship_mc_no_context
+  with_context_mc: qa_citizenship_mc
 
 
 # for evaluation 

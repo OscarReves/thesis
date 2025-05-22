@@ -33,5 +33,5 @@ export LD_LIBRARY_PATH=$CONDA_PREFIX/lib:$LD_LIBRARY_PATH
 
 # set config path(s) for open domain QA
 
-python3 -u -m scripts.experiments.test_qa --config configs/news/test_qa/gemma
+python3 -u -m scripts.experiments.test_qa --config configs/news/test_qa/gemma.yaml
 
