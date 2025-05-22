@@ -18,6 +18,7 @@ class E5Retriever:
     def __init__(self, index_path, documents, device=None, text_field='text', top_k = 5):
         model_name = 'intfloat/multilingual-e5-large-instruct'
         self.device = torch.device(device)
+        self.top_k = top_k
 
         print(f"Loaded model {model_name} for top-{top_k} on device {self.device}")
 
