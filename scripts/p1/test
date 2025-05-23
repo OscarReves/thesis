@@ -32,7 +32,7 @@ conda activate production_env
 export LD_LIBRARY_PATH=$CONDA_PREFIX/lib:$LD_LIBRARY_PATH
 
 # set config path(s) for open domain QA
-CONFIG_PATH=configs/configs/news/test_qa/yi-34b.yaml
+CONFIG_PATH=configs/news/test_qa/yi-34b.yaml
 
 # test model 
 python3 -u -m scripts.experiments.test_qa --config $CONFIG_PATH
