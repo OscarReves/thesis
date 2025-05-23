@@ -8,10 +8,10 @@ def main(config_path):
         config = yaml.safe_load(f)
 
     directory = Path(config['directory'])
-    mc_evaluation_path = config['save_dir']
+    open_domain_evaluation_path = config['save_dir']
 
-    multiple_choice_dir = directory / mc_evaluation_path
-    open_domain_dir = directory / 'open_domain'
+    open_domain_dir = directory / open_domain_evaluation_path
+    multiple_choice_dir = directory / 'multiple_choice'
 
     for mc_file in multiple_choice_dir.iterdir():
         answers_path = str(mc_file)
