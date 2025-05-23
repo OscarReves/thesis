@@ -18,9 +18,9 @@ def main(config_path):
     evaluator = get_evaluator(evaluator_name)
 
     # iterate through directory 
-    directory = Path(answers_dir)
+    answers_directory = Path(answers_dir)
 
-    for file in directory.iterdir():
+    for file in answers_directory.iterdir():
         answers_path = str(file)
         answers = load_documents(answers_path)
 
