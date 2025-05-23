@@ -35,4 +35,4 @@ export LD_LIBRARY_PATH=$CONDA_PREFIX/lib:$LD_LIBRARY_PATH
 CONFIG_PATH=configs/configs/news/test_qa/yi-34b.yaml
 
 # test model 
-python3 -u -m scripts.batched_scripts.test_qa_news --config $CONFIG_PATH
+python3 -u -m scripts.experiments.test_qa --config $CONFIG_PATH
