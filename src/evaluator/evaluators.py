@@ -10,7 +10,7 @@ class BaseEvaluator:
         base_path = "/dtu/p1/oscrev/models"
         model_path = os.path.join(base_path, save_name)
 
-        self.eos_token = "<|im_end|>"
+        #self.eos_token = "<|im_end|>"
         self.system_prompt = (
             "You are a helpful assistant. You respond to questions in Danish. "
             "Respond briefly and accurately. Do not generate any extra questions or superfluous text. "

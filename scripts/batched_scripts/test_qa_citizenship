@@ -22,7 +22,7 @@
 ### -- Specify the output and error file. %J is the job-id -- 
 ### -- -o and -e mean append, -oo and -eo mean overwrite -- 
 #BSUB -oo logs/test_qa_citizenship.out 
-#BSUB -eo logs/test_qa_news.err 
+#BSUB -eo logs/test_qa_citizenship.err 
 
 # here follow the commands you want to execute with input.in as the input file
 
