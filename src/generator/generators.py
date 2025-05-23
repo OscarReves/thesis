@@ -11,7 +11,7 @@ class BaseGenerator:
         base_path = "/dtu/p1/oscrev/models"
         model_path = os.path.join(base_path, save_name)
         
-        self.eos_token = "<|im_end|>"
+        # self.eos_token = "<|im_end|>" # also shouldn't be necesary? All cauusal models should have eos pre-defined
         self.system_prompt = (
             "You are a helpful assistant. You respond to questions in Danish. "
             "Respond briefly and accurately. Do not generate any extra questions or superfluous text. "
@@ -190,8 +190,8 @@ class BaseGenerator:
                 use_cache=True,
                 #temperature=0.7,
                 #top_p=0.9,
-                eos_token_id=self.tokenizer.convert_tokens_to_ids(self.eos_token),
-                pad_token_id=self.tokenizer.eos_token_id
+                #eos_token_id=self.tokenizer.convert_tokens_to_ids(self.eos_token), # this shouldn't be necessary?
+                #pad_token_id=self.tokenizer.eos_token_id # same for this?
             )
 
         input_lengths = [len(i) for i in inputs["input_ids"]]
@@ -229,7 +229,7 @@ class SnakModelGenerator(BaseGenerator):
             model_name="NLPnorth/snakmodel-7b-instruct",
             save_name="snakmodel"
             )
-        self.eos_token = self.tokenizer.eos_token
+        #self.eos_token = self.tokenizer.eos_token
         self.system_prompt = "Du er Snakmodel, skabt af IT-Universitetet i København. Du er en hjælpsom assistent."
 
 
@@ -239,7 +239,7 @@ class Gemma9bGenerator(BaseGenerator):
             model_name="google/gemma-2-9b-it",
             save_name="gemma-2-9b-it"
             )
-        self.eos_token = self.tokenizer.eos_token
+        #self.eos_token = self.tokenizer.eos_token
 
     # requires its own prompt formatting since the 'system' role is not supported in chat_template    
     def generate_batch(self, questions, contexts, max_new_tokens=32):

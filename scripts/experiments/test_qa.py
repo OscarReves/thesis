@@ -61,8 +61,14 @@ def main(config_path):
 
     for suffix, pipeline_name in pipelines.items():
         # Create file name like "gemma_no_context"
+        mc = (suffix[-2:] == 'mc') # this is messy, you can do better
+        if mc:
+            folder = 'multiple_choice'
+        else:
+            folder = 'open_domain'
+
         file_name = generator_name + "_" + suffix
-        save_path = Path(save_dir) / file_name
+        save_path = Path(save_dir) / folder / file_name
 
         # Get pipeline function
         pipeline_func = getattr(pipeline_module, pipeline_name)
