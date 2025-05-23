@@ -1,3 +1,3 @@
 directory: 'results/news/test_qa/'
-save_dir: 'multiple_choice_evluation'
+save_dir: 'multiple_choice_evaluation'
 batch_size: 32

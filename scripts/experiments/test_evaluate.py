@@ -9,7 +9,9 @@ def main(config_path):
     with open(config_path, "r") as f:
         config = yaml.safe_load(f)
 
-    answers_dir = config['answers_dir']
+    # evaluates every open-domain answer in a directory
+    directory = Path(config['directory'])
+    answers_dir  = directory / 'open_domain'
     save_dir = config['save_dir']
     evaluator_name = 'gemma-9b'
     batch_size = config['batch_size']
