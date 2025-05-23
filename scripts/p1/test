@@ -32,7 +32,7 @@ conda activate production_env
 export LD_LIBRARY_PATH=$CONDA_PREFIX/lib:$LD_LIBRARY_PATH
 
 # set config path(s) for open domain QA
-CONFIG_PATH=configs/citizenship/snakmodel_wiki.yaml
+CONFIG_PATH=configs/citizenship/test_retrieval/e5_top25.yaml
 
 # test model 
 python3 -u -m scripts.generalized.qa --config $CONFIG_PATH
