@@ -12,7 +12,7 @@ def main(config_path):
     multiple_choice_dir = directory / 'multiple_choice_evaluation'
     open_domain_dir = directory / 'open_domain'
 
-    for mc_file in multiple_choice_dir.iter():
+    for mc_file in multiple_choice_dir.iterdir():
         answers_path = str(mc_file)
         answers = load_documents(answers_path)
         evaluation_type = 'multiple_choice'
