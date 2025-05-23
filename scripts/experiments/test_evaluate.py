@@ -12,7 +12,6 @@ def main(config_path):
     answers_dir = config['answers_dir']
     save_dir = config['save_dir']
     evaluator_name = 'gemma-9b'
-    save_path = config['evaluation_path']
     batch_size = config['batch_size']
     evaluator = get_evaluator(evaluator_name)
 

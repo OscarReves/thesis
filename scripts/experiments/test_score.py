@@ -9,7 +9,7 @@ def main(config_path):
 
     directory = Path(config['directory'])
     
-    multiple_choice_dir = directory / 'multiple_choice'
+    multiple_choice_dir = directory / 'multiple_choice_evluation'
     open_domain_dir = directory / 'open_domain'
 
     for mc_file in multiple_choice_dir.iter():
