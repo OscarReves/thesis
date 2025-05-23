@@ -15,7 +15,7 @@ def main():
         "yi-34b-binary",
         "snakmodel-binary",
     ]
-    batch_size = '8'
+    batch_size = 8
 
     # iterate through directory 
     answers_path = 'results/citizenship/human_evaluation/100_balanced_questions'
