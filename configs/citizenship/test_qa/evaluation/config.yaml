@@ -1,0 +1,3 @@
+directory: 'results/citizenship/test_qa/'
+save_dir: 'open_domain_evaluation'
+batch_size: 32
