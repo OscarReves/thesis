@@ -23,8 +23,8 @@ def main(config_path):
         with open("results/accuracy.txt", "a") as log_file:
             log_file.write(f"{answers_path}\tAccuracy: {accuracy:.3f}\n")
     
-    for od_file in open_domain_dir.iter():
-        answers_path = str(mc_file)
+    for od_file in open_domain_dir.iterdir():
+        answers_path = str(od_file)
         answers = load_documents(answers_path)
         evaluation_type = 'binary'
         accuracy = get_accuracy(answers, type=evaluation_type)
