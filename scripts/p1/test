@@ -13,7 +13,7 @@
 ### -- specify that we want the job to get killed if it exceeds 5 GB per core/slot -- 
 #BSUB -M 40GB 
 ### -- set walltime limit: hh:mm -- 
-#BSUB -W 0:15
+#BSUB -W 1:00
 ###BSUB -u krf217@alumni.ku.dk
 ### -- send notification at start -- 
 ###BSUB -B 
@@ -33,6 +33,14 @@ export LD_LIBRARY_PATH=$CONDA_PREFIX/lib:$LD_LIBRARY_PATH
 
 # set config path(s) for open domain QA
 CONFIG_PATH=configs/citizenship/test_retrieval/e5_top25.yaml
+
+# test model 
+python3 -u -m scripts.generalized.qa --config $CONFIG_PATH
+python3 -u -m scripts.generalized.evaluate --config $CONFIG_PATH
+python3 -u -m scripts.generalized.score --config $CONFIG_PATH
+
+# set config path(s) for open domain QA
+CONFIG_PATH=configs/citizenship/test_retrieval/no_context.yaml
 
 # test model 
 python3 -u -m scripts.generalized.qa --config $CONFIG_PATH
