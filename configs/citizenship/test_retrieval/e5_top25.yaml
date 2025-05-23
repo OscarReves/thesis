@@ -8,7 +8,7 @@ device: cuda
 save_path: results/citizenship/test_retrieval/e5_top25
 generator_name: gemma-9b
 n_questions:
-batch_size: 8
+batch_size: 4
 pipeline: test_qa_citizenship
 top_k: 25
 
