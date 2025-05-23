@@ -1,11 +1,11 @@
-questions_path: /dtu/p1/oscrev/news/2025/questions.jsonl
-question_type: news
-kb_path: /dtu/p1/oscrev/news/2025/chunked_paragraph.jsonl # path to knowledge base
-kb_type: news
-index_path: /dtu/p1/oscrev/news/2025/index_paragraph
+questions_path: 
+question_type: citizenship
+kb_path: /dtu/p1/oscrev/wiki/chunked_paragraph # path to knowledge base
+kb_type: wiki
+index_path: /dtu/p1/oscrev/wiki/index/index_paragraph
 retriever_name: e5
 device: cuda
-save_path: results/news/test_qa/
+save_path: results/citizenship/test_qa/
 generator_name: yi-34b
 n_questions: 
 batch_size: 8
@@ -17,9 +17,3 @@ pipelines:
   no_context_mc: qa_citizenship_mc_no_context
   with_context_mc: qa_news_mc
 
-
-# for evaluation 
-answers_path: results/news/e5_top5
-evaluator_name: gemma-9b-binary
-evaluation_path: results/news/evaluation_e5_top5
-evaluation_type: binary
