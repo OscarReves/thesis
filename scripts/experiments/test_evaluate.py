@@ -13,7 +13,7 @@ def main(config_path):
     directory = Path(config['directory'])
     answers_dir  = directory / 'open_domain'
     save_dir = config['save_dir']
-    evaluator_name = 'gemma-9b'
+    evaluator_name = 'gemma-9b-binary'
     batch_size = config['batch_size']
     evaluator = get_evaluator(evaluator_name)
 
