@@ -24,7 +24,7 @@ def main():
         evaluator = get_evaluator(evaluator_name)
         answers = load_documents(answers_path)
 
-        save_path = Path('results/citizenship/human_evaluation/model_evaluations') / evaluator_names
+        save_path = Path('results/citizenship/human_evaluation/model_evaluations') / evaluator_name
 
         evaluate_answers(
             answer_dataset = answers,
