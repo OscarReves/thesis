@@ -6,7 +6,7 @@ from src.pipeline import evaluate_answers
 from pathlib import Path
 import torch
 
-def main(config_path):
+def main():
     # evaluates every open-domain answer in a directory
     evaluator_names = [
         'nous-hermes-mistral-binary',
@@ -40,7 +40,4 @@ def main(config_path):
             torch.cuda.ipc_collect()
     
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--config", required=True, help="Path to config YAML")
-    args = parser.parse_args()
-    main(args.config)
+    main()
