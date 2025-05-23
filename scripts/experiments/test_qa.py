@@ -27,7 +27,7 @@ def main(config_path):
     kb_type = config['kb_type']
     question_type = config['question_type']
     pipelines = config.get('pipelines')
-    silent = config.get('silent') # defaults to none 
+    #silent = config.get('silent') # defaults to none 
     top_k = config.get('top_k', 5)
 
     if kb_path:
@@ -81,7 +81,7 @@ def main(config_path):
             save_path=save_path,
             max_samples=max_samples,
             batch_size=batch_size,
-            silent=silent
+            silent=True
         )
 
 if __name__ == "__main__":
