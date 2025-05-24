@@ -22,7 +22,7 @@ def main(config_path):
     kb_type = config['kb_type']
     question_type = config['question_type']
     pipeline_name = config.get('pipeline', 'test_qa_with_retrieval_wiki')
-    silent = config.get('silent') # defaults to none 
+    silent = config.get('silent', True) # defaults to none 
     top_k = config.get('top_k', 5)
 
     if kb_path:
