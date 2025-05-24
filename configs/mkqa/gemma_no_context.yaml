@@ -8,7 +8,7 @@ device: cuda
 save_path: results/mkqa/gemma_no_context
 generator_name: gemma-9b
 n_questions: 
-batch_size: 64
+batch_size: 32
 pipeline: test_qa_no_context
 
 # for evaluation 
