@@ -21,8 +21,8 @@
 ###BSUB -N 
 ### -- Specify the output and error file. %J is the job-id -- 
 ### -- -o and -e mean append, -oo and -eo mean overwrite -- 
-#BSUB -oo logs/mkqa.out 
-#BSUB -eo logs/mkqa.err 
+#BSUB -oo logs/mkqa_no_context.out 
+#BSUB -eo logs/mkqa_no_context.err 
 
 # here follow the commands you want to execute with input.in as the input file
 
