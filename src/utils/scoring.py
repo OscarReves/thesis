@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 from src.utils import load_documents
 from sklearn.metrics import precision_score, recall_score, f1_score
+from pathlib import Path
 
 # === Question Answering Accuracy ===
 
@@ -66,7 +67,7 @@ def get_human_evals(path_to_csv='results/citizenship/human_evaluation/human_anno
 
 def get_model_evals(path='results/citizenship/human_evaluation/100_balanced_questions'):
     questions = load_documents(path)
-    model_evals = [int(x[0]) for x in questions['evaluation']]
+    model_evals = np.array([int(x[0]) if x and x[0].isdigit() else np.nan for x in questions['evaluation']])
     return model_evals
 
 def get_eval_accuracy(
@@ -103,3 +104,21 @@ def get_annotater_agreement(path='results/citizenship/human_evaluation/human_ann
                 print(i,j)
                 mean += agreement(votes[i],votes[j])
     return mean/len(votes)
+
+def get_model_agreements(path='results/citizenship/human_evaluation/model_evaluations/'):
+    directory = Path(path)
+    evals = {'Human Majority': get_human_evals()}
+    for file in directory.iterdir():
+        file_path = directory / file.name
+        print(file_path)
+        eval = get_model_evals(str(file_path))
+        evals.update({file.name[:-7] : eval}) # remove "-binary" suffix for aesthetic reasons
+    def agreement(p1,p2):
+        return np.mean(p1 == p2)
+    scores = {}
+    for model,eval in evals.items():
+        agreements = []
+        for _,eval2 in evals.items():
+            agreements.append(agreement(eval,eval2))
+        scores.update({model: agreements})
+    return scores

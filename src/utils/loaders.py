@@ -111,7 +111,21 @@ def load_citizenship_questions(silent=False):
         print(f"Loaded {len(records)} questions")
     return Dataset.from_list(records)
 
-    
+def load_mkqa(silent=False):
+    mkqa = load_dataset('apple/mkqa', trust_remote_code=True)
+    records = []
+    for sample in mkqa['train']:
+        example_id = sample['example_id']
+        question = sample['queries']['da']
+        answer = sample['answers']['da'][0]['text']
+        records.append({
+            'example_id'    : example_id,
+            'question'      : question,
+            'answer'        : answer
+        })
+
+    return Dataset.from_list(records)
+
 
 # == For loading processed data == 
 
@@ -171,6 +185,8 @@ def load_questions_by_type(path, type, silent=False):
         return load_news(path, silent)
     if type == "citizenship":
         return load_citizenship_questions(silent)
+    if type == "mkqa":
+        return load_mkqa(silent)
 
 # == For saving == 
 
