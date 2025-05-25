@@ -97,7 +97,7 @@ def main():
         batch_size=128,            # try 128–256 on H100 with use_amp=True
         shuffle=True,
         num_workers=32,            # plenty of cores available
-git         pin_memory=True,
+        pin_memory=True,
         prefetch_factor=4
     )
     
