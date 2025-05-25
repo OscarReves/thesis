@@ -78,6 +78,10 @@ def main():
     device = torch.device("cuda")
     model = AutoModel.from_pretrained("intfloat/multilingual-e5-large").to(device)
     model.train()
+    if torch.cuda.device_count() > 1:
+        print(f"Using {torch.cuda.device_count()} GPUs")
+        model = torch.nn.DataParallel(model)
+    model = model.to("cuda")
 
     optimizer = torch.optim.AdamW(model.parameters(), lr=2e-5)
     scaler = torch.cuda.amp.GradScaler()  # for mixed precision
