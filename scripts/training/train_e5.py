@@ -17,35 +17,46 @@ from torch.utils.data import Dataset
 def main():
     
     # Build dataloader
-    documents_path = '/dtu/p1/oscrev/webfaq_danish'
-    documents = load_web_faq(documents_path)
+    dataset_path = '/dtu/p1/oscrev/webfaq_danish'
+    dataset = load_web_faq(dataset_path)
+
+    # Prepare training examples for being in memory 
+    train_examples = [
+        InputExample(texts=[f"query: {q}", f"passage: {p}"])
+        for q, p in tqdm(zip(dataset["query"], dataset["text"]), total=len(dataset), desc="Building training examples")
+    ]
+
+    import pickle
+    with open("data/train_examples.pkl", "wb") as f:
+        pickle.dump(train_examples, f)
+
+    from torch.utils.data import DataLoader
+
+    train_dataloader = DataLoader(
+        train_examples,
+        batch_size=256,
+        shuffle=True,
+        num_workers=4,  # tune depending on CPU
+        pin_memory=True
+    )
+
     
-    # def to_input_example(example):
-    #     return InputExample(texts=[f"query: {example['query']}", f"passage: {example['text']}"])
+    # class HFContrastiveDataset(Dataset):
+    #     def __init__(self, hf_dataset):
+    #         self.dataset = hf_dataset
 
-    # # Assuming `documents` is a HuggingFace Dataset
-    # train_dataset = documents.map(lambda x: {"input_example": to_input_example(x)})
+    #     def __len__(self):
+    #         return len(self.dataset)
 
-    # # Extract list of InputExamples
-    # train_examples = train_dataset["input_example"]
-    # train_dataloader = DataLoader(train_examples, batch_size=32, shuffle=True)
-    
-    class HFContrastiveDataset(Dataset):
-        def __init__(self, hf_dataset):
-            self.dataset = hf_dataset
-
-        def __len__(self):
-            return len(self.dataset)
-
-        def __getitem__(self, idx):
-            row = self.dataset[idx]
-            return InputExample(
-                texts=[f"query: {row['query']}", f"passage: {row['text']}"]
-            )
+    #     def __getitem__(self, idx):
+    #         row = self.dataset[idx]
+    #         return InputExample(
+    #             texts=[f"query: {row['query']}", f"passage: {row['text']}"]
+    #         )
 
 
-    train_dataset = HFContrastiveDataset(documents)
-    train_dataloader = DataLoader(train_dataset, batch_size=32, shuffle=True)
+    # train_dataset = HFContrastiveDataset(documents)
+    # train_dataloader = DataLoader(train_dataset, batch_size=32, shuffle=True)
     
     # load model
     model = SentenceTransformer("intfloat/multilingual-e5-large")
@@ -57,7 +68,8 @@ def main():
     model.fit(
         train_objectives=[(train_dataloader, train_loss)],
         epochs=1,
-        warmup_steps=100,
+        warmup_steps=500,
+        use_amp=True,
         output_path="models/e5-finetuned"
     )
 
