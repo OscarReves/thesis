@@ -74,7 +74,8 @@ def main(config_path):
                 "retrieved_uids"    : ru
             } for q, u, ru in zip(queries, uids, retrieved_uids))
 
-            if i == 5: break # break early for testing
+            if i // batch_size == 5:
+                break
 
         save_to_json(results, save_path, result_type="retrieved uids")
     
