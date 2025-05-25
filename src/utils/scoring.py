@@ -55,19 +55,30 @@ def get_accuracy(dataset, type='binary'):
 #     accuracy = len(correct)/len(dataset)
 #     return accuracy
 
+# def get_retrieval_accuracy(dataset, k=5):
+#     max_k = len(dataset[0]['retrieved_uids'])
+#     if k > max_k:
+#         print(f"Warning: Attempting to get accuracy for k = {k} but only {max_k} results have been retrieved")
+
+#     # Extract uid and top-k retrieved uids
+#     uids = np.array([d['uid'] for d in dataset])
+#     topk_retrieved = [set(d['retrieved_uids'][:k]) for d in dataset]
+
+#     # Vectorized comparison using list comprehension (still faster than .filter)
+#     correct = np.array([uid in retrieved for uid, retrieved in zip(uids, topk_retrieved)])
+#     return np.mean(correct)
+
 def get_retrieval_accuracy(dataset, k=5):
     max_k = len(dataset[0]['retrieved_uids'])
     if k > max_k:
         print(f"Warning: Attempting to get accuracy for k = {k} but only {max_k} results have been retrieved")
 
     # Extract uid and top-k retrieved uids
-    uids = np.array([d['uid'] for d in dataset])
-    topk_retrieved = [set(d['retrieved_uids'][:k]) for d in dataset]
+    uids = np.array([dataset['uid']])
+    retrieved_uids = np.array([dataset['retrieved_uids']])
 
-    # Vectorized comparison using list comprehension (still faster than .filter)
-    correct = np.array([uid in retrieved for uid, retrieved in zip(uids, topk_retrieved)])
-    return np.mean(correct)
-
+    correct = (uids == retrieved_uids).any(axis=1)
+    return correct.mean()
 
 # === Human Annotation === 
 
