@@ -17,21 +17,54 @@ class FaissIndexer:
         faiss.normalize_L2(embeddings)
         # Build and save FAISS index
         dim = self.embedder.model.config.hidden_size
-        index = faiss.IndexFlatL2(dim)
+        index = faiss.IndexFlatIP(dim)
         index.add(embeddings)
         faiss.write_index(index, self.index_path)
 
+    # def index_documents_with_uid(self, documents, batch_size):
+    #     # indexes a single HF-dataset with a uid-mapping 
+    #     embeddings = self.embedder.encode(documents,batch_size)
+    #     faiss.normalize_L2(embeddings)
+    #     # Build and save FAISS index
+    #     dim = self.embedder.model.config.hidden_size
+    #     base_index = faiss.IndexFlatIP(dim)
+    #     index = faiss.IndexIDMap(base_index)
+
+    #     uids = np.array(documents["uid"], dtype=np.int64)
+    #     index.add_with_ids(embeddings, uids)
+
+    #     faiss.write_index(index, self.index_path)
+
     def index_documents_with_uid(self, documents, batch_size):
         # indexes a single HF-dataset with a uid-mapping 
-        embeddings = self.embedder.encode(documents,batch_size)
-        faiss.normalize_L2(embeddings)
-        # Build and save FAISS index
         dim = self.embedder.model.config.hidden_size
-        base_index = faiss.IndexFlatL2(dim)
+
+        # Create a single FAISS index
+        base_index = faiss.IndexFlatIP(dim)
         index = faiss.IndexIDMap(base_index)
 
-        uids = np.array(documents["uid"], dtype=np.int64)
-        index.add_with_ids(embeddings, uids)
+        process = psutil.Process()
+
+        for start in tqdm(range(0, len(documents), batch_size), 
+                          desc=f"Indexing in batches of {batch_size}"):
+            end = start + batch_size
+            batch = documents[start:end]
+
+            # Encode and normalize
+            embeddings = self.embedder.encode(batch, batch_size=batch_size)
+            faiss.normalize_L2(embeddings)
+
+            # Get UIDs
+            uids = np.array(batch["uid"], dtype=np.int64)
+
+            # Add to index
+            index.add_with_ids(embeddings, uids)
+
+            mem_gb = process.memory_info().rss / 1e9
+            print(f"Added docs {start} to {end} | Memory usage: {mem_gb:.2f} GB")
+
+            del embeddings, uids, batch
+            gc.collect()
 
         faiss.write_index(index, self.index_path)
 
@@ -42,7 +75,7 @@ class FaissIndexer:
         dim = self.embedder.model.config.hidden_size
 
         # Create a single FAISS index
-        base_index = faiss.IndexFlatL2(dim)
+        base_index = faiss.IndexFlatIP(dim)
         index = faiss.IndexIDMap(base_index)
 
         outer_batch_size = batch_size * 100  # Controls how much to embed in one go
@@ -90,7 +123,7 @@ class FaissIndexer:
 
         # Initialize index
         dim = embeddings.shape[1]
-        base_index = faiss.IndexFlatL2(dim)
+        base_index = faiss.IndexFlatIP(dim)
         index = faiss.IndexIDMap(base_index)
 
         # Add in batches
