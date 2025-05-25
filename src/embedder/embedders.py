@@ -43,8 +43,8 @@ class E5Embedder:
         self.model.eval()
         torch.set_float32_matmul_precision('high')
 
-    def encode(self, documents, batch_size=64, text_field='text'):  # bump batch size if your GPU allows
-        texts = [f"passage: {t}" for t in documents[text_field]]
+    def encode(self, documents, batch_size=64):  # bump batch size if your GPU allows
+        texts = [f"passage: {t}" for t in documents['text']]
         all_embeddings = []
 
         with torch.inference_mode():
