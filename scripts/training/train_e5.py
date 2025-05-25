@@ -96,7 +96,7 @@ def main():
         train_dataset,
         batch_size=128,            # try 128–256 on H100 with use_amp=True
         shuffle=True,
-        num_workers=32,            # plenty of cores available
+        num_workers=8,            # plenty of cores available
         pin_memory=True,
         prefetch_factor=4
     )
