@@ -57,30 +57,51 @@ def main():
     #     pickle.dump(train_examples, f)
 
     tokenized_path = 'data/training/tokenized_e5_inputs.pt'
+    batch_size = 1024  # adjust based on your RAM
+
     if os.path.exists(tokenized_path):
         print(f"Loading pre-tokenized data from {tokenized_path}")
         tokenized = torch.load(tokenized_path)
     else:
-        print(f"Tokenizing data and saving to {tokenized_path}")
+        print(f"Tokenizing data in batches and saving to {tokenized_path}")
         tokenizer = AutoTokenizer.from_pretrained("intfloat/multilingual-e5-large")
-        tokenized = tokenizer(
-            [f"query: {q}" for q in dataset["query"]],
-            [f"passage: {p}" for p in dataset["text"]],
-            padding="max_length",
-            truncation=True,
-            max_length=512,
-            return_tensors="pt"
-        )
-        torch.save(tokenized, tokenized_path)
+
+        input_ids = []
+        attention_masks = []
+
+        for i in tqdm(range(0, len(dataset), batch_size), desc="Tokenizing"):
+            batch_queries = [f"query: {q}" for q in dataset["query"][i:i+batch_size]]
+            batch_passages = [f"passage: {p}" for p in dataset["text"][i:i+batch_size]]
+
+            tokens = tokenizer(
+                batch_queries,
+                batch_passages,
+                padding="max_length",
+                truncation=True,
+                max_length=512,
+                return_tensors="pt"
+            )
+
+            input_ids.append(tokens["input_ids"])
+            attention_masks.append(tokens["attention_mask"])
+
+        # Concatenate into single tensors
+        tokenized = {
+            "input_ids": torch.cat(input_ids, dim=0),
+            "attention_mask": torch.cat(attention_masks, dim=0)
+        }
+
+    torch.save(tokenized, tokenized_path)
 
     #train_dataset = TensorDataset(tokenized["input_ids"], tokenized["attention_mask"])
     train_dataset = PreTokenizedDataset(tokenized["input_ids"], tokenized["attention_mask"])
 
     train_dataloader = DataLoader(
         train_dataset,
-        batch_size=64,            # try 128–256 on H100 with use_amp=True
+        batch_size=128,            # try 128–256 on H100 with use_amp=True
         shuffle=True,
         num_workers=16,            # plenty of cores available
+        use_amp=True,
         pin_memory=True,
         prefetch_factor=4
     )
