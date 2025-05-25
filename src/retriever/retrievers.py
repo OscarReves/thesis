@@ -37,7 +37,8 @@ class E5Retriever:
         # Load dataset and extract text field
         self.dataset = documents  # or load_dataset(...)
         self.contexts = self.dataset[text_field]      # list of texts
-        self.titles = self.dataset['id']
+        if "id" in self.dataset.column_names:
+            self.titles = self.dataset['id']
         if "uid" in self.dataset.column_names:
             self.uid_map = {int(row["uid"]): row for row in self.dataset} # construct uid mapping
 
