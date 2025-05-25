@@ -37,7 +37,4 @@ def main():
     )
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--config", required=True, help="Path to config YAML")
-    args = parser.parse_args()
-    main(args.config)
+    main()
