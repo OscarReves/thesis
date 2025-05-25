@@ -7,7 +7,7 @@ from src.indexer import FaissIndexer
 from src import pipeline as pipeline_module
 from src.utils import save_to_json
 import argparse 
-import tqdm
+from tqdm import tqdm
 import os 
 
 def main():
