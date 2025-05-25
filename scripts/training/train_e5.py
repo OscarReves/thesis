@@ -20,6 +20,7 @@ import torch.nn.functional as F
 from torch.utils.data import DataLoader, TensorDataset
 from transformers import AutoModel, AutoTokenizer
 from tqdm import tqdm
+torch.backends.cudnn.benchmark = True
 
 
 
@@ -82,7 +83,6 @@ def main():
     scaler = torch.cuda.amp.GradScaler()  # for mixed precision
 
     # Load pre-tokenized data
-    tokenized = torch.load("data/training/tokenized_e5_inputs.pt")
     dataset = TensorDataset(tokenized["input_ids"], tokenized["attention_mask"])
     dataloader = DataLoader(dataset, batch_size=256, shuffle=True, num_workers=16, pin_memory=True)
 
@@ -114,9 +114,10 @@ def main():
                 labels = torch.arange(len(sims), device=device)
                 loss = F.cross_entropy(sims, labels)
 
-                writer.add_scalar("train/loss", loss.item(), global_step)
-                writer.flush() 
-                global_step += 1
+            writer.add_scalar("train/loss", loss.item(), global_step)
+            if global_step % 10 == 0:
+                writer.flush()
+            global_step += 1
 
             scaler.scale(loss).backward()
             scaler.step(optimizer)
