@@ -11,12 +11,19 @@ from tqdm import tqdm
 import os 
 import numpy as np
 from sentence_transformers import SentenceTransformer, InputExample, losses
-from sentence_transformers.input_examples import InputFeatures
 from torch.utils.data import DataLoader, TensorDataset
 from torch.utils.data import Dataset
 from torch.utils.tensorboard import SummaryWriter
 from transformers import AutoTokenizer
 import torch
+
+class InputFeatures:
+    def __init__(self, input_ids, attention_mask, token_type_ids=None, label=None):
+        self.input_ids = input_ids
+        self.attention_mask = attention_mask
+        self.token_type_ids = token_type_ids
+        self.label = label
+
 
 class PreTokenizedDataset(Dataset):
     def __init__(self, input_ids, attention_mask):
