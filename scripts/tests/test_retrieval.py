@@ -17,7 +17,7 @@ def main():
     embedder_name = 'e5'
     device = 'cuda'
     retriever_name = 'e5'
-    save_path = 'results/retrieval_test/results'
+    save_path = 'results/retrieval_test/results_with_IP_index'
     batch_size = 1024
 
     # 1. Build index 
@@ -68,6 +68,7 @@ def main():
     
     # 3. Evaluate 
     results = load_documents(save_path)
+    results = results.filter(lambda x: x['query'] != '')
     def uid_match(sample):
         return sample['uid'] in sample['retrieved_uids']
     
