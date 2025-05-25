@@ -10,10 +10,26 @@ import argparse
 from tqdm import tqdm
 import os 
 import numpy as np
-from sentence_transformers import SentenceTransformer, InputExample, losses
-from torch.utils.data import DataLoader
+from sentence_transformers import SentenceTransformer, InputExample, losses, InputFeatures
+from torch.utils.data import DataLoader, TensorDataset
 from torch.utils.data import Dataset
 from torch.utils.tensorboard import SummaryWriter
+from transformers import AutoTokenizer
+import torch
+
+class PreTokenizedDataset(Dataset):
+    def __init__(self, input_ids, attention_mask):
+        self.input_ids = input_ids
+        self.attention_mask = attention_mask
+
+    def __len__(self):
+        return len(self.input_ids)
+
+    def __getitem__(self, idx):
+        return InputFeatures(
+            input_ids=self.input_ids[idx],
+            attention_mask=self.attention_mask[idx]
+        )
 
 def main():
     
@@ -21,23 +37,44 @@ def main():
     dataset_path = '/dtu/p1/oscrev/webfaq_danish'
     dataset = load_web_faq(dataset_path)
 
-    # Prepare training examples for being in memory 
-    train_examples = [
-        InputExample(texts=[f"query: {q}", f"passage: {p}"])
-        for q, p in tqdm(zip(dataset["query"], dataset["text"]), total=len(dataset), desc="Building training examples")
-    ]
+    # # Prepare training examples for being in memory 
+    # train_examples = [
+    #     InputExample(texts=[f"query: {q}", f"passage: {p}"])
+    #     for q, p in tqdm(zip(dataset["query"], dataset["text"]), total=len(dataset), desc="Building training examples")
+    # ]
 
-    # Save train examples
-    import pickle
-    with open("data/train_examples.pkl", "wb") as f:
-        pickle.dump(train_examples, f)
+    # # Save train examples
+    # import pickle
+    # with open("data/train_examples.pkl", "wb") as f:
+    #     pickle.dump(train_examples, f)
+
+    tokenized_path = 'data/training/tokenized_e5_inputs.pt'
+    if os.path.exists(tokenized_path):
+        print(f"Loading pre-tokenized data from {tokenized_path}")
+        tokenized = torch.load(tokenized_path)
+    else:
+        print(f"Tokenizing data and saving to {tokenized_path}")
+        tokenizer = AutoTokenizer.from_pretrained("intfloat/multilingual-e5-large")
+        tokenized = tokenizer(
+            [f"query: {q}" for q in dataset["query"]],
+            [f"passage: {p}" for p in dataset["text"]],
+            padding="max_length",
+            truncation=True,
+            max_length=512,
+            return_tensors="pt"
+        )
+        torch.save(tokenized, tokenized_path)
+
+    #train_dataset = TensorDataset(tokenized["input_ids"], tokenized["attention_mask"])
+    train_dataset = PreTokenizedDataset(tokenized["input_ids"], tokenized["attention_mask"])
 
     train_dataloader = DataLoader(
-        train_examples,
-        batch_size=64,
+        train_dataset,
+        batch_size=64,            # try 128–256 on H100 with use_amp=True
         shuffle=True,
-        num_workers=32,  # tune depending on CPU
-        pin_memory=True
+        num_workers=16,            # plenty of cores available
+        pin_memory=True,
+        prefetch_factor=4
     )
     
     # load model
@@ -61,6 +98,7 @@ def main():
         output_path="models/e5-finetuned",
         callback=log_callback
     )
+    writer.close()
 
 if __name__ == "__main__":
     main()
