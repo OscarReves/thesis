@@ -139,7 +139,7 @@ class E5RetrieverGPU:
         
         index_cpu = faiss.read_index(index_path)
         res = faiss.StandardGpuResources()
-        self.index = faiss.index_cpu_to_gpu(res, 0, index_cpu)
+        self.index = faiss.index_cpu_to_gpu(res, 0, index_cpu) # move the index to gpu 
 
 
         # Load dataset and extract text field
