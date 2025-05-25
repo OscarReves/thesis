@@ -66,32 +66,28 @@ def main():
         print(f"Tokenizing data in batches and saving to {tokenized_path}")
         tokenizer = AutoTokenizer.from_pretrained("intfloat/multilingual-e5-large",use_fast=True)
 
-        input_ids = []
-        attention_masks = []
-
-        for i in tqdm(range(0, len(dataset), batch_size), desc="Tokenizing"):
-            batch_queries = [f"query: {q}" for q in dataset["query"][i:i+batch_size]]
-            batch_passages = [f"passage: {p}" for p in dataset["text"][i:i+batch_size]]
-
-            tokens = tokenizer(
-                batch_queries,
-                batch_passages,
+        def tokenize_batch(batch):
+            return tokenizer(
+                [f"query: {q}" for q in batch["query"]],
+                [f"passage: {p}" for p in batch["text"]],
                 padding="max_length",
                 truncation=True,
-                max_length=512,
-                return_tensors="pt"
+                max_length=512
             )
 
-            input_ids.append(tokens["input_ids"])
-            attention_masks.append(tokens["attention_mask"])
-
+        tokenized_dataset = dataset.map(
+            tokenize_batch,
+            batched=True,
+            batch_size=1024,
+            num_proc=16,  # adjust to your core count
+            remove_columns=dataset.column_names
+        )
         # Concatenate into single tensors
         tokenized = {
-            "input_ids": torch.cat(input_ids, dim=0),
-            "attention_mask": torch.cat(attention_masks, dim=0)
+            "input_ids": torch.tensor(tokenized_dataset["input_ids"]),
+            "attention_mask": torch.tensor(tokenized_dataset["attention_mask"])
         }
-
-    torch.save(tokenized, tokenized_path)
+        torch.save(tokenized, tokenized_path)
 
     #train_dataset = TensorDataset(tokenized["input_ids"], tokenized["attention_mask"])
     train_dataset = PreTokenizedDataset(tokenized["input_ids"], tokenized["attention_mask"])
