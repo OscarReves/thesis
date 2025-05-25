@@ -196,7 +196,7 @@ def load_web_faq(path):
     for old, new in column_renames.items():
         dataset = dataset.rename_column(old, new)
     #dataset = dataset.map(lambda example, idx: {"uid": idx}, with_indices=True)
-    dataset = dataset.add_column("id", list(range(len(dataset))))
+    dataset = dataset.add_column("uid", list(range(len(dataset))))
     return dataset
 
 def load_knowledge_base(path, type, silent=False):
