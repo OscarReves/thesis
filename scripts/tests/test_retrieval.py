@@ -5,7 +5,7 @@ from src.embedder import get_embedder
 from src.generator import get_generator
 from src.indexer import FaissIndexer
 from src import pipeline as pipeline_module
-from src.utils import save_to_json
+from src.utils import save_to_json, load_documents
 import argparse 
 from tqdm import tqdm
 import os 
@@ -64,11 +64,12 @@ def main():
             "retrieved_uids"    : ru
         } for q, u, ru in zip(queries, uids, retrieved_uids))
 
-    save_to_json(results, save_path, result_type="answers with context")
+    save_to_json(results, save_path, result_type="retrieved uids")
     
     # 3. Evaluate 
+    results = load_documents(save_path)
     def uid_match(sample):
-        return sample('uid') in sample('retrieved_uids')
+        return sample['uid'] in sample['retrieved_uids']
     
     correct = results.filter(uid_match)
     accuracy = len(correct)/len(results)
