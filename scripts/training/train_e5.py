@@ -10,7 +10,8 @@ import argparse
 from tqdm import tqdm
 import os 
 import numpy as np
-from sentence_transformers import SentenceTransformer, InputExample, losses, InputFeatures
+from sentence_transformers import SentenceTransformer, InputExample, losses
+from sentence_transformers.input_examples import InputFeatures
 from torch.utils.data import DataLoader, TensorDataset
 from torch.utils.data import Dataset
 from torch.utils.tensorboard import SummaryWriter
