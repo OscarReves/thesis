@@ -44,10 +44,11 @@ class FaissIndexer:
         index = faiss.IndexIDMap(base_index)
 
         process = psutil.Process()
+        outer_batch_size = batch_size * 100  # Controls how much to embed in one go
 
-        for start in tqdm(range(0, len(documents), batch_size), 
+        for start in tqdm(range(0, len(documents), outer_batch_size), 
                           desc=f"Indexing in batches of {batch_size}"):
-            end = start + batch_size
+            end = start + outer_batch_size
             batch = documents[start:end]
 
             # Encode and normalize
