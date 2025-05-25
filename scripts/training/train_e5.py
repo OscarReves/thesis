@@ -88,7 +88,7 @@ def main():
 
     # Load pre-tokenized data
     dataset = TensorDataset(tokenized["input_ids"], tokenized["attention_mask"])
-    dataloader = DataLoader(dataset, batch_size=256, shuffle=True, num_workers=8, pin_memory=True)
+    dataloader = DataLoader(dataset, batch_size=256, shuffle=True, num_workers=4, pin_memory=True)
 
     def mean_pooling(last_hidden_state, attention_mask):
         mask = attention_mask.unsqueeze(-1).expand(last_hidden_state.size()).float()
@@ -102,7 +102,7 @@ def main():
 
     global_step = 0
 
-    for epoch in range(1):  # add more epochs as needed
+    for epoch in range(8):  # add more epochs as needed
         pbar = tqdm(dataloader, desc=f"Epoch {epoch}")
         for input_ids, attention_mask in pbar:
             input_ids = input_ids.to(device)
@@ -129,7 +129,10 @@ def main():
             optimizer.zero_grad()
 
             pbar.set_postfix(loss=loss.item())
-
+        
+        save_path = f"models/e5_finetuned_epoch{epoch}.pt"
+        torch.save(model.module.state_dict() if isinstance(model, torch.nn.DataParallel) else model.state_dict(), save_path)
+        print(f"Saved model to {save_path}")
 
     writer.close()
 
