@@ -16,31 +16,15 @@ from torch.utils.data import Dataset
 from torch.utils.tensorboard import SummaryWriter
 from transformers import AutoTokenizer
 import torch
-
-class InputFeatures:
-    def __init__(self, input_ids, attention_mask, token_type_ids=None, label=None):
-        self.input_ids = input_ids
-        self.attention_mask = attention_mask
-        self.token_type_ids = token_type_ids
-        self.label = label
+import torch.nn.functional as F
+from torch.utils.data import DataLoader, TensorDataset
+from transformers import AutoModel, AutoTokenizer
+from tqdm import tqdm
 
 
-class PreTokenizedDataset(Dataset):
-    def __init__(self, input_ids, attention_mask):
-        self.input_ids = input_ids
-        self.attention_mask = attention_mask
-
-    def __len__(self):
-        return len(self.input_ids)
-
-    def __getitem__(self, idx):
-        return InputFeatures(
-            input_ids=self.input_ids[idx],
-            attention_mask=self.attention_mask[idx]
-        )
 
 def main():
-    
+
     # Build dataloader
     dataset_path = '/dtu/p1/oscrev/webfaq_danish'
     dataset = load_web_faq(dataset_path)
@@ -89,39 +73,59 @@ def main():
         }
         torch.save(tokenized, tokenized_path)
 
-    #train_dataset = TensorDataset(tokenized["input_ids"], tokenized["attention_mask"])
-    train_dataset = PreTokenizedDataset(tokenized["input_ids"], tokenized["attention_mask"])
 
-    train_dataloader = DataLoader(
-        train_dataset,
-        batch_size=128,            # try 128–256 on H100 with use_amp=True
-        shuffle=True,
-        num_workers=8,            # plenty of cores available
-        pin_memory=True,
-        prefetch_factor=4
-    )
-    
-    # load model
-    model = SentenceTransformer("intfloat/multilingual-e5-large")
+    device = torch.device("cuda")
+    model = AutoModel.from_pretrained("intfloat/multilingual-e5-large").to(device)
+    model.train()
 
-    # Loss: in-batch negatives
-    train_loss = losses.MultipleNegativesRankingLoss(model)
+    optimizer = torch.optim.AdamW(model.parameters(), lr=2e-5)
+    scaler = torch.cuda.amp.GradScaler()  # for mixed precision
+
+    # Load pre-tokenized data
+    tokenized = torch.load("data/training/tokenized_e5_inputs.pt")
+    dataset = TensorDataset(tokenized["input_ids"], tokenized["attention_mask"])
+    dataloader = DataLoader(dataset, batch_size=128, shuffle=True, num_workers=16, pin_memory=True)
+
+    def mean_pooling(last_hidden_state, attention_mask):
+        mask = attention_mask.unsqueeze(-1).expand(last_hidden_state.size()).float()
+        summed = torch.sum(last_hidden_state * mask, dim=1)
+        count = torch.clamp(mask.sum(dim=1), min=1e-9)
+        return summed / count
+
 
     # Logger 
     writer = SummaryWriter(log_dir="./logs/e5_finetune")
-    def log_callback(score, epoch, step):
-        writer.add_scalar("training/loss", score, step)
-        writer.flush() 
 
-    # Fine-tune
-    model.fit(
-        train_objectives=[(train_dataloader, train_loss)],
-        epochs=1,
-        warmup_steps=500,
-        use_amp=True,
-        output_path="models/e5-finetuned",
-        callback=log_callback
-    )
+    global_step = 0
+
+    for epoch in range(1):  # add more epochs as needed
+        pbar = tqdm(dataloader, desc=f"Epoch {epoch}")
+        for input_ids, attention_mask in pbar:
+            input_ids = input_ids.to(device)
+            attention_mask = attention_mask.to(device)
+
+            with torch.cuda.amp.autocast():
+                outputs = model(input_ids=input_ids, attention_mask=attention_mask)
+                pooled = mean_pooling(outputs.last_hidden_state, attention_mask)
+                pooled = F.normalize(pooled, p=2, dim=1)
+
+                # Similarity matrix (cosine sim)
+                sims = pooled @ pooled.T  # [batch_size x batch_size]
+                labels = torch.arange(len(sims), device=device)
+                loss = F.cross_entropy(sims, labels)
+
+                writer.add_scalar("train/loss", loss.item(), global_step)
+                writer.flush() 
+                global_step += 1
+
+            scaler.scale(loss).backward()
+            scaler.step(optimizer)
+            scaler.update()
+            optimizer.zero_grad()
+
+            pbar.set_postfix(loss=loss.item())
+
+
     writer.close()
 
 if __name__ == "__main__":
