@@ -49,7 +49,7 @@ def main():
         )
 
     results = []
-    for i in tqdm(range(0, len(documents), batch_size=batch_size), 
+    for i in tqdm(range(0, len(documents), batch_size), 
                   desc=f"Retrieving documents in batches of {batch_size}"):
         batch = documents[i:i+batch_size]
         queries = batch['queries']
