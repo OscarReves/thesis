@@ -75,7 +75,7 @@ def get_retrieval_accuracy(dataset, k=5):
 
     # Extract uid and top-k retrieved uids
     uids = np.array(dataset['uid'])
-    retrieved_uids = np.array(dataset['retrieved_uids'])
+    retrieved_uids = np.array(dataset['retrieved_uids'][:k])
 
     accuracy = (uids[:, None] == retrieved_uids).any(axis=1).mean()
     return accuracy
