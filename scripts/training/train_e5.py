@@ -12,7 +12,7 @@ import os
 import numpy as np
 from sentence_transformers import SentenceTransformer, InputExample, losses
 from torch.utils.data import DataLoader
-
+from torch.utils.data import Dataset
 
 def main():
     
@@ -20,15 +20,34 @@ def main():
     documents_path = '/dtu/p1/oscrev/webfaq_danish'
     documents = load_web_faq(documents_path)
     
-    def to_input_example(example):
-        return InputExample(texts=[f"query: {example['query']}", f"passage: {example['text']}"])
+    # def to_input_example(example):
+    #     return InputExample(texts=[f"query: {example['query']}", f"passage: {example['text']}"])
 
-    # Assuming `documents` is a HuggingFace Dataset
-    train_dataset = documents.map(lambda x: {"input_example": to_input_example(x)})
+    # # Assuming `documents` is a HuggingFace Dataset
+    # train_dataset = documents.map(lambda x: {"input_example": to_input_example(x)})
 
-    # Extract list of InputExamples
-    train_examples = train_dataset["input_example"]
-    train_dataloader = DataLoader(train_examples, batch_size=32, shuffle=True)
+    # # Extract list of InputExamples
+    # train_examples = train_dataset["input_example"]
+    # train_dataloader = DataLoader(train_examples, batch_size=32, shuffle=True)
+    
+    class HFContrastiveDataset(Dataset):
+        def __init__(self, hf_dataset):
+            self.dataset = hf_dataset
+
+        def __len__(self):
+            return len(self.dataset)
+
+        def __getitem__(self, idx):
+            row = self.dataset[idx]
+            return InputExample(
+                texts=[f"query: {row['query']}", f"passage: {row['text']}"]
+            )
+
+
+    train_dataset = HFContrastiveDataset(documents)
+    train_dataloader = DataLoader(train_dataset, batch_size=32, shuffle=True)
+    
+    # load model
     model = SentenceTransformer("intfloat/multilingual-e5-large")
 
     # Loss: in-batch negatives
