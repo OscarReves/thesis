@@ -12,7 +12,7 @@ import os
 
 def main():
     # Start by writing for one specific dataset, then generalize 
-    documents = load_retrieval_corpus
+    documents = load_retrieval_corpus()
     index_path = 'results/retrieval_test/index.faiss'
     embedder_name = 'e5'
     device = 'cuda'
