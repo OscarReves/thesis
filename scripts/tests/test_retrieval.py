@@ -41,31 +41,34 @@ def main():
         print(f"Index built and saved to {index_path}")
 
     # 2. Retrieve 
-    retriever = get_retriever(
-        retriever_name,
-        documents = documents,
-        index_path = index_path,
-        device = device,
-        top_k = 1000
-        )
+    if not os.path.exists(save_path):
+        print(f"No retrieval results found at {save_path}, retrieving new results...")
 
-    results = []
-    for i in tqdm(range(0, len(documents), batch_size), 
-                  desc=f"Retrieving documents in batches of {batch_size}"):
-        batch = documents[i:i+batch_size]
-        queries = batch['query']
-        uids = batch['uid']
+        retriever = get_retriever(
+            retriever_name,
+            documents = documents,
+            index_path = index_path,
+            device = device,
+            top_k = 1000
+            )
 
-        retrieved_uids = retriever.retrieve_uids(queries) 
-            # really you should pre-compute embeddings and search manually
-        
-        results.extend({
-            "query"     : q,
-            "uid"       : u,
-            "retrieved_uids"    : ru
-        } for q, u, ru in zip(queries, uids, retrieved_uids))
+        results = []
+        for i in tqdm(range(0, len(documents), batch_size), 
+                    desc=f"Retrieving documents in batches of {batch_size}"):
+            batch = documents[i:i+batch_size]
+            queries = batch['query']
+            uids = batch['uid']
 
-    save_to_json(results, save_path, result_type="retrieved uids")
+            retrieved_uids = retriever.retrieve_uids(queries) 
+                # really you should pre-compute embeddings and search manually
+            
+            results.extend({
+                "query"     : q,
+                "uid"       : u,
+                "retrieved_uids"    : ru
+            } for q, u, ru in zip(queries, uids, retrieved_uids))
+
+        save_to_json(results, save_path, result_type="retrieved uids")
     
     # 3. Evaluate 
     results = load_documents(save_path)

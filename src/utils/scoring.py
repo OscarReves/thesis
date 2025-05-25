@@ -44,7 +44,7 @@ def get_accuracy(dataset, type='binary'):
 #     return accuracy
 
 def get_retrieval_accuracy(dataset, k=5):
-    def uid_match(sample):
+    def uid_match(sample, batched=True):
         return sample['uid'] in sample['retrieved_uids'][:k]
     
     max_k = len(dataset[0]['retrieved_uids'])
