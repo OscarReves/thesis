@@ -53,7 +53,7 @@ def main():
                   desc=f"Retrieving documents in batches of {batch_size}"):
         batch = documents[i:i+batch_size]
         queries = batch['query']
-        uids = batch['uids']
+        uids = batch['uid']
 
         retrieved_uids = retriever.retrieve_uids(queries) 
             # really you should pre-compute embeddings and search manually
