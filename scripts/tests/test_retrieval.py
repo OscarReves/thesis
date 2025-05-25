@@ -39,7 +39,7 @@ def main(config_path):
             index_path= index_path
         )
         
-        indexer.index_documents_with_uid(
+        indexer.index_directory(
             documents=documents,
             batch_size=batch_size
         )
@@ -55,7 +55,7 @@ def main(config_path):
             documents = documents,
             index_path = index_path,
             device = device,
-            top_k = 1000
+            top_k = 100
             )
 
         results = []
@@ -74,6 +74,8 @@ def main(config_path):
                 "retrieved_uids"    : ru
             } for q, u, ru in zip(queries, uids, retrieved_uids))
 
+            if i == 5: break # break early for testing
+
         save_to_json(results, save_path, result_type="retrieved uids")
     
     # 3. Evaluate 
@@ -86,7 +88,7 @@ def main(config_path):
     uids = np.array(results['uid'], dtype=np.int64)
     retrieved_uids_full = np.array(results['retrieved_uids'], dtype=np.int64)
 
-    for k in [1, 5, 10, 25, 50, 100, 1000]:
+    for k in [1, 5, 10, 25, 50, 100, 100]:
         retrieved_uids = retrieved_uids_full[:, :k]
         accuracy = (uids[:, None] == retrieved_uids).any(axis=1).mean()
         print(f"Retrieval accuracy@{k}: {accuracy}")

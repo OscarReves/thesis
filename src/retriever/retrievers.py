@@ -52,7 +52,7 @@ class E5Retriever:
             output = self.model(**inputs)
             mask = inputs["attention_mask"].unsqueeze(-1).expand(output.last_hidden_state.size()).float()
             pooled = (output.last_hidden_state * mask).sum(1) / mask.sum(1)
-            return F.normalize(pooled, p=2, dim=1).cpu().numpy()
+            return F.normalize(pooled, p=2, dim=1).cpu().numpy() # you are normalizing twice. Not harmful, but also not necessary 
     
     def retrieve(self, questions):
         queries = [f"query: {q}" for q in questions]

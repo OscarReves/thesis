@@ -44,7 +44,30 @@ class E5Embedder:
         torch.set_float32_matmul_precision('high')
 
     def encode(self, documents, batch_size=64):  # bump batch size if your GPU allows
-        texts = [f"passage: {t}" for t in documents['text']]
+        texts = [f"passage: {t}" for t in documents['text']] # for very large batch sizes this is likely ineffecient. Consider .map 
+        all_embeddings = []
+
+        with torch.inference_mode():
+            for i in tqdm(range(0, len(texts), batch_size), desc=
+                          f"Encoding chunks in batches of {batch_size}"):
+                batch = texts[i:i+batch_size]
+                tokens = self.tokenizer(batch, padding=True, truncation=True, return_tensors="pt").to(self.device)
+                output = self.model(**tokens).last_hidden_state
+
+                mask = tokens['attention_mask'].unsqueeze(-1)
+                summed = torch.sum(output * mask, dim=1)
+                counts = mask.sum(dim=1).clamp(min=1e-9)
+                embeddings = summed / counts
+
+                all_embeddings.append(embeddings)
+
+        embeddings = torch.cat(all_embeddings, dim=0)
+        embeddings = embeddings.cpu().numpy()
+
+        return embeddings
+
+    def encode_query(self, documents, batch_size=64):  # bump batch size if your GPU allows
+        texts = [f"query: {t}" for t in documents['query']] # for very large batch sizes this is likely ineffecient. Consider .map 
         all_embeddings = []
 
         with torch.inference_mode():
