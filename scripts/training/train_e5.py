@@ -79,7 +79,7 @@ def main():
             tokenize_batch,
             batched=True,
             batch_size=1024,
-            num_proc=16,  # adjust to your core count
+            num_proc=16,  # adjust to core count
             remove_columns=dataset.column_names
         )
         # Concatenate into single tensors
@@ -96,9 +96,8 @@ def main():
         train_dataset,
         batch_size=128,            # try 128–256 on H100 with use_amp=True
         shuffle=True,
-        num_workers=16,            # plenty of cores available
-        use_amp=True,
-        pin_memory=True,
+        num_workers=32,            # plenty of cores available
+git         pin_memory=True,
         prefetch_factor=4
     )
     
