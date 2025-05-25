@@ -2,7 +2,7 @@ from datasets import load_dataset, Dataset
 import json
 from pathlib import Path
 import os 
-
+import re
 
 # == For loading raw data ==
 
@@ -162,8 +162,29 @@ def load_news(path, silent=False):
         print(f"{len(dataset)} questions loaded")
     return dataset
 
+def load_retrieval_corpus():
+    dataset = load_dataset('ThatsGroes/synthetic-from-retrieval-tasks-danish')
 
+    def unwrap_and_merge(example, idx):
+        try:
+            json_str = re.sub(r"^\s*```json\s*\n|\n\s*```\s*$", "", example["response"], flags=re.DOTALL)
+            parsed = json.loads(json_str)
+        except Exception:
+            parsed = {}
 
+        return {
+            "uid": idx,  # <-- integer ID for FAISS
+            "query": parsed.get("user_query", ""),
+            "text": parsed.get("positive_document", ""),
+        }
+
+    dataset = dataset["train"].map(
+        unwrap_and_merge,
+        with_indices=True,
+        features=None,
+    )
+
+    return dataset
 
 
 def load_knowledge_base(path, type, silent=False):
