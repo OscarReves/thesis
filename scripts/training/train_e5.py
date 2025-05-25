@@ -84,7 +84,7 @@ def main():
 
     # Load pre-tokenized data
     dataset = TensorDataset(tokenized["input_ids"], tokenized["attention_mask"])
-    dataloader = DataLoader(dataset, batch_size=256, shuffle=True, num_workers=16, pin_memory=True)
+    dataloader = DataLoader(dataset, batch_size=128, shuffle=True, num_workers=8, pin_memory=True)
 
     def mean_pooling(last_hidden_state, attention_mask):
         mask = attention_mask.unsqueeze(-1).expand(last_hidden_state.size()).float()
