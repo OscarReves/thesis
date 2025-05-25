@@ -64,7 +64,7 @@ def main():
         tokenized = torch.load(tokenized_path)
     else:
         print(f"Tokenizing data in batches and saving to {tokenized_path}")
-        tokenizer = AutoTokenizer.from_pretrained("intfloat/multilingual-e5-large")
+        tokenizer = AutoTokenizer.from_pretrained("intfloat/multilingual-e5-large",use_fast=True)
 
         input_ids = []
         attention_masks = []
