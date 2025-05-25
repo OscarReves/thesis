@@ -74,11 +74,11 @@ def get_retrieval_accuracy(dataset, k=5):
         print(f"Warning: Attempting to get accuracy for k = {k} but only {max_k} results have been retrieved")
 
     # Extract uid and top-k retrieved uids
-    uids = np.array([dataset['uid']])
-    retrieved_uids = np.array([dataset['retrieved_uids']]).unsqueeze(1)
+    uids = np.array(dataset['uid'])
+    retrieved_uids = np.array(dataset['retrieved_uids'])
 
-    correct = (uids == retrieved_uids).any(axis=1)
-    return correct.mean()
+    accuracy = (uids[:, None] == retrieved_uids).any(axis=1).mean()
+    return accuracy
 
 # === Human Annotation === 
 
