@@ -9,6 +9,7 @@ from src.utils import save_to_json, load_documents, get_retrieval_accuracy
 import argparse 
 from tqdm import tqdm
 import os 
+import numpy as np
 
 def main():
     # Start by writing for one specific dataset, then generalize 
@@ -74,8 +75,15 @@ def main():
     results = load_documents(save_path)
     results = results.filter(lambda x: x['query'] != '') # filter for missing queries 
 
-    for k in [1,5,10,25,50,100,1000]:
-        accuracy = get_retrieval_accuracy(results, k = k)
+    # for k in [1,5,10,25,50,100,1000]:
+    #     accuracy = get_retrieval_accuracy(results, k = k)
+    #     print(f"Retrieval accuracy@{k}: {accuracy}")
+    uids = np.array(results['uid'], dtype=np.int64)
+    retrieved_uids_full = np.array(results['retrieved_uids'], dtype=np.int64)
+
+    for k in [1, 5, 10, 25, 50, 100, 1000]:
+        retrieved_uids = retrieved_uids_full[:, :k]
+        accuracy = (uids[:, None] == retrieved_uids).any(axis=1).mean()
         print(f"Retrieval accuracy@{k}: {accuracy}")
 
 
