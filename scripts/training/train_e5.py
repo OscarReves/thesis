@@ -19,9 +19,15 @@ def main():
     # Build dataloader
     documents_path = '/dtu/p1/oscrev/webfaq_danish'
     documents = load_web_faq(documents_path)
-    def to_input_examples(dataset):
-        return [InputExample(texts=[f"query: {row['query']}", f"passage: {row['text']}"]) for row in dataset]
-    train_examples = to_input_examples(documents)
+    
+    def to_input_example(example):
+        return InputExample(texts=[f"query: {example['query']}", f"passage: {example['text']}"])
+
+    # Assuming `documents` is a HuggingFace Dataset
+    train_dataset = documents.map(lambda x: {"input_example": to_input_example(x)})
+
+    # Extract list of InputExamples
+    train_examples = train_dataset["input_example"]
     train_dataloader = DataLoader(train_examples, batch_size=32, shuffle=True)
     model = SentenceTransformer("intfloat/multilingual-e5-large")
 
