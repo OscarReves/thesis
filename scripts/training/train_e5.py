@@ -34,7 +34,7 @@ def main():
 
     train_dataloader = DataLoader(
         train_examples,
-        batch_size=256,
+        batch_size=124,
         shuffle=True,
         num_workers=4,  # tune depending on CPU
         pin_memory=True
