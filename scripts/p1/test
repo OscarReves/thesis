@@ -32,7 +32,7 @@ conda activate production_env
 export LD_LIBRARY_PATH=$CONDA_PREFIX/lib:$LD_LIBRARY_PATH
 
 # set config path(s) for open domain QA
-#CONFIG_PATH=configs/mkqa/gemma_wiki.yaml
+CONFIG_PATH=configs/web_faq/retrieval_test.yaml
 
 # test model 
-python3 -u -m scripts.tests.test_retrieval
+python3 -u -m scripts.tests.test_retrieval --config $CONFIG_PATH
