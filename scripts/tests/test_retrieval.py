@@ -10,7 +10,7 @@ import argparse
 import tqdm
 import os 
 
-def main(config_path):
+def main():
     # Start by writing for one specific dataset, then generalize 
     documents = load_retrieval_corpus
     index_path = 'results/retrieval_test/index.faiss'
