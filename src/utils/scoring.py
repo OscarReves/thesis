@@ -34,12 +34,24 @@ def get_accuracy(dataset, type='binary'):
 
 # === Retrieval Accuracy === 
 
-def retrieval_success(sample):
-    return (sample['context_id'] in sample['retrieved_uids'])
+# def retrieval_success(sample):
+#     return (sample['context_id'] in sample['retrieved_uids'])
 
-def get_retrieval_accuracy(dataset):
-    # assumes columns retrieved_uids and context_id
-    correct = dataset.filter(retrieval_success)
+# def get_retrieval_accuracy(dataset):
+#     # assumes columns retrieved_uids and context_id
+#     correct = dataset.filter(retrieval_success)
+#     accuracy = len(correct)/len(dataset)
+#     return accuracy
+
+def get_retrieval_accuracy(dataset, k=5):
+    def uid_match(sample):
+        return sample['uid'] in sample['retrieved_uids'][:k]
+    
+    max_k = len(dataset[0]['retrieved_uids'])
+    if k > max_k:
+        print(f"Warning: Attempting to get accuracy for k = {k} but only {max_k} results have been retrieved")
+
+    correct = dataset.filter(uid_match)
     accuracy = len(correct)/len(dataset)
     return accuracy
 

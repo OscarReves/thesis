@@ -5,7 +5,7 @@ from src.embedder import get_embedder
 from src.generator import get_generator
 from src.indexer import FaissIndexer
 from src import pipeline as pipeline_module
-from src.utils import save_to_json, load_documents
+from src.utils import save_to_json, load_documents, get_retrieval_accuracy
 import argparse 
 from tqdm import tqdm
 import os 
@@ -45,7 +45,8 @@ def main():
         retriever_name,
         documents = documents,
         index_path = index_path,
-        device = device
+        device = device,
+        top_k = 1000
         )
 
     results = []
@@ -68,13 +69,11 @@ def main():
     
     # 3. Evaluate 
     results = load_documents(save_path)
-    results = results.filter(lambda x: x['query'] != '')
-    def uid_match(sample):
-        return sample['uid'] in sample['retrieved_uids']
-    
-    correct = results.filter(uid_match)
-    accuracy = len(correct)/len(results)
-    print(f"Retrieval accuracy: {accuracy}")
+    results = results.filter(lambda x: x['query'] != '') # filter for missing queries 
+
+    for k in [1,5,10,25,50,100,1000]:
+        accuracy = get_retrieval_accuracy(results, k = k)
+        print(f"Retrieval accuracy@{k}: {accuracy}")
 
 
 if __name__ == "__main__":
