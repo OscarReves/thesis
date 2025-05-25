@@ -5,23 +5,28 @@ from src.embedder import get_embedder
 from src.generator import get_generator
 from src.indexer import FaissIndexer
 from src import pipeline as pipeline_module
-from src.utils import save_to_json, load_documents, get_retrieval_accuracy
+from src.utils import save_to_json, load_documents, get_retrieval_accuracy, load_web_faq
 import argparse 
 from tqdm import tqdm
 import os 
 import numpy as np
 
-def main():
-    # Start by writing for one specific dataset, then generalize 
-    documents = load_retrieval_corpus()
-    index_path = 'results/retrieval_test/IPindex.faiss'
-    embedder_name = 'e5'
-    device = 'cuda'
-    retriever_name = 'e5'
-    save_path = 'results/retrieval_test/results_with_IP_index'
-    batch_size = 1024
 
+def main(config_path):
+    with open(config_path, "r") as f:
+        config = yaml.safe_load(f)
+
+    documents_path = config['documents_path']
+    index_path = config['index_path']
+    retriever_name = config['retriever_name']
+    embedder_name = config['embedder_name']
+    device = config['device']
+    save_path = config['save_path']
+    batch_size = config['batch_size']
+    
     # 1. Build index 
+    documents = load_web_faq(documents_path)
+    
     embedder = get_embedder(embedder_name)
 
     if os.path.exists(index_path):

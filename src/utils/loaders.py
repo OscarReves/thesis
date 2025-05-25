@@ -1,8 +1,9 @@
-from datasets import load_dataset, Dataset
+from datasets import load_dataset, Dataset, load_from_disk
 import json
 from pathlib import Path
 import os 
 import re
+
 
 # == For loading raw data ==
 
@@ -164,7 +165,6 @@ def load_news(path, silent=False):
 
 def load_retrieval_corpus():
     dataset = load_dataset('ThatsGroes/synthetic-from-retrieval-tasks-danish')
-
     def unwrap_and_merge(example, idx):
         try:
             json_str = re.sub(r"^\s*```json\s*\n|\n\s*```\s*$", "", example["response"], flags=re.DOTALL)
@@ -186,6 +186,17 @@ def load_retrieval_corpus():
 
     return dataset
 
+def load_web_faq(path):
+    dataset = load_from_disk(path)
+    column_renames = {
+    "question": "query",
+    "answer": "passage"
+    }
+        
+    for old, new in column_renames.items():
+        dataset = dataset.rename_column(old, new)
+    dataset = dataset.map(lambda example, idx: {"uid": idx}, with_indices=True)
+    return dataset
 
 def load_knowledge_base(path, type, silent=False):
     if type == "squad":
