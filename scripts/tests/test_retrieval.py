@@ -52,7 +52,7 @@ def main():
     for i in tqdm(range(0, len(documents), batch_size), 
                   desc=f"Retrieving documents in batches of {batch_size}"):
         batch = documents[i:i+batch_size]
-        queries = batch['queries']
+        queries = batch['query']
         uids = batch['uids']
 
         retrieved_uids = retriever.retrieve_uids(queries) 
