@@ -52,7 +52,7 @@ class E5Embedder:
                           f"Encoding chunks in batches of {batch_size}"):
                 batch = texts[i:i+batch_size]
                 tokens = self.tokenizer(batch, padding=True, truncation=True, return_tensors="pt")
-                tokens = {k: v.to(self.device) for k, v in tokens.items()}
+                tokens = {k: v.to(self.model.device) for k, v in tokens.items()}
                 output = self.model(**tokens).last_hidden_state
 
                 mask = tokens['attention_mask'].unsqueeze(-1)
