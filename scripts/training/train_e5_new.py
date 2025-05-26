@@ -1,15 +1,5 @@
-import yaml
-from src.utils import load_retrieval_corpus
-from src.retriever import get_retriever
-from src.embedder import get_embedder
-from src.generator import get_generator
-from src.indexer import FaissIndexer
-from src import pipeline as pipeline_module
-from src.utils import save_to_json, load_documents, get_retrieval_accuracy, load_web_faq
-import argparse 
+from src.utils import load_web_faq
 from tqdm import tqdm
-import os 
-import numpy as np
 from sentence_transformers import SentenceTransformer, InputExample, losses
 from torch.utils.data import DataLoader, TensorDataset
 from torch.utils.data import Dataset
@@ -64,7 +54,7 @@ def main():
     ]
 
     # 6) Wrap in a DataLoader
-    train_dataloader = DataLoader(train_examples, batch_size=64, shuffle=True)
+    train_dataloader = DataLoader(train_examples, batch_size=32, shuffle=True)
 
     # 7) Choose a contrastive loss (MultipleNegativesRankingLoss ≈ InfoNCE)
     train_loss = losses.MultipleNegativesRankingLoss(model=model)
