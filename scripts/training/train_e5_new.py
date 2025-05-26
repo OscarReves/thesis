@@ -54,11 +54,10 @@ def main():
 
     # 5) Prepare your Danish WebFAQ data as InputExample pairs
     #    Each example is a (query, positive_passage) pair
-    
     train_examples = [
         InputExample(texts=[f"query: {q}", f"passage: {p}"])
         for q, p in tqdm(
-            zip(webfaq_train_pairs["query"], webfaq_train_pairs["passage"]),
+            webfaq_train_pairs,
             total=len(webfaq_train_pairs),
             desc="Building train_examples"
         )
