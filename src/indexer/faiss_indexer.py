@@ -41,9 +41,10 @@ class FaissIndexer:
 
         # Create a single FAISS index
         base_index = faiss.IndexFlatIP(dim)
-        index_cpu = faiss.IndexIDMap(base_index)
-        res = faiss.StandardGpuResources()
-        index = faiss.index_cpu_to_gpu(res, 0, index_cpu) # move the index to gpu
+        index = faiss.IndexIDMap(base_index)
+        #index_cpu = faiss.IndexIDMap(base_index)
+        #res = faiss.StandardGpuResources()
+        #index = faiss.index_cpu_to_gpu(res, 0, index_cpu) # move the index to gpu
 
         process = psutil.Process()
         outer_batch_size = batch_size * 100  # Controls how much to embed in one go
@@ -69,8 +70,8 @@ class FaissIndexer:
             del embeddings, uids, batch
             gc.collect()
 
-        cpu_index = faiss.index_gpu_to_cpu(index)
-        faiss.write_index(cpu_index, self.index_path)
+        #cpu_index = faiss.index_gpu_to_cpu(index)
+        faiss.write_index(index, self.index_path)
 
     def index_directory(self, document_paths, batch_size):
         # Load the dataset (assumes memory-mapped HF Dataset)
