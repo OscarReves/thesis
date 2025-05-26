@@ -85,7 +85,7 @@ class E5Embedder:
 
                 # Mean pooling
                 mask = batch_mask.unsqueeze(-1)
-                summed = (output * mask).sum(dim=1)
+                summed = torch.sum(output * mask, dim=1)
                 counts = mask.sum(dim=1).clamp(min=1e-9)
                 embeddings = summed / counts
 
