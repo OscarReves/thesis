@@ -39,9 +39,15 @@ def main(config_path):
             index_path= index_path
         )
         
-        indexer.index_documents_with_uid(
+        # indexer.index_documents_with_uid(
+        #     documents=documents,
+        #     batch_size=batch_size
+        # )
+
+        indexer.index_pretokenized(
             documents=documents,
-            batch_size=batch_size
+            tokenized_path='data/training/tokenized_e5_inputs',
+            batch_size=1024
         )
 
         print(f"Index built and saved to {index_path}")

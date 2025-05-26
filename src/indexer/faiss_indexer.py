@@ -73,6 +73,29 @@ class FaissIndexer:
         #cpu_index = faiss.index_gpu_to_cpu(index)
         faiss.write_index(index, self.index_path)
 
+    def index_pretokenized(self, documents, tokenized_path, batch_size):
+        dim = self.embedder.model.config.hidden_size
+        process = psutil.Process()
+        # Create a single FAISS index
+        base_index = faiss.IndexFlatIP(dim)
+        index = faiss.IndexIDMap(base_index)
+
+        embeddings = self.embedder.encode_pretokenized(tokenized_path, batch_size)
+        faiss.normalize_L2(embeddings)
+
+        # Get UIDs
+        uids = np.array(documents["uid"], dtype=np.int64)
+
+        # Add to index
+        index.add_with_ids(embeddings, uids)
+
+        mem_gb = process.memory_info().rss / 1e9
+        print(f"Added docs {len(documents)} to index | Memory usage: {mem_gb:.2f} GB")
+        del embeddings, uids, batch
+        gc.collect()
+
+        faiss.write_index(index, self.index_path)
+
     def index_directory(self, document_paths, batch_size):
         # Load the dataset (assumes memory-mapped HF Dataset)
         paths = [str(p) for p in document_paths]

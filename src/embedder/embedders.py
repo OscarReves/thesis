@@ -52,7 +52,7 @@ class E5Embedder:
                           f"Encoding chunks in batches of {batch_size}"):
                 batch = texts[i:i+batch_size]
                 tokens = self.tokenizer(batch, padding=True, truncation=True, return_tensors="pt").to(self.device)
-                #tokens = {k: v.to(self.model.device) for k, v in tokens.items()}
+                tokens = {k: v.to(self.device, non_blocking=True) for k, v in tokens.items()}
                 output = self.model(**tokens).last_hidden_state
 
                 mask = tokens['attention_mask'].unsqueeze(-1)
@@ -66,6 +66,34 @@ class E5Embedder:
         embeddings = embeddings.cpu().numpy()
 
         return embeddings
+
+    def encode_pretokenized(self, path, batch_size=64):
+        tokenized = torch.load(path)
+        input_ids = tokenized["input_ids"]
+        attention_mask = tokenized["attention_mask"]
+        lengths = (input_ids != self.tokenizer.pad_token_id).sum(dim=1)  # or just attention_mask.sum(1)
+        max_len = lengths.max().item()
+        print(f"Max token length: {max_len}")
+        
+        all_embeddings = []
+        with torch.inference_mode():
+            for i in range(0, len(input_ids), batch_size):
+                batch_ids = input_ids[i:i+batch_size].to(self.device)
+                batch_mask = attention_mask[i:i+batch_size].to(self.device)
+
+                output = self.model(input_ids=batch_ids, attention_mask=batch_mask).last_hidden_state
+
+                # Mean pooling
+                mask = batch_mask.unsqueeze(-1)
+                summed = (output * mask).sum(dim=1)
+                counts = mask.sum(dim=1).clamp(min=1e-9)
+                embeddings = summed / counts
+
+                all_embeddings.append(embeddings)
+
+        embeddings = torch.cat(all_embeddings, dim=0).cpu().numpy()
+
+
 
     def encode_query(self, queries, batch_size=64):  # bump batch size if your GPU allows
         #texts = [f"query: {t}" for t in documents['query']] # for very large batch sizes this is likely ineffecient. Consider .map 
