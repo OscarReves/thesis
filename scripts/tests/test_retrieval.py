@@ -46,7 +46,7 @@ def main(config_path):
 
         indexer.index_pretokenized(
             documents=documents,
-            tokenized_path='data/training/tokenized_e5_inputs',
+            tokenized_path='data/training/tokenized_e5_inputs.pt',
             batch_size=1024
         )
 
