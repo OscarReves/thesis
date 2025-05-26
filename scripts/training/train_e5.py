@@ -27,7 +27,7 @@ def main():
 
     # Build dataloader
     dataset_path = '/dtu/p1/oscrev/webfaq_danish'
-    dataset = load_web_faq(dataset_path,max_samples=10000)
+    dataset = load_web_faq(dataset_path)
 
     tokenized_path = 'data/training/tokenized_e5_inputs.pt'
     batch_size = 1024  # adjust based on your RAM
