@@ -135,7 +135,7 @@ class E5EmbedderLocal(E5Embedder):
         state_dict = torch.load(save_path)
         # because of dual-gpu training, state_dict needs to be refactored 
         new_state_dict = {k.replace("module.", ""): v for k, v in state_dict.items()} 
-        self.model.load_state_dict(new_state_dict)
+        #self.model.load_state_dict(new_state_dict)
         #model.to("cuda")
         self.model.eval()
         #torch.set_float32_matmul_precision('high') # is this necessary?
