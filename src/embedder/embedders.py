@@ -101,7 +101,8 @@ class E5EmbedderLocal(E5Embedder):
             raise RuntimeError(f"CUDA requested but not available on this system (device={device})")
         self.tokenizer = AutoTokenizer.from_pretrained(model_name)
         self.model = AutoModel.from_pretrained("intfloat/multilingual-e5-large")
-        
+        self.device = device
+
         # load weights of saved model
         state_dict = torch.load(save_path)
         # because of dual-gpu training, state_dict needs to be refactored 
