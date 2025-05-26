@@ -30,4 +30,4 @@ source ~/miniconda3/etc/profile.d/conda.sh
 conda activate production_env
 export LD_LIBRARY_PATH=$CONDA_PREFIX/lib:$LD_LIBRARY_PATH
 
-python3 -u -m scripts.training.train_e5_new
+python3 -u -m scripts.training.train_e5

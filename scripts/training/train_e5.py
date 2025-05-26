@@ -23,7 +23,6 @@ from tqdm import tqdm
 torch.backends.cudnn.benchmark = True
 
 
-
 def main():
 
     # Build dataloader
@@ -102,25 +101,59 @@ def main():
 
     global_step = 0
 
-    for epoch in range(8):  # add more epochs as needed
+    # Split tokenized data into query and passage encodings
+    query_inputs = tokenizer(
+        [f"query: {q}" for q in dataset["query"]],
+        padding="max_length",
+        truncation=True,
+        max_length=128,
+        return_tensors="pt"
+    )
+    passage_inputs = tokenizer(
+        [f"passage: {p}" for p in dataset["text"]],
+        padding="max_length",
+        truncation=True,
+        max_length=128,
+        return_tensors="pt"
+    )
+
+    # Zip and load into DataLoader
+    tensor_dataset = TensorDataset(
+        query_inputs["input_ids"],
+        query_inputs["attention_mask"],
+        passage_inputs["input_ids"],
+        passage_inputs["attention_mask"]
+    )
+    dataloader = DataLoader(tensor_dataset, batch_size=128, shuffle=True, num_workers=4)
+
+    def mean_pooling(last_hidden, mask):
+        mask = mask.unsqueeze(-1).expand(last_hidden.size()).float()
+        return (last_hidden * mask).sum(dim=1) / mask.sum(dim=1)
+
+    def contrastive_loss(q, p, temperature=0.05):
+        q = F.normalize(q, dim=1)
+        p = F.normalize(p, dim=1)
+        logits = torch.matmul(q, p.T) / temperature
+        labels = torch.arange(q.size(0), device=q.device)
+        return F.cross_entropy(logits, labels)
+
+    for epoch in range(8):
+        model.train()
         pbar = tqdm(dataloader, desc=f"Epoch {epoch}")
-        for input_ids, attention_mask in pbar:
-            input_ids = input_ids.to(device)
-            attention_mask = attention_mask.to(device)
+        for q_ids, q_mask, p_ids, p_mask in pbar:
+            q_ids, q_mask = q_ids.to(device), q_mask.to(device)
+            p_ids, p_mask = p_ids.to(device), p_mask.to(device)
 
             with torch.cuda.amp.autocast():
-                outputs = model(input_ids=input_ids, attention_mask=attention_mask)
-                pooled = mean_pooling(outputs.last_hidden_state, attention_mask)
-                pooled = F.normalize(pooled, p=2, dim=1)
+                q_out = model(input_ids=q_ids, attention_mask=q_mask)
+                p_out = model(input_ids=p_ids, attention_mask=p_mask)
 
-                # Similarity matrix (cosine sim)
-                sims = pooled @ pooled.T  # [batch_size x batch_size]
-                labels = torch.arange(len(sims), device=device)
-                loss = F.cross_entropy(sims, labels)
+                q_emb = mean_pooling(q_out.last_hidden_state, q_mask)
+                p_emb = mean_pooling(p_out.last_hidden_state, p_mask)
+
+                loss = contrastive_loss(q_emb, p_emb)
 
             writer.add_scalar("train/loss", loss.item(), global_step)
-            if global_step % 10 == 0:
-                writer.flush()
             global_step += 1
 
             scaler.scale(loss).backward()
@@ -129,12 +162,10 @@ def main():
             optimizer.zero_grad()
 
             pbar.set_postfix(loss=loss.item())
-        
+
         save_path = f"models/e5_finetuned_epoch{epoch}.pt"
         torch.save(model.module.state_dict() if isinstance(model, torch.nn.DataParallel) else model.state_dict(), save_path)
         print(f"Saved model to {save_path}")
-
-    writer.close()
 
 if __name__ == "__main__":
     main()
