@@ -4,3 +4,4 @@ from .batch_iterator import batch_iterator
 from .scoring import get_accuracy, get_retrieval_accuracy, get_eval_metrics, get_human_votes, get_annotater_agreement, get_human_evals, get_model_evals, get_model_agreements
 from .loaders import load_knowledge_base, load_questions_by_type, save_to_json, load_mkqa, load_retrieval_corpus, load_web_faq
 from .postprocessing import get_incorrect, get_correct
+from .scoring import get_EM, get_BERTscore, get_easy_hard, get_most_improved

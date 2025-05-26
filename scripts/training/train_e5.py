@@ -98,6 +98,7 @@ def main():
     global_step = 0
 
     # Tokenize queries with progress
+    # add loading from disk in the future
     queries = [f"query: {q}" for q in dataset["query"]]
     query_inputs = {"input_ids": [], "attention_mask": []}
     for q in tqdm(queries, desc="Tokenizing queries"):
@@ -109,6 +110,7 @@ def main():
     torch.save(query_inputs, "data/training/query_inputs.pt")
 
     # Tokenize passages with progress
+    # add loading from disk in the future
     passages = [f"passage: {p}" for p in dataset["text"]]
     passage_inputs = {"input_ids": [], "attention_mask": []}
     for p in tqdm(passages, desc="Tokenizing passages"):

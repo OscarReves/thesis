@@ -3,6 +3,7 @@ import numpy as np
 from src.utils import load_documents
 from sklearn.metrics import precision_score, recall_score, f1_score
 from pathlib import Path
+import evaluate
 
 # === Question Answering Accuracy ===
 
@@ -81,6 +82,23 @@ def get_retrieval_accuracy(dataset, k=5):
     accuracy = (uids[:, None] == retrieved_uids).any(axis=1).mean()
     return accuracy
 
+# === Metrics ===
+
+def get_EM(dataset):
+    EM = evaluate.load("exact_match")
+    generated = dataset['generated_answer']
+    ref = dataset['reference_answer']
+    results = EM.compute(predictions = generated, references = ref, ignore_case = True, ignore_punctuation=True)
+    return results['exact_match']
+
+def get_BERTscore(dataset):
+    bertscore = evaluate.load("bertscore")
+    generated = dataset['generated_answer']
+    ref = dataset['reference_answer']
+    results = bertscore.compute(predictions = generated, references = ref, lang="da")
+    return results['f1']
+
+
 # === Human Annotation === 
 
 def get_human_votes(path_to_csv='results/citizenship/human_evaluation/human_annotation.csv'):
@@ -143,14 +161,20 @@ def get_annotater_agreement(path='results/citizenship/human_evaluation/human_ann
                 mean += agreement(votes[i],votes[j])
     return mean/len(votes)
 
-def get_model_agreements(path='results/citizenship/human_evaluation/model_evaluations/'):
+def get_model_agreements(path='results/citizenship/human_evaluation/model_evaluations/', 
+                         include_human=True,
+                         file_suffix=''):
     directory = Path(path)
-    evals = {'Human Majority': get_human_evals()}
+    if include_human:
+        evals = {'Human Majority': get_human_evals()}
+    else:
+        evals = {}
     for file in directory.iterdir():
-        file_path = directory / file.name
-        print(file_path)
-        eval = get_model_evals(str(file_path))
-        evals.update({file.name[:-7] : eval}) # remove "-binary" suffix for aesthetic reasons
+        if file_suffix in file.name:
+            file_path = directory / file.name
+            print(file_path)
+            eval = get_model_evals(str(file_path))
+            evals.update({file.name.replace(file_suffix,'') : eval}) # remove "-binary" suffix for aesthetic reasons
     def agreement(p1,p2):
         return np.mean(p1 == p2)
     scores = {}
@@ -160,3 +184,76 @@ def get_model_agreements(path='results/citizenship/human_evaluation/model_evalua
             agreements.append(agreement(eval,eval2))
         scores.update({model: agreements})
     return scores
+
+def get_easy_hard(path='results/citizenship/test_qa/open_domain_evaluation/',
+                  file_suffix=''):
+    dir = Path(path)
+    evals = []
+    first = True
+    for file in dir.iterdir():
+        if file_suffix in file.name:        
+            file_path = dir / file.name
+            if first:
+                questions = load_documents(str(file_path))
+                first=False
+            #print(file_path)
+            eval = get_model_evals(str(file_path))
+            evals.append(eval)
+    evals = np.array(evals)
+    evals[np.isnan(evals)] = 1/evals.shape[0] # replace nan
+    means = evals.mean(axis=0)
+    means = evals.mean(axis=0)
+    easiest = np.argsort(means)[-5:][::-1]
+    hardest = np.argsort(means)[:5][::-1]
+    easiest_questions = questions[easiest]['question']
+    easiest_scores = means[easiest]
+    hardest_questions = questions[hardest]['question']
+    hardest_scores = means[hardest]
+
+    res = {
+        'easiest' : (easiest_questions,easiest_scores),
+        'hardest' : (hardest_questions,hardest_scores)
+    }
+
+    return res
+
+def get_most_improved(path='results/citizenship/test_qa/open_domain_evaluation/'):
+    dir = Path(path)
+    with_context = []
+    no_context = []
+    first = True    
+    for file in dir.iterdir():
+        file_path = dir / file.name
+        if first:
+            questions = load_documents(str(file_path))
+            first=False
+        #print(file_path)
+        eval = get_model_evals(str(file_path))
+        if 'with_context' in file.name:        
+            with_context.append(eval)
+        if 'no_context' in file.name:
+            no_context.append(eval)            
+    with_context = np.array(with_context)
+    no_context = np.array(no_context)
+    with_context[np.isnan(with_context)] = 1/with_context.shape[0] # replace nan
+    means_with_context = with_context.mean(axis=0)
+    no_context[np.isnan(no_context)] = 1/no_context.shape[0] # replace nan
+    means_no_context = no_context.mean(axis=0)
+    
+    means_diff = means_with_context - means_no_context
+    
+    
+    
+    easiest = np.argsort(means_diff)[-5:][::-1]
+    hardest = np.argsort(means_diff)[:5][::-1]
+    easiest_questions = questions[easiest]['question']
+    easiest_scores = means_diff[easiest]
+    hardest_questions = questions[hardest]['question']
+    hardest_scores = means_diff[hardest]
+
+    res = {
+        'easiest' : (easiest_questions,easiest_scores),
+        'hardest' : (hardest_questions,hardest_scores)
+    }
+
+    return res
