@@ -42,13 +42,13 @@ def main():
 
     tokenized_path = 'data/training/tokenized_e5_inputs.pt'
     batch_size = 1024  # adjust based on your RAM
+    tokenizer = AutoTokenizer.from_pretrained("intfloat/multilingual-e5-large",use_fast=True)
 
     if os.path.exists(tokenized_path):
         print(f"Loading pre-tokenized data from {tokenized_path}")
         tokenized = torch.load(tokenized_path)
     else:
         print(f"Tokenizing data in batches and saving to {tokenized_path}")
-        tokenizer = AutoTokenizer.from_pretrained("intfloat/multilingual-e5-large",use_fast=True)
 
         def tokenize_batch(batch):
             return tokenizer(
