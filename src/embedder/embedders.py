@@ -41,7 +41,7 @@ class E5Embedder:
         self.tokenizer = AutoTokenizer.from_pretrained(model_name)
         self.model = AutoModel.from_pretrained(model_name, torch_dtype=torch.float16).to(self.device)
         self.model.eval()
-        torch.set_float32_matmul_precision('high')
+        torch.set_float32_matmul_precision('high') # is this necessary?
 
     def encode(self, documents, batch_size=64):  # bump batch size if your GPU allows
         texts = [f"passage: {t}" for t in documents['text']] # for very large batch sizes this is likely ineffecient. Consider .map 
@@ -66,14 +66,15 @@ class E5Embedder:
 
         return embeddings
 
-    def encode_query(self, documents, batch_size=64):  # bump batch size if your GPU allows
-        texts = [f"query: {t}" for t in documents['query']] # for very large batch sizes this is likely ineffecient. Consider .map 
+    def encode_query(self, queries, batch_size=64):  # bump batch size if your GPU allows
+        #texts = [f"query: {t}" for t in documents['query']] # for very large batch sizes this is likely ineffecient. Consider .map 
+        queries = [f"query: {q}" for q in queries] # assume iterable 
         all_embeddings = []
 
         with torch.inference_mode():
-            for i in tqdm(range(0, len(texts), batch_size), desc=
+            for i in tqdm(range(0, len(queries), batch_size), desc=
                           f"Encoding chunks in batches of {batch_size}"):
-                batch = texts[i:i+batch_size]
+                batch = queries[i:i+batch_size]
                 tokens = self.tokenizer(batch, padding=True, truncation=True, return_tensors="pt").to(self.device)
                 output = self.model(**tokens).last_hidden_state
 
@@ -88,6 +89,25 @@ class E5Embedder:
         embeddings = embeddings.cpu().numpy()
 
         return embeddings
+
+class E5EmbedderLocal(E5Embedder):
+    def __init__(self):
+        def __init__(self, 
+                     device, 
+                     model_name="intfloat/multilingual-e5-large",
+                     save_path='models/e5_finetuned_epoch7.pt'
+                ):
+            super().__init__(device, model_name)
+            self.tokenizer = AutoTokenizer.from_pretrained(model_name)
+            model = AutoModel.from_pretrained("intfloat/multilingual-e5-large")
+            
+            # load weights of saved model
+            state_dict = torch.load(save_path)
+            # because of dual-gpu training, state_dict needs to be refactored 
+            new_state_dict = {k.replace("module.", ""): v for k, v in state_dict.items()} 
+            model.load_state_dict(new_state_dict)
+            model.to("cuda")
+            model.eval()
 
 class BertTinyEmbedder:
     def __init__(self, device, model_name='prajjwal1/bert-tiny'):

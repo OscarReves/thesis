@@ -39,7 +39,7 @@ def main(config_path):
             index_path= index_path
         )
         
-        indexer.index_directory(
+        indexer.index_documents_with_uid(
             documents=documents,
             batch_size=batch_size
         )

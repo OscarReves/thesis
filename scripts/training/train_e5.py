@@ -84,7 +84,7 @@ def main():
     model = model.to("cuda")
 
     optimizer = torch.optim.AdamW(model.parameters(), lr=2e-5)
-    scaler = torch.cuda.amp.GradScaler()  # for mixed precision
+    scaler = torch.amp.GradScaler(device='cuda')  # for mixed precision
 
     # Load pre-tokenized data
     dataset = TensorDataset(tokenized["input_ids"], tokenized["attention_mask"])
