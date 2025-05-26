@@ -71,15 +71,22 @@ def main():
 
     # 8) Prepare val InputExamples and IR‐evaluator
     #    We need query‐to‐passage mapping for the evaluator, so we split
-    val_queries = [q for q, p in webfaq_val_pairs]
-    val_corpus  = list({p for _, p in webfaq_val_pairs})
-    val_qrels   = { i: [val_corpus.index(p)] 
-                    for i, (_, p) in enumerate(webfaq_val_pairs) }
+    # preserve insertion order & remove duplicates
+    unique_passages = list(dict.fromkeys([p for _, p in webfaq_val_pairs]))
+    corpus_dict = {i: p for i, p in enumerate(unique_passages)}
+    queries_dict = {i: q for i, (q, _) in enumerate(webfaq_val_pairs)}
+    # invert corpus_dict for fast lookup
+    passage_to_id = {p: i for i, p in corpus_dict.items()}
+    relevant_docs = {
+        qi: [passage_to_id[p]]
+        for qi, (_, p) in enumerate(webfaq_val_pairs)
+    }
 
+    # 9) Instantiate evaluator
     val_evaluator = InformationRetrievalEvaluator(
-        queries=val_queries,
-        corpus=val_corpus,
-        relevant_docs=val_qrels,          # exactly this dict: {q_idx: [p_idx], …}
+        queries=queries_dict,
+        corpus=corpus_dict,
+        relevant_docs=relevant_docs,
         batch_size=64,
         name="webfaq-val",
         show_progress_bar=True
@@ -91,7 +98,7 @@ def main():
         evaluation_steps=500,
         epochs=3,
         warmup_steps=200,
-        output_path="./e5-danish-finetuned",
+        output_path="models/e5_new",
         save_best_model=True
     )
 
