@@ -58,7 +58,7 @@ def main(config_path):
 
         retriever = get_retriever(
             retriever_name,
-            embedder,
+            embedder = embedder,
             documents = documents,
             index_path = index_path,
             device = device,
