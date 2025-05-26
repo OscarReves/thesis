@@ -85,10 +85,6 @@ def main():
     optimizer = torch.optim.AdamW(model.parameters(), lr=2e-5)
     scaler = torch.amp.GradScaler(device='cuda')  # for mixed precision
 
-    # Load pre-tokenized data
-    dataset = TensorDataset(tokenized["input_ids"], tokenized["attention_mask"])
-    dataloader = DataLoader(dataset, batch_size=256, shuffle=True, num_workers=4, pin_memory=True)
-
     def mean_pooling(last_hidden_state, attention_mask):
         mask = attention_mask.unsqueeze(-1).expand(last_hidden_state.size()).float()
         summed = torch.sum(last_hidden_state * mask, dim=1)
