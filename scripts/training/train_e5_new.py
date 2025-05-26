@@ -64,7 +64,7 @@ def main():
     ]
 
     # 6) Wrap in a DataLoader
-    train_dataloader = DataLoader(train_examples, batch_size=128, shuffle=True)
+    train_dataloader = DataLoader(train_examples, batch_size=64, shuffle=True)
 
     # 7) Choose a contrastive loss (MultipleNegativesRankingLoss ≈ InfoNCE)
     train_loss = losses.MultipleNegativesRankingLoss(model=model)
