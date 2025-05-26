@@ -98,22 +98,23 @@ class E5Embedder:
     def encode_query(self, queries, batch_size=64):  # bump batch size if your GPU allows
         #texts = [f"query: {t}" for t in documents['query']] # for very large batch sizes this is likely ineffecient. Consider .map 
         queries = [f"query: {q}" for q in queries] # assume iterable 
-        all_embeddings = []
+        # all_embeddings = []
 
+        # no reason to batch this as queries are usually passed in batches already
         with torch.inference_mode():
-            for i in tqdm(range(0, len(queries), batch_size), desc=
-                          f"Encoding chunks in batches of {batch_size}"):
-                batch = queries[i:i+batch_size]
-                tokens = self.tokenizer(batch, padding=True, truncation=True, return_tensors="pt").to(self.device)
-                output = self.model(**tokens).last_hidden_state
-                mask = tokens['attention_mask'].unsqueeze(-1)
-                summed = torch.sum(output * mask, dim=1)
-                counts = mask.sum(dim=1).clamp(min=1e-9)
-                embeddings = summed / counts
+            # for i in tqdm(range(0, len(queries), batch_size), desc=
+            #               f"Encoding chunks in batches of {batch_size}"):
+            #     batch = queries[i:i+batch_size]
+            tokens = self.tokenizer(queries, padding=True, truncation=True, return_tensors="pt").to(self.device)
+            output = self.model(**tokens).last_hidden_state
+            mask = tokens['attention_mask'].unsqueeze(-1)
+            summed = torch.sum(output * mask, dim=1)
+            counts = mask.sum(dim=1).clamp(min=1e-9)
+            embeddings = summed / counts
 
-                all_embeddings.append(embeddings)
+            # all_embeddings.append(embeddings)
 
-        embeddings = torch.cat(all_embeddings, dim=0)
+        # embeddings = torch.cat(all_embeddings, dim=0)
         embeddings = embeddings.cpu().numpy()
 
         return embeddings
