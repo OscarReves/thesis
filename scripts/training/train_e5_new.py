@@ -28,40 +28,31 @@ from sentence_transformers.evaluation import InformationRetrievalEvaluator
 
 def main():
 
-    # 1) load the Danish config
+    # 1) load the dataset
     dataset_path = '/dtu/p1/oscrev/webfaq_danish'
     ds = load_web_faq(dataset_path)
-    qrels   = ds["qrels"]    # has "query-id" & "corpus-id"
-    queries = ds["queries"]  # has "_id" & "text"
-    corpus  = ds["corpus"]   # has "_id" & "text"
 
-    # 2) rename to align keys
-    queries = queries.rename_column("_id",    "query_id")  \
-                    .rename_column("text",   "query")
-    corpus  = corpus.rename_column("_id",     "corpus_id") \
-                    .rename_column("text",    "passage")
-    qrels   = qrels.rename_column("query-id",  "query_id")   \
-                .rename_column("corpus-id", "corpus_id")
+    # 2) split into train/validation
+    splits     = ds.train_test_split(test_size=0.1, seed=42)
+    train_ds = splits["train"]
+    val_ds   = splits["test"]
 
-    # 3) split qrels into train/validation
-    splits     = qrels.train_test_split(test_size=0.1, seed=42)
-    train_qrels = splits["train"]
-    val_qrels   = splits["test"]
+    # 3) Build (query, passage) tuples with tqdm
+    webfaq_train_pairs = list(
+        tqdm(zip(train_ds["query"], train_ds["text"]),
+            total=len(train_ds),
+            desc="Building train_pairs")
+    )
+    webfaq_val_pairs = list(
+        tqdm(zip(val_ds["query"], val_ds["text"]),
+            total=len(val_ds),
+            desc="Building val_pairs")
+    )
 
-    # 4) join onto queries & corpus for each split
-    def make_pairs(qr):
-        joined = qr.join(queries, on="query_id") \
-                .join(corpus,  on="corpus_id")
-        return list(zip(joined["query"], joined["passage"]))
-
-    webfaq_train_pairs = make_pairs(train_qrels)
-    webfaq_val_pairs   = make_pairs(val_qrels)
-
-
-    # 1. Load your pretrained E5 model
+    # 4) Load your pretrained E5 model
     model = SentenceTransformer("intfloat/multilingual-e5-large")
 
-    # 2. Prepare your Danish WebFAQ data as InputExample pairs
+    # 5) Prepare your Danish WebFAQ data as InputExample pairs
     #    Each example is a (query, positive_passage) pair
     
     train_examples = [
@@ -73,13 +64,13 @@ def main():
         )
     ]
 
-    # 3. Wrap in a DataLoader
+    # 6) Wrap in a DataLoader
     train_dataloader = DataLoader(train_examples, batch_size=32, shuffle=True)
 
-    # 4. Choose a contrastive loss (MultipleNegativesRankingLoss ≈ InfoNCE)
+    # 7) Choose a contrastive loss (MultipleNegativesRankingLoss ≈ InfoNCE)
     train_loss = losses.MultipleNegativesRankingLoss(model=model)
 
-    # 2) Prepare val InputExamples and IR‐evaluator
+    # 8) Prepare val InputExamples and IR‐evaluator
     #    We need query‐to‐passage mapping for the evaluator, so we split
     val_queries, val_pos = zip(*webfaq_val_pairs)
     val_corpus = list(set(val_pos))  # all unique passages in your val split
@@ -95,7 +86,7 @@ def main():
         name="webfaq-val"
     )
 
-    # 3) Fine-tune with evaluation every 500 steps and save best model by val MRR
+    # 10) Fine-tune with evaluation every 500 steps and save best model by val MRR
     model.fit(
         train_objectives=[(train_dataloader, train_loss)],
         evaluator=val_evaluator,
