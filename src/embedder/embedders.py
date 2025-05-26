@@ -51,8 +51,8 @@ class E5Embedder:
             for i in tqdm(range(0, len(texts), batch_size), desc=
                           f"Encoding chunks in batches of {batch_size}"):
                 batch = texts[i:i+batch_size]
-                tokens = self.tokenizer(batch, padding=True, truncation=True, return_tensors="pt")
-                tokens = {k: v.to(self.model.device) for k, v in tokens.items()}
+                tokens = self.tokenizer(batch, padding=True, truncation=True, return_tensors="pt").to(self.device)
+                #tokens = {k: v.to(self.model.device) for k, v in tokens.items()}
                 output = self.model(**tokens).last_hidden_state
 
                 mask = tokens['attention_mask'].unsqueeze(-1)
@@ -78,7 +78,6 @@ class E5Embedder:
                 batch = queries[i:i+batch_size]
                 tokens = self.tokenizer(batch, padding=True, truncation=True, return_tensors="pt").to(self.device)
                 output = self.model(**tokens).last_hidden_state
-
                 mask = tokens['attention_mask'].unsqueeze(-1)
                 summed = torch.sum(output * mask, dim=1)
                 counts = mask.sum(dim=1).clamp(min=1e-9)
@@ -101,7 +100,7 @@ class E5EmbedderLocal(E5Embedder):
         if 'cuda' in device and not torch.cuda.is_available():
             raise RuntimeError(f"CUDA requested but not available on this system (device={device})")
         self.tokenizer = AutoTokenizer.from_pretrained(model_name)
-        self.model = AutoModel.from_pretrained("intfloat/multilingual-e5-large")
+        self.model = AutoModel.from_pretrained("intfloat/multilingual-e5-large").to(device)
         self.device = device
 
         # load weights of saved model
