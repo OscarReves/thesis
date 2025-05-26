@@ -29,50 +29,8 @@ def main():
     dataset_path = '/dtu/p1/oscrev/webfaq_danish'
     dataset = load_web_faq(dataset_path,max_samples=10000)
 
-    # # Prepare training examples for being in memory 
-    # train_examples = [
-    #     InputExample(texts=[f"query: {q}", f"passage: {p}"])
-    #     for q, p in tqdm(zip(dataset["query"], dataset["text"]), total=len(dataset), desc="Building training examples")
-    # ]
-
-    # # Save train examples
-    # import pickle
-    # with open("data/train_examples.pkl", "wb") as f:
-    #     pickle.dump(train_examples, f)
-
     tokenized_path = 'data/training/tokenized_e5_inputs.pt'
     batch_size = 1024  # adjust based on your RAM
-    tokenizer = AutoTokenizer.from_pretrained("intfloat/multilingual-e5-large",use_fast=True)
-
-    if os.path.exists(tokenized_path):
-        print(f"Loading pre-tokenized data from {tokenized_path}")
-        tokenized = torch.load(tokenized_path)
-    else:
-        print(f"Tokenizing data in batches and saving to {tokenized_path}")
-
-        def tokenize_batch(batch):
-            return tokenizer(
-                [f"query: {q}" for q in batch["query"]],
-                [f"passage: {p}" for p in batch["text"]],
-                padding="max_length",
-                truncation=True,
-                max_length=512
-            )
-
-        tokenized_dataset = dataset.map(
-            tokenize_batch,
-            batched=True,
-            batch_size=1024,
-            num_proc=16,  # adjust to core count
-            remove_columns=dataset.column_names
-        )
-        # Concatenate into single tensors
-        tokenized = {
-            "input_ids": torch.tensor(tokenized_dataset["input_ids"]),
-            "attention_mask": torch.tensor(tokenized_dataset["attention_mask"])
-        }
-        torch.save(tokenized, tokenized_path)
-
 
     device = torch.device("cuda")
     model = AutoModel.from_pretrained("intfloat/multilingual-e5-large")
@@ -101,6 +59,7 @@ def main():
 
     # Tokenize queries with progress
     # add loading from disk in the future
+    tokenizer = AutoTokenizer.from_pretrained("intfloat/multilingual-e5-large",use_fast=True)
     queries = [f"query: {q}" for q in dataset["query"]]
     query_inputs = {"input_ids": [], "attention_mask": []}
     for q in tqdm(queries, desc="Tokenizing queries"):
