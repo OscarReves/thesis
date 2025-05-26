@@ -1,8 +1,8 @@
 documents_path: /dtu/p1/oscrev/webfaq_danish
-index_path: /dtu/p1/oscrev/webfaq/index_E5_finetuned_epoch2
+index_path: /dtu/p1/oscrev/webfaq/index_E5_finetuned_epoch7
 embedder_name: e5-local
 device: cuda
 retriever_name: e5_gpu
-save_path: results/webfaq/results_E5_finetuned_epoch2
+save_path: results/webfaq/results_E5_finetuned_epoch_test
 batch_size: 2048
 max_samples: 10000
