@@ -92,7 +92,7 @@ class E5Embedder:
 
 class E5EmbedderLocal(E5Embedder):
     def __init__(self, 
-                    device, 
+                    device='cuda', 
                     model_name="intfloat/multilingual-e5-large",
                     save_path='models/e5_finetuned_epoch7.pt'
             ):
