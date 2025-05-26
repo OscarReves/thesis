@@ -51,7 +51,7 @@ class E5Embedder:
             for i in tqdm(range(0, len(texts), batch_size), desc=
                           f"Encoding chunks in batches of {batch_size}"):
                 batch = texts[i:i+batch_size]
-                tokens = self.tokenizer(batch, padding=True, truncation=True, return_tensors="pt").to(self.device)
+                tokens = self.tokenizer(batch, padding=True, truncation=True, return_tensors="pt").to(self.model.device)
                 output = self.model(**tokens).last_hidden_state
 
                 mask = tokens['attention_mask'].unsqueeze(-1)
