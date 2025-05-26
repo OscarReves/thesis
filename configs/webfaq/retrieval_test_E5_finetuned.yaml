@@ -1,5 +1,5 @@
 documents_path: /dtu/p1/oscrev/webfaq_danish
-index_path: /dtu/p1/oscrev/webfaq/index_E5_finetuned_epoch7
+index_path: /dtu/p1/oscrev/webfaq/index_E5_finetuned_epoch7_test
 embedder_name: e5-local
 device: cuda
 retriever_name: e5_gpu

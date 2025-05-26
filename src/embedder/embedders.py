@@ -123,7 +123,7 @@ class E5EmbedderLocal(E5Embedder):
     def __init__(self, 
                     device='cuda', 
                     model_name="intfloat/multilingual-e5-large",
-                    save_path='models/e5_finetuned_epoch2.pt'
+                    save_path='models/e5_finetuned_epoch7.pt'
             ):
         #super().__init__(device, model_name)
         if 'cuda' in device and not torch.cuda.is_available():
