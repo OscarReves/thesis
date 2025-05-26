@@ -27,7 +27,7 @@ def main():
 
     # Build dataloader
     dataset_path = '/dtu/p1/oscrev/webfaq_danish'
-    dataset = load_web_faq(dataset_path)
+    dataset = load_web_faq(dataset_path,max_samples=10000)
 
     # # Prepare training examples for being in memory 
     # train_examples = [
@@ -75,12 +75,14 @@ def main():
 
 
     device = torch.device("cuda")
-    model = AutoModel.from_pretrained("intfloat/multilingual-e5-large").to(device)
+    model = AutoModel.from_pretrained("intfloat/multilingual-e5-large")
     model.train()
+
     if torch.cuda.device_count() > 1:
         print(f"Using {torch.cuda.device_count()} GPUs")
         model = torch.nn.DataParallel(model)
-    model = model.to("cuda")
+
+    model = model.to(device)
 
     optimizer = torch.optim.AdamW(model.parameters(), lr=2e-5)
     scaler = torch.amp.GradScaler(device='cuda')  # for mixed precision
