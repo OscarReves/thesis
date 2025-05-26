@@ -186,8 +186,10 @@ def load_retrieval_corpus():
 
     return dataset
 
-def load_web_faq(path):
+def load_web_faq(path, max_samples=None):
     dataset = load_from_disk(path)
+    if max_samples:
+        dataset.select(range(max_samples))
     column_renames = {
     "question": "query",
     "answer": "text"

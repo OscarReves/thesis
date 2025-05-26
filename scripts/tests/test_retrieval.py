@@ -23,9 +23,10 @@ def main(config_path):
     device = config['device']
     save_path = config['save_path']
     batch_size = config['batch_size']
+    max_samples = config.get('max_samples')
     
     # 1. Build index 
-    documents = load_web_faq(documents_path)
+    documents = load_web_faq(documents_path,max_samples=max_samples)
     
     embedder = get_embedder(embedder_name)
 
