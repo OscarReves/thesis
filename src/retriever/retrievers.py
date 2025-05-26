@@ -124,12 +124,12 @@ class E5RetrieverGPU(E5Retriever):
     # Has several benefits over the parent class:
     #   1. Moves index to gpu for faster search
     #   2. Recieves an embed to allow for modular encoding of the queries 
-    def __init__(self, embedder, **kwargs):
-        super().__init__(**kwargs)
+    def __init__(self, embedder, *args, **kwargs):
+        super().__init__(self, *args, **kwargs)
         self.embedder = embedder 
-        index_cpu = faiss.read_index(self.index)
+        #index_cpu = faiss.read_index(self.index)
         res = faiss.StandardGpuResources()
-        self.index = faiss.index_cpu_to_gpu(res, 0, index_cpu) # move the index to gpu
+        self.index = faiss.index_cpu_to_gpu(res, 0, self.index) # move the index to gpu
 
     def retrieve_uids(self, questions):
         q_embs = self.embedder.encode_query(questions)
