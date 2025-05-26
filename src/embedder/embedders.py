@@ -91,26 +91,25 @@ class E5Embedder:
         return embeddings
 
 class E5EmbedderLocal(E5Embedder):
-    def __init__(self):
-        def __init__(self, 
-                     device, 
-                     model_name="intfloat/multilingual-e5-large",
-                     save_path='models/e5_finetuned_epoch7.pt'
-                ):
-            #super().__init__(device, model_name)
-            if 'cuda' in device and not torch.cuda.is_available():
-                raise RuntimeError(f"CUDA requested but not available on this system (device={device})")
-            self.tokenizer = AutoTokenizer.from_pretrained(model_name)
-            self.model = AutoModel.from_pretrained("intfloat/multilingual-e5-large")
-            
-            # load weights of saved model
-            state_dict = torch.load(save_path)
-            # because of dual-gpu training, state_dict needs to be refactored 
-            new_state_dict = {k.replace("module.", ""): v for k, v in state_dict.items()} 
-            self.model.load_state_dict(new_state_dict)
-            #model.to("cuda")
-            self.model.eval()
-            torch.set_float32_matmul_precision('high') # is this necessary?
+    def __init__(self, 
+                    device, 
+                    model_name="intfloat/multilingual-e5-large",
+                    save_path='models/e5_finetuned_epoch7.pt'
+            ):
+        #super().__init__(device, model_name)
+        if 'cuda' in device and not torch.cuda.is_available():
+            raise RuntimeError(f"CUDA requested but not available on this system (device={device})")
+        self.tokenizer = AutoTokenizer.from_pretrained(model_name)
+        self.model = AutoModel.from_pretrained("intfloat/multilingual-e5-large")
+        
+        # load weights of saved model
+        state_dict = torch.load(save_path)
+        # because of dual-gpu training, state_dict needs to be refactored 
+        new_state_dict = {k.replace("module.", ""): v for k, v in state_dict.items()} 
+        self.model.load_state_dict(new_state_dict)
+        #model.to("cuda")
+        self.model.eval()
+        torch.set_float32_matmul_precision('high') # is this necessary?
 
 class BertTinyEmbedder:
     def __init__(self, device, model_name='prajjwal1/bert-tiny'):
