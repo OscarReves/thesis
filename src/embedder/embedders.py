@@ -132,6 +132,7 @@ class E5EmbedderLocal(E5Embedder):
         self.tokenizer = AutoTokenizer.from_pretrained(model_name)
         self.model = AutoModel.from_pretrained("intfloat/multilingual-e5-large",torch_dtype=torch.float16).to(device)
         # load weights of saved model
+        print(f"Loading state dict from {save_path}")
         state_dict = torch.load(save_path)
         # because of dual-gpu training, state_dict needs to be refactored 
         new_state_dict = {k.replace("module.", ""): v for k, v in state_dict.items()} 
