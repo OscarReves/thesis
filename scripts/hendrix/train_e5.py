@@ -103,8 +103,8 @@ def main():
         generator=torch.Generator().manual_seed(42)
     )
 
-    dataloader = DataLoader(train_dataset, batch_size=256, shuffle=True, num_workers=4)
-    test_dataloader = DataLoader(test_dataset, batch_size=256, shuffle=True, num_workers=4)
+    dataloader = DataLoader(train_dataset, batch_size=128, shuffle=True, num_workers=4)
+    test_dataloader = DataLoader(test_dataset, batch_size=128, shuffle=True, num_workers=4)
 
 
     def mean_pooling(last_hidden, mask):
