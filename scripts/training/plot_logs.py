@@ -3,7 +3,7 @@ from tensorboard.backend.event_processing import event_accumulator
 import matplotlib.pyplot as plt
 
 logdir = "logs/e5_finetune/"  # change this
-scalar_tag = "loss"  # change this to whatever tag you want to plot
+scalar_tag = "test/loss_single_batch"  # change this to whatever tag you want to plot
 
 plt.figure()
 
