@@ -57,8 +57,8 @@ def main():
     # Tokenize queries with progress
     # add loading from disk in the future
     
-    passage_inputs_path = 'data/training/passage_inputs.pt'
-    query_inputs_path = 'data/training/query_inputs.pt' 
+    passage_inputs_path = 'dtu/p1/training/passage_inputs.pt'
+    query_inputs_path = 'dtu/p1/training/query_inputs.pt' 
     
     if os.path.exists(query_inputs_path) and os.path.exists(passage_inputs_path):
         print(f"Loading pre-tokenized passages from disk at {passage_inputs_path}")
@@ -76,7 +76,7 @@ def main():
             query_inputs["attention_mask"].append(encoded["attention_mask"])
         query_inputs["input_ids"] = torch.cat(query_inputs["input_ids"])
         query_inputs["attention_mask"] = torch.cat(query_inputs["attention_mask"])
-        torch.save(query_inputs, "data/training/query_inputs.pt")
+        torch.save(query_inputs, query_inputs_path)
         # tokenize passages
         passages = [f"passage: {p}" for p in dataset["text"]]
         passage_inputs = {"input_ids": [], "attention_mask": []}
@@ -86,7 +86,7 @@ def main():
             passage_inputs["attention_mask"].append(encoded["attention_mask"])
         passage_inputs["input_ids"] = torch.cat(passage_inputs["input_ids"])
         passage_inputs["attention_mask"] = torch.cat(passage_inputs["attention_mask"])
-        torch.save(passage_inputs, "data/training/passage_inputs.pt")
+        torch.save(passage_inputs, passage_inputs_path)
 
     # Zip and load into DataLoader
     tensor_dataset = TensorDataset(
@@ -134,7 +134,7 @@ def main():
 
             pbar.set_postfix(loss=loss.item())
 
-        save_path = f"models/e5_finetuned_epoch{epoch}.pt"
+        save_path = f"dtu/p1/oscrev/models/e5_finetuned_epoch{epoch}.pt"
         torch.save(model.module.state_dict() if isinstance(model, torch.nn.DataParallel) else model.state_dict(), save_path)
         print(f"Saved model to {save_path}")
 
