@@ -29,9 +29,6 @@ def main():
     dataset_path = '/dtu/p1/oscrev/webfaq_danish'
     dataset = load_web_faq(dataset_path)
 
-    tokenized_path = 'data/training/tokenized_e5_inputs.pt'
-    batch_size = 1024  # adjust based on your RAM
-
     device = torch.device("cuda")
     model = AutoModel.from_pretrained("intfloat/multilingual-e5-large")
     model.train()
@@ -59,28 +56,37 @@ def main():
 
     # Tokenize queries with progress
     # add loading from disk in the future
-    tokenizer = AutoTokenizer.from_pretrained("intfloat/multilingual-e5-large",use_fast=True)
-    queries = [f"query: {q}" for q in dataset["query"]]
-    query_inputs = {"input_ids": [], "attention_mask": []}
-    for q in tqdm(queries, desc="Tokenizing queries"):
-        encoded = tokenizer(q, padding="max_length", truncation=True, max_length=128, return_tensors="pt")
-        query_inputs["input_ids"].append(encoded["input_ids"])
-        query_inputs["attention_mask"].append(encoded["attention_mask"])
-    query_inputs["input_ids"] = torch.cat(query_inputs["input_ids"])
-    query_inputs["attention_mask"] = torch.cat(query_inputs["attention_mask"])
-    torch.save(query_inputs, "data/training/query_inputs.pt")
-
-    # Tokenize passages with progress
-    # add loading from disk in the future
-    passages = [f"passage: {p}" for p in dataset["text"]]
-    passage_inputs = {"input_ids": [], "attention_mask": []}
-    for p in tqdm(passages, desc="Tokenizing passages"):
-        encoded = tokenizer(p, padding="max_length", truncation=True, max_length=128, return_tensors="pt")
-        passage_inputs["input_ids"].append(encoded["input_ids"])
-        passage_inputs["attention_mask"].append(encoded["attention_mask"])
-    passage_inputs["input_ids"] = torch.cat(passage_inputs["input_ids"])
-    passage_inputs["attention_mask"] = torch.cat(passage_inputs["attention_mask"])
-    torch.save(passage_inputs, "data/training/passage_inputs.pt")
+    
+    passage_inputs_path = 'data/training/passage_inputs.pt'
+    query_inputs_path = 'data/training/query_inputs.pt' 
+    
+    if os.path.exists(query_inputs_path) and os.path.exists(passage_inputs_path):
+        print(f"Loading pre-tokenized passages from disk at {passage_inputs_path}")
+        torch.load(passage_inputs_path)
+        print(f"Loading pre-tokenized queries from disk at {query_inputs_path}")
+        torch.load(query_inputs_path)
+    else:
+        tokenizer = AutoTokenizer.from_pretrained("intfloat/multilingual-e5-large",use_fast=True)
+        # tokenize queries
+        queries = [f"query: {q}" for q in dataset["query"]]
+        query_inputs = {"input_ids": [], "attention_mask": []}
+        for q in tqdm(queries, desc="Tokenizing queries"):
+            encoded = tokenizer(q, padding="max_length", truncation=True, max_length=128, return_tensors="pt")
+            query_inputs["input_ids"].append(encoded["input_ids"])
+            query_inputs["attention_mask"].append(encoded["attention_mask"])
+        query_inputs["input_ids"] = torch.cat(query_inputs["input_ids"])
+        query_inputs["attention_mask"] = torch.cat(query_inputs["attention_mask"])
+        torch.save(query_inputs, "data/training/query_inputs.pt")
+        # tokenize passages
+        passages = [f"passage: {p}" for p in dataset["text"]]
+        passage_inputs = {"input_ids": [], "attention_mask": []}
+        for p in tqdm(passages, desc="Tokenizing passages"):
+            encoded = tokenizer(p, padding="max_length", truncation=True, max_length=128, return_tensors="pt")
+            passage_inputs["input_ids"].append(encoded["input_ids"])
+            passage_inputs["attention_mask"].append(encoded["attention_mask"])
+        passage_inputs["input_ids"] = torch.cat(passage_inputs["input_ids"])
+        passage_inputs["attention_mask"] = torch.cat(passage_inputs["attention_mask"])
+        torch.save(passage_inputs, "data/training/passage_inputs.pt")
 
     # Zip and load into DataLoader
     tensor_dataset = TensorDataset(
