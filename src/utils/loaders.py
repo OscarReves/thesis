@@ -152,6 +152,9 @@ def load_questions(path, silent=False):
 def load_news(path, silent=False):
     dataset = load_dataset("json",data_files=path, field=None, split='train')
     dataset = dataset.map(
+        lambda x: {k : v for k,v in x['quiz'].items()}
+        )
+    dataset = dataset.map(
         lambda x: {'answer': x['options'][x['correct_idx']]}
         )
     correct_mapping = ['A', 'B', 'C', 'D']
