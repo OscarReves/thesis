@@ -22,7 +22,7 @@ results_backup/
 keys/
 production_env/
 notebooks/*
-
+logs/
 
 # Files
 sync_results.sh
