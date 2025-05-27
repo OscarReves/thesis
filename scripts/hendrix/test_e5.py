@@ -32,8 +32,8 @@ def main():
     device = torch.device("cuda")
     model = AutoModel.from_pretrained("intfloat/multilingual-e5-large")
     print(f"Loading state dict from {save_path}")
-    model.load_state_dict(state_dict)
     state_dict = torch.load(save_path)    
+    model.load_state_dict(state_dict)
     model.eval()
 
     if torch.cuda.device_count() > 1:
