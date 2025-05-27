@@ -61,9 +61,9 @@ def main():
     
     if os.path.exists(query_inputs_path) and os.path.exists(passage_inputs_path):
         print(f"Loading pre-tokenized passages from disk at {passage_inputs_path}")
-        torch.load(passage_inputs_path)
+        passage_inputs = torch.load(passage_inputs_path)
         print(f"Loading pre-tokenized queries from disk at {query_inputs_path}")
-        torch.load(query_inputs_path)
+        query_inputs = torch.load(query_inputs_path)
     else:
         tokenizer = AutoTokenizer.from_pretrained("intfloat/multilingual-e5-large",use_fast=True)
         # tokenize queries
