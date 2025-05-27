@@ -258,7 +258,7 @@ class BM25Retriever():
         print(f"Preprocessing {len(self.contexts)} chunks...")
         self.tokenized_contexts = [self.preprocess(doc) for doc in self.contexts]
 
-
+        print(f"Index path: {index_path}")
         if os.path.exists(index_path):
             self.load()
         else:
