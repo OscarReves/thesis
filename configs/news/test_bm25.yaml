@@ -2,7 +2,7 @@ questions_path: /dtu/p1/oscrev/news/2025/questions.jsonl
 question_type: news
 kb_path: /dtu/p1/oscrev/news/2025/chunked_paragraph.jsonl # path to knowledge base
 kb_type: news
-index_path: 
+index_path: /dtu/p1/oscrev/news/2025/index_new
 retriever_name: bm25
 device: cuda
 save_path: results/news/retrieval_test_bm25
