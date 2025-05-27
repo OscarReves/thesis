@@ -21,6 +21,7 @@ def main():
     dataset_path = 'data/webfaq_danish'
     if os.path.exists(dataset_path):
         print(f'Dataset found on disk at {dataset_path}')
+        dataset = load_dataset(path=dataset_path, split='default')
     else:
         # download danish split
         dataset = load_dataset("PaDaS-Lab/webfaq", "dan", split='default')
