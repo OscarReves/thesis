@@ -259,13 +259,14 @@ class BM25Retriever():
         self.tokenized_contexts = [self.preprocess(doc) for doc in self.contexts]
 
 
-        if index_path and os.path.exists(index_path):
-            self.load()
-        else:
-            print(f"Building bm25 index...")
-            self.bm25 = BM25Okapi(self.tokenized_contexts)
-            self.save()
-    
+        if index_path:
+            if os.path.exists(index_path):
+                self.load()
+            else:
+                print(f"Building bm25 index...")
+                self.bm25 = BM25Okapi(self.tokenized_contexts)
+                self.save()
+        
     def retrieve(self, questions):
         top_k = self.top_k
         results = [self.bm25.get_top_n(
