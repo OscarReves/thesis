@@ -259,7 +259,7 @@ class BM25Retriever():
         self.tokenized_contexts = [self.preprocess(doc) for doc in self.contexts]
 
 
-        if os.path.exists(index_path) and index_path:
+        if index_path and os.path.exists(index_path):
             self.load()
         else:
             print(f"Building bm25 index...")
