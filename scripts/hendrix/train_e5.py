@@ -137,6 +137,11 @@ def main():
             writer.add_scalar("train/loss", loss.item(), global_step)
             global_step += 1
 
+            scaler.scale(loss).backward()
+            scaler.step(optimizer)
+            scaler.update()
+            optimizer.zero_grad()
+
             if global_step % 100 == 0:
                 model.eval()
                 with torch.no_grad():
@@ -155,11 +160,6 @@ def main():
                 print(f"[Step {global_step}] Test Loss (1 batch): {test_loss:.4f}")
                 writer.add_scalar("test/loss_single_batch", test_loss, global_step)
                 model.train()
-
-            scaler.scale(loss).backward()
-            scaler.step(optimizer)
-            scaler.update()
-            optimizer.zero_grad()
 
             pbar.set_postfix(loss=loss.item())
 
