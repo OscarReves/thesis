@@ -262,10 +262,10 @@ class BM25Retriever():
         if index_path:
             if os.path.exists(index_path):
                 self.load()
-            else:
-                print(f"Building bm25 index...")
-                self.bm25 = BM25Okapi(self.tokenized_contexts)
-                self.save()
+        else:
+            print(f"Building bm25 index...")
+            self.bm25 = BM25Okapi(self.tokenized_contexts)
+            self.save()
         
     def retrieve(self, questions):
         top_k = self.top_k
