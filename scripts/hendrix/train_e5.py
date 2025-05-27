@@ -1,18 +1,8 @@
 import yaml
-from src.utils import load_retrieval_corpus
-from src.retriever import get_retriever
-from src.embedder import get_embedder
-from src.generator import get_generator
-from src.indexer import FaissIndexer
-from src import pipeline as pipeline_module
 from src.utils import save_to_json, load_documents, get_retrieval_accuracy, load_web_faq
-import argparse 
 from tqdm import tqdm
 import os 
-import numpy as np
-from sentence_transformers import SentenceTransformer, InputExample, losses
 from torch.utils.data import DataLoader, TensorDataset
-from torch.utils.data import Dataset
 from torch.utils.tensorboard import SummaryWriter
 from transformers import AutoTokenizer
 import torch
@@ -21,7 +11,8 @@ from torch.utils.data import DataLoader, TensorDataset
 from transformers import AutoModel, AutoTokenizer
 from tqdm import tqdm
 torch.backends.cudnn.benchmark = True
-from datasets import load_dataset
+
+
 
 
 def main():
