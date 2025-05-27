@@ -11,7 +11,7 @@ from torch.utils.data import DataLoader, TensorDataset
 from transformers import AutoModel, AutoTokenizer
 from tqdm import tqdm
 torch.backends.cudnn.benchmark = True
-from datasets import load_dataset
+from datasets import load_dataset, load_from_disk
 
 
 
@@ -21,7 +21,7 @@ def main():
     dataset_path = 'data/webfaq_danish'
     if os.path.exists(dataset_path):
         print(f'Dataset found on disk at {dataset_path}')
-        dataset = load_dataset(path=dataset_path, split='default')
+        dataset = load_from_disk(dataset_path=dataset_path)
     else:
         # download danish split
         dataset = load_dataset("PaDaS-Lab/webfaq", "dan", split='default')
