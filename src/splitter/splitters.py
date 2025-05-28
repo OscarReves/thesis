@@ -24,13 +24,12 @@ class ParagraphSplitter(RecursiveCharacterTextSplitter):
 class WordCountTextSplitter(RecursiveCharacterTextSplitter):
     def __init__(self, **kwargs):
         defaults = {
-            "chunk_size": 256,
-            "chunk_overlap": 128,
-            "separators": ["\n\n", "\n"],
+            "chunk_size": 128,
+            "chunk_overlap": 56,
+            "separators": ["\n\n", "\n", " ", ""],  # fallback enabled
         }
         defaults.update(kwargs)
-        super().__init__(**defaults)
-        self.length_function = lambda text: len(text.split())
+        super().__init__(length_function=lambda text: len(text.split()), **defaults)
 
 
 class TokenizedSplitter(RecursiveCharacterTextSplitter):

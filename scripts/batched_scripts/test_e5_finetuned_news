@@ -35,6 +35,7 @@ export LD_LIBRARY_PATH=$CONDA_PREFIX/lib:$LD_LIBRARY_PATH
 yaml=configs/news/test_e5_finetuned.yaml
 
 # build index
+python3 -u -m scripts.news.chunk_dataset --config $yaml
 python3 -u -m scripts.news.build_index --config $yaml
 
 # run qa for multiple values of k retrieval

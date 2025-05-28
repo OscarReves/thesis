@@ -14,6 +14,7 @@ def main(config_path):
     docs_path = config["documents_path"]
     save_path = config['chunked_path']
     splitter_name = config['splitter_name']
+    prepend_with_title=config.get("prepend_with_title",True)
 
     print("Loading documents...")
     documents = load_raw_articles(docs_path)
@@ -23,7 +24,7 @@ def main(config_path):
     print("Chunking documents...")
     # this should be expanded to inlcude arguments for chunk size etc
     # also, consider not chunking based on the tokenizer 
-    chunk_and_save(documents, splitter, save_path)
+    chunk_and_save(documents, splitter, save_path, prepend_with_title=prepend_with_title)
 
     print(f"Chunked documents saved to {save_path}")
 
