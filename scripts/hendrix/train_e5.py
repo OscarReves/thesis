@@ -96,9 +96,9 @@ def main():
     )
 
     if True:
-        print("DATASET LIMITED TO 10K FOR DRY RUN")
+        print("DATASET LIMITED TO 20K FOR DRY RUN")
         print("CHANGE BOOL TO RUN PROPERLY")
-        tensor_dataset = tensor_dataset[:10000] # for dry run
+        tensor_dataset = tensor_dataset[:20000] # for dry run
 
 
     # Split sizes
@@ -106,8 +106,8 @@ def main():
     val_size = int(0.01 * len(tensor_dataset))
     test_size = len(tensor_dataset) - (train_size + val_size)
 
-    train_dataset, test_dataset, val_dataset = random_split(
-        tensor_dataset, [train_size, test_size, val_size],
+    train_dataset, val_dataset, test_dataset = random_split(
+        tensor_dataset, [train_size, val_size, test_size],
         generator=torch.Generator().manual_seed(42)
     )
 
