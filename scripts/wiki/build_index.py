@@ -15,7 +15,7 @@ def main(config_path):
     index_path = config["index_path"]
     embedder_name = config["embedder_name"]
     device = config['device']
-    batch_size = config['batch_size']
+    batch_size = config['indexing_batch_size']
 
     print("Loading document paths...")
     document_paths = load_wiki_file_paths(docs_path)

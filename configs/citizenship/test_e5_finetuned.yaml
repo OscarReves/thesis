@@ -10,6 +10,7 @@ directory: results/citizenship/test_qa/
 generator_name: gemma-9b
 n_questions: 
 batch_size: 16
+indexing_batch_size: 2048
 pipeline: test_qa_with_retrieval
 mc_pipeline : qa_news_mc
 
