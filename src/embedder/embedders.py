@@ -2,6 +2,9 @@ from transformers import AutoTokenizer, AutoModel
 import torch
 from tqdm import tqdm
 import numpy as np
+from huggingface_hub import login, whoami
+from dotenv import load_dotenv
+import os
 
 class GPT2Embedder:
     def __init__(self, device, model_name="gpt2"):

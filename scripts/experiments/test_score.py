@@ -13,6 +13,17 @@ def main(config_path):
     open_domain_dir = directory / open_domain_evaluation_path
     multiple_choice_dir = directory / 'multiple_choice'
 
+    for od_file in open_domain_dir.iterdir():
+        answers_path = str(od_file)
+        answers = load_documents(answers_path)
+        evaluation_type = 'binary'
+        accuracy = get_accuracy(answers, type=evaluation_type)
+        print(f" {answers_path} Accuracy: {accuracy:.2f}")
+        
+        # Append to log file
+        with open("results/accuracy.txt", "a") as log_file:
+            log_file.write(f"{answers_path}\tAccuracy: {accuracy:.3f}\n")
+
     for mc_file in multiple_choice_dir.iterdir():
         answers_path = str(mc_file)
         answers = load_documents(answers_path)
@@ -24,16 +35,6 @@ def main(config_path):
         with open("results/accuracy.txt", "a") as log_file:
             log_file.write(f"{answers_path}\tAccuracy: {accuracy:.3f}\n")
     
-    for od_file in open_domain_dir.iterdir():
-        answers_path = str(od_file)
-        answers = load_documents(answers_path)
-        evaluation_type = 'binary'
-        accuracy = get_accuracy(answers, type=evaluation_type)
-        print(f" {answers_path} Accuracy: {accuracy:.2f}")
-        
-        # Append to log file
-        with open("results/accuracy.txt", "a") as log_file:
-            log_file.write(f"{answers_path}\tAccuracy: {accuracy:.3f}\n")
 
 
 
