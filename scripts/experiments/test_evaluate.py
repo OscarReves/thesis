@@ -4,6 +4,7 @@ from src.utils import load_documents
 from src.evaluator import get_evaluator
 from src.pipeline import evaluate_answers
 from pathlib import Path
+import os
 
 def main(config_path):
     with open(config_path, "r") as f:
@@ -12,7 +13,9 @@ def main(config_path):
     # evaluates every open-domain answer in a directory
     directory = Path(config['directory'])
     answers_dir  = directory / 'open_domain'
+    os.makedirs(answers_dir,exist_ok=True)
     save_dir = directory / 'open_domain_evaluation'
+    os.makedirs(save_dir,exist_ok=True)
     evaluator_name = 'gemma-9b-binary'
     batch_size = config['batch_size']
     evaluator = get_evaluator(evaluator_name)
