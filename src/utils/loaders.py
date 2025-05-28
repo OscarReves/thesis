@@ -3,7 +3,8 @@ import json
 from pathlib import Path
 import os 
 import re
-
+from torch.utils.data import random_split
+import torch
 
 # == For loading raw data ==
 
@@ -189,11 +190,19 @@ def load_retrieval_corpus():
 
     return dataset
 
-def load_web_faq(path, max_samples=None):
+def load_web_faq(path, test=False, max_samples=None):
     dataset = load_from_disk(path)
+    if test:
+        train_size = int(0.8 * len(dataset))
+        test_size = len(dataset) - train_size
+        train_dataset, test_dataset = random_split(
+            dataset, [train_size, test_size],
+            generator=torch.Generator().manual_seed(42)
+        )
+        dataset = test_dataset
     if max_samples:
         dataset = dataset.select(range(max_samples))
-    print(f"Loaded {len(dataset)} documetns")
+    print(f"Loaded {len(dataset)} documents from {test} dataset")
     column_renames = {
     "question": "query",
     "answer": "text"
