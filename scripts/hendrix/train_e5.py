@@ -110,14 +110,15 @@ def main():
     test_size = total_samples - (train_size + val_size)
 
     print(f"Dataset sizes — total: {total_samples}")
-    print(f"Train: {len(train_dataset)}, Val: {len(val_dataset)}, Test: {len(test_dataset)}")
-    print(f"Split sizes: {[train_size, val_size, test_size]}")
-
 
     train_dataset, val_dataset, test_dataset = random_split(
         tensor_dataset, [train_size, val_size, test_size],
         generator=torch.Generator().manual_seed(42)
     )
+
+    print(f"Train: {len(train_dataset)}, Val: {len(val_dataset)}, Test: {len(test_dataset)}")
+    print(f"Split sizes: {[train_size, val_size, test_size]}")
+
 
     dataloader = DataLoader(train_dataset, batch_size=256, shuffle=True, num_workers=4)
     test_dataloader = DataLoader(test_dataset, batch_size=256, shuffle=True, num_workers=4)
