@@ -43,9 +43,8 @@ python3 -u -m scripts.generalized.qa_multiple --config $yaml
 # evaluate every answer 
 python3 -u -m scripts.experiments.test_evaluate --config $yaml
 
-for yaml in configs/news/test_retrieval/*.yaml; do
-    python3 -u -m scripts.generalized.evaluate --config $yaml
-    python3 -u -m scripts.generalized.score --config $yaml
-done
+# score all answers
+python3 -u -m scripts.experiments.test_score --config $yaml
+
 
 

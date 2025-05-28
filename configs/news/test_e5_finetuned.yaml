@@ -5,11 +5,11 @@ kb_type: news
 index_path: /dtu/p1/oscrev/news/2025/index_e5_finetuned
 retriever_name: e5-finetuned
 device: cuda
-save_path: results/news/test_e5_finetuned/open-domain/
+save_path: results/news/test_e5_finetuned/open_domain/
 directory: results/news/test_e5_finetuned/
 generator_name: gemma-9b
-n_questions: 16
-batch_size: 16
+n_questions: 
+batch_size: 32
 pipeline: test_qa_with_retrieval
 
 # for evaluation 

@@ -56,7 +56,7 @@ def main(config_path):
     pipeline_func = getattr(pipeline_module, pipeline_name)
 
     for k in [1,5,10,25]:
-        retriever.set_top_k = k
+        retriever.set_top_k(k)
         pipeline_func(
             question_dataset = question_dataset, 
             retriever = retriever, 
