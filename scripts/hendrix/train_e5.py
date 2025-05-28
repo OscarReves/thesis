@@ -13,6 +13,7 @@ from tqdm import tqdm
 torch.backends.cudnn.benchmark = True
 from datasets import load_dataset
 import numpy as np
+from torch.utils.data import Subset
 
 
 def main():
@@ -100,7 +101,8 @@ def main():
         print("DATASET LIMITED TO 10K FOR DRY RUN")
         print("CHANGE BOOL TO RUN PROPERLY")
         total_samples = 10000
-        tensor_dataset = tensor_dataset[:total_samples] # for dry run
+        tensor_dataset = Subset(tensor_dataset, range(total_samples))
+
     else:
         total_samples = len(dataset)
 
