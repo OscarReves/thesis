@@ -9,7 +9,7 @@ save_path: results/news/test_e5_finetuned/open_domain/
 directory: results/news/test_e5_finetuned/
 generator_name: gemma-9b
 n_questions: 
-batch_size: 32
+batch_size: 16
 pipeline: test_qa_with_retrieval
 
 # for evaluation 
