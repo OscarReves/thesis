@@ -1,5 +1,8 @@
 import torch
 from transformers import AutoModel, AutoTokenizer
+from huggingface_hub import login, whoami
+from dotenv import load_dotenv
+import os
 
 def main():
     
@@ -11,9 +14,13 @@ def main():
     state_dict = torch.load(save_path, map_location=torch.device('cpu'))
     model.load_state_dict(state_dict)
 
+    # Log in to the hub
+    load_dotenv()
+    token = os.getenv("HUGGINGFACE_TOKEN")
+    login(token=token)
+    print(whoami())
+
     # Upload to the hub
-    
-    from huggingface_hub import HfApi, HfFolder, Repository
     model.push_to_hub("E5_finetuned_epoch7")
     tokenizer.push_to_hub("E5_finetuned_epoch7")
 
