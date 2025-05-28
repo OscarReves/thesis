@@ -144,7 +144,7 @@ def main():
 
             if global_step % 100 == 0:
                 model.eval()
-                with torch.no_grad():
+                with torch.inference_mode():
                     q_ids, q_mask, p_ids, p_mask = next(iter(test_dataloader))
                     q_ids, q_mask = q_ids.to(device), q_mask.to(device)
                     p_ids, p_mask = p_ids.to(device), p_mask.to(device)
