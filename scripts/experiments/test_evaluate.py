@@ -24,7 +24,7 @@ def main(config_path):
         answers_path = str(file)
         answers = load_documents(answers_path)
 
-        save_path = directory / save_dir / file.name
+        save_path = save_dir / file.name
 
         evaluate_answers(
             answer_dataset = answers,
