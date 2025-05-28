@@ -114,9 +114,9 @@ def main():
     def contrastive_loss(q, p, temperature=0.05):
         q = F.normalize(q, dim=1)
         p = F.normalize(p, dim=1)
-        logits = torch.matmul(q, p.T) / temperature
+        logits = torch.matmul(q, p.T) / temperature # temperature-scaled cosine sim
         labels = torch.arange(q.size(0), device=q.device)
-        return F.cross_entropy(logits, labels)
+        return F.cross_entropy(logits, labels) # actually softmax THEN cross-entropy internally 
 
     for epoch in range(8):
         model.train()
