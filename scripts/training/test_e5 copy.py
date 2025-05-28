@@ -19,8 +19,12 @@ def main():
     dataset_path = '/dtu/p1/oscrev/webfaq_danish'
     dataset = load_web_faq(dataset_path)
 
+
+    save_path = 'models/e5_finetuned_epoch7.pt'
     device = torch.device("cuda")
     model = AutoModel.from_pretrained("intfloat/multilingual-e5-large")
+    print(f"Loading state dict from {save_path}")
+    state_dict = torch.load(save_path)    
     model.train()
 
     if torch.cuda.device_count() > 1:

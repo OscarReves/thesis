@@ -5,7 +5,7 @@ EMBEDDER_REGISTRY = {
     "e5"    : E5Embedder,
     "bert-tiny" : BertTinyEmbedder,
     "e5-local" : E5EmbedderLocal,
-    "e5-fineuned" : E5Finetuned
+    "e5-finetuned" : E5Finetuned
 }
 
 def get_embedder(name, **kwargs):
