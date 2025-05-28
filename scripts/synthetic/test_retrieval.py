@@ -65,7 +65,7 @@ def main(config_path):
             documents = documents,
             index_path = index_path,
             device = device,
-            top_k = 100
+            top_k = 1000
             )
         
         # retriever = get_retriever(
