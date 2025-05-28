@@ -9,9 +9,8 @@ def main(config_path):
         config = yaml.safe_load(f)
 
     directory = Path(config['directory'])
-    open_domain_evaluation_path = directory / 'open_domain_evaluation'
-
-    open_domain_dir = directory / open_domain_evaluation_path
+    
+    open_domain_dir = directory / 'open_domain_evaluation'
     multiple_choice_dir = directory / 'multiple_choice'
 
     for od_file in open_domain_dir.iterdir():
