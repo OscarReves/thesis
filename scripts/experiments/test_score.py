@@ -8,7 +8,7 @@ def main(config_path):
         config = yaml.safe_load(f)
 
     directory = Path(config['directory'])
-    open_domain_evaluation_path = config['save_dir']
+    open_domain_evaluation_path = directory / 'open_domain_evaluation'
 
     open_domain_dir = directory / open_domain_evaluation_path
     multiple_choice_dir = directory / 'multiple_choice'

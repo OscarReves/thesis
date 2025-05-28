@@ -12,7 +12,7 @@ def main(config_path):
     # evaluates every open-domain answer in a directory
     directory = Path(config['directory'])
     answers_dir  = directory / 'open_domain'
-    save_dir = Path(config['save_dir'])
+    save_dir = directory / 'open_domain_evaluation'
     evaluator_name = 'gemma-9b-binary'
     batch_size = config['batch_size']
     evaluator = get_evaluator(evaluator_name)
