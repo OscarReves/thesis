@@ -13,8 +13,8 @@ def chunk_and_save(documents, splitter, save_path, prepend_with_title=True):
     print("Chunking dataset...")
     chunked = chunk_dataset(documents, splitter, prepend_with_title=prepend_with_title)
 
-    chunked.to_json(save_path) # removed lines=False
-    #save_as_json(data=chunked,path=save_path)
+    #chunked.to_json(save_path) # removed lines=False
+    save_as_json(data=chunked,path=save_path)
 
 def chunk_multiple(dump_dir, out_dir, splitter, test=False):
     # chunks and saves multiple wiki dump files
