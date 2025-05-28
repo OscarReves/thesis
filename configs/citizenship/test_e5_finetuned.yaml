@@ -1,0 +1,26 @@
+questions_path: 
+question_type: citizenship
+kb_path: /dtu/p1/oscrev/wiki/chunked_paragraph # path to knowledge base
+kb_type: wiki
+index_path: /dtu/p1/oscrev/wiki/index/index_e5_finetuned
+retriever_name: e5-finetuned
+device: cuda
+save_path: results/citizenship/test_qa/
+directory: results/citizenship/test_qa/
+generator_name: gemma-9b
+n_questions: 
+batch_size: 16
+pipeline: test_qa_with_retrieval
+mc_pipeline : qa_news_mc
+
+evaluator_name: gemma-9b-binary
+evaluation_type: binary
+
+# for index building
+documents_path: 
+chunked_path: /dtu/p1/oscrev/wiki/chunked_paragraph
+splitter_name: paragraph
+
+# for embedding 
+embedder_name: e5-finetuned
+device: cuda
