@@ -195,11 +195,19 @@ def load_web_faq(path, test=False, max_samples=None):
     if test:
         train_size = int(0.8 * len(dataset))
         test_size = len(dataset) - train_size
-        train_dataset, test_dataset = random_split(
-            dataset, [train_size, test_size],
-            generator=torch.Generator().manual_seed(42)
-        )
+        # Generate shuffled indices with PyTorch
+        generator = torch.Generator().manual_seed(42)
+        perm = torch.randperm(len(dataset), generator=generator).tolist()
+
+        # Split indices
+        train_indices = perm[:train_size]
+        test_indices = perm[train_size:]
+
+        # Create HF subsets using .select()
+        train_dataset = dataset.select(train_indices)
+        test_dataset = dataset.select(test_indices)
         dataset = test_dataset
+
     if max_samples:
         dataset = dataset.select(range(max_samples))
     print(f"Loaded {len(dataset)} documents from {test} dataset")
