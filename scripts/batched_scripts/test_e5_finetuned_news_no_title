@@ -32,7 +32,7 @@ conda activate production_env
 export LD_LIBRARY_PATH=$CONDA_PREFIX/lib:$LD_LIBRARY_PATH
 
 # set config path
-yaml=configs/news/test_e5_finetuned.yaml
+yaml=configs/news/test_e5_finetuned/no_title.yaml
 
 # build index
 #python3 -u -m scripts.news.chunk_dataset --config $yaml
