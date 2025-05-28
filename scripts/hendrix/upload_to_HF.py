@@ -8,7 +8,7 @@ def main():
     model = AutoModel.from_pretrained("intfloat/multilingual-e5-large")
     tokenizer = AutoTokenizer.from_pretrained("intfloat/multilingual-e5-large")
     print(f"Loading state dict from {save_path}")
-    state_dict = torch.load(save_path)    
+    state_dict = torch.load(save_path, map_location=torch.device('cpu'))
     model.load_state_dict(state_dict)
 
     # Upload to the hub
