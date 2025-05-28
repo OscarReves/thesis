@@ -21,7 +21,8 @@ def main(config_path):
     batch_size = config['batch_size']
     kb_type = config['kb_type']
     question_type = config['question_type']
-    pipeline_name = config.get('pipeline', 'test_qa_with_retrieval_wiki')
+    pipeline_name = config.get('pipeline')
+    mc_pipeline_name = config['mc_pipeline']
     silent = config.get('silent', True) # defaults to none 
     top_k = config.get('top_k', 5)
 
@@ -61,7 +62,23 @@ def main(config_path):
             question_dataset = question_dataset, 
             retriever = retriever, 
             generator = generator,
-            save_path = save_path + f"top_{k}",
+            save_path = save_path + "open_domain/" + f"top_{k}",
+            max_samples=max_samples,
+            batch_size=batch_size,
+            silent=silent)
+
+    print("Testing qa with retrieval (Mutiple Choice)...")
+    #print("Available functions in pipeline_module:", dir(pipeline_module))
+    #print("Trying to access:", pipeline_name)
+    pipeline_func = getattr(pipeline_module, mc_pipeline_name)
+
+    for k in [1,5,10,25]:
+        retriever.set_top_k(k)
+        pipeline_func(
+            question_dataset = question_dataset, 
+            retriever = retriever, 
+            generator = generator,
+            save_path = save_path + "multiple_choice/" + f"top_{k}",
             max_samples=max_samples,
             batch_size=batch_size,
             silent=silent)
