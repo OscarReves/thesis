@@ -105,11 +105,11 @@ def main():
         total_samples = len(dataset)
 
     # Split sizes
-    train_size = int(0.8 * len(total_samples))
-    val_size = int(0.01 * len(total_samples))
-    test_size = len(total_samples) - (train_size + val_size)
+    train_size = int(0.8 * total_samples)
+    val_size = int(0.01 * total_samples)
+    test_size = total_samples - (train_size + val_size)
 
-    print(f"Dataset sizes — total: {len(total_samples)}")
+    print(f"Dataset sizes — total: {total_samples}")
     print(f"Train: {len(train_dataset)}, Val: {len(val_dataset)}, Test: {len(test_dataset)}")
     print(f"Split sizes: {[train_size, val_size, test_size]}")
 
