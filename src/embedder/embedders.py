@@ -141,6 +141,11 @@ class E5EmbedderLocal(E5Embedder):
         self.model.eval()
         #torch.set_float32_matmul_precision('high') # is this necessary?
 
+
+class E5Finetuned(E5Embedder):
+    def __init__(self, device='cuda', model_name='coffeecat69/E5_finetuned_epoch7'):
+        super().__init__(device, model_name)
+
 class BertTinyEmbedder:
     def __init__(self, device, model_name='prajjwal1/bert-tiny'):
         self.tokenizer = AutoTokenizer.from_pretrained(model_name) 
