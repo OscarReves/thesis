@@ -6,3 +6,4 @@ retriever_name: e5_gpu
 save_path: results/webfaq/results_E5_finetuned_test
 batch_size: 2048
 max_samples: 10000
+test: True
