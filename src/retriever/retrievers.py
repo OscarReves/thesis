@@ -15,18 +15,18 @@ import pickle
 import scipy.sparse as sp
 
 class E5Retriever:
-    def __init__(self, index_path, documents, device=None, text_field='text', top_k = 5):
-        model_name = 'intfloat/multilingual-e5-large-instruct'
+    def __init__(self, index_path, documents, device=None, text_field='text', top_k = 5,
+                 model_name='intfloat/multilingual-e5-large-instruct'):
         self.device = torch.device(device)
         self.top_k = top_k
 
-        print(f"Loaded model {model_name} for top-{top_k} on device {self.device}")
 
         # Load model
         self.tokenizer = AutoTokenizer.from_pretrained(model_name)
         if self.tokenizer.pad_token == None:
             self.tokenizer.pad_token = self.tokenizer.eos_token
         self.model = AutoModel.from_pretrained(model_name).to(self.device)
+        print(f"Loaded model {model_name} for top-{top_k} on device {self.device}")
 
         # Load FAISS index
         if not os.path.exists(index_path):
@@ -137,6 +137,12 @@ class E5RetrieverGPU(E5Retriever):
         D, I = self.index.search(q_embs, self.top_k)
         
         return I.tolist()
+
+class E5RetrieverFinetuned(E5Retriever):
+    def __init__(self, index_path, documents, device=None, text_field='text', top_k=5):
+        super().__init__(index_path, documents, device, text_field, top_k,
+                         model_name='coffeecat69/E5_finetuned_epoch7')
+
 
 # class E5RetrieverGPU:
 #     def __init__(self, index_path, documents, device=None, text_field='text', top_k = 5):

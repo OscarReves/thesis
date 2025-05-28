@@ -38,7 +38,7 @@ yaml=configs/news/test_e5_finetuned.yaml
 python3 -u -m scripts.news.build_index --config $yaml
 
 # run qa for multiple values of k retrieval
-python3 -u -m scripts.generalized.qa_multiple.py --config $yaml
+python3 -u -m scripts.generalized.qa_multiple. --config $yaml
 
 # evaluate every answer 
 python3 -u -m scripts.test_evaluate --config $yaml
