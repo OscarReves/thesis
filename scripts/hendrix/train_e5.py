@@ -95,18 +95,21 @@ def main():
         passage_inputs["attention_mask"]
     )
 
-    if True:
-        print("DATASET LIMITED TO 20K FOR DRY RUN")
+    DRY_RUN = True
+    if DRY_RUN:
+        print("DATASET LIMITED TO 10K FOR DRY RUN")
         print("CHANGE BOOL TO RUN PROPERLY")
-        tensor_dataset = tensor_dataset[:20000] # for dry run
-
+        total_samples = 10000
+        tensor_dataset = tensor_dataset[:total_samples] # for dry run
+    else:
+        total_samples = len(dataset)
 
     # Split sizes
-    train_size = int(0.8 * len(tensor_dataset))
-    val_size = int(0.01 * len(tensor_dataset))
-    test_size = len(tensor_dataset) - (train_size + val_size)
+    train_size = int(0.8 * len(total_samples))
+    val_size = int(0.01 * len(total_samples))
+    test_size = len(total_samples) - (train_size + val_size)
 
-    print(f"Dataset sizes — total: {len(tensor_dataset)}")
+    print(f"Dataset sizes — total: {len(total_samples)}")
     print(f"Train: {len(train_dataset)}, Val: {len(val_dataset)}, Test: {len(test_dataset)}")
     print(f"Split sizes: {[train_size, val_size, test_size]}")
 
