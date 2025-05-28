@@ -95,7 +95,11 @@ def main():
         passage_inputs["attention_mask"]
     )
 
-    tensor_dataset = tensor_dataset[:1000] # for dry run
+    if True:
+        print("DATASET LIMITED TO 10K FOR DRY RUN")
+        print("CHANGE BOOL TO RUN PROPERLY")
+        tensor_dataset = tensor_dataset[:1000] # for dry run
+
 
     # Split sizes
     train_size = int(0.8 * len(tensor_dataset))
