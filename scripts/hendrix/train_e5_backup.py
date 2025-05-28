@@ -12,7 +12,7 @@ from transformers import AutoModel, AutoTokenizer
 from tqdm import tqdm
 torch.backends.cudnn.benchmark = True
 from datasets import load_dataset
-import numpy as np
+
 
 
 def main():
@@ -95,21 +95,17 @@ def main():
         passage_inputs["attention_mask"]
     )
 
-    tensor_dataset = tensor_dataset[:1000] # for dry run
-
     # Split sizes
-    train_size = int(0.8 * len(tensor_dataset))
-    val_size = int(0.01 * len(tensor_dataset))
-    test_size = len(tensor_dataset) - (train_size + val_size)
-
-    train_dataset, test_dataset, val_dataset = random_split(
-        tensor_dataset, [train_size, test_size, val_size],
+    train_size = int(0.8 * len(dataset))
+    test_size = len(dataset) - train_size
+    train_dataset, test_dataset = random_split(
+        tensor_dataset, [train_size, test_size],
         generator=torch.Generator().manual_seed(42)
     )
 
     dataloader = DataLoader(train_dataset, batch_size=256, shuffle=True, num_workers=4)
     test_dataloader = DataLoader(test_dataset, batch_size=256, shuffle=True, num_workers=4)
-    val_dataloader = DataLoader(val_dataset, batch_size=256, shuffle=True, num_workers=4)
+
 
     def mean_pooling(last_hidden, mask):
         mask = mask.unsqueeze(-1).expand(last_hidden.size()).float()
@@ -122,21 +118,7 @@ def main():
         labels = torch.arange(q.size(0), device=q.device)
         return F.cross_entropy(logits, labels) # actually softmax THEN cross-entropy internally 
 
-    def should_stop(val_losses, patience=3, min_delta=0.0):
-        best = min(val_losses)
-        count = 0
-        for loss in reversed(val_losses[:-1]):
-            if loss - best > min_delta:
-                count += 1
-                if count >= patience:
-                    return True
-            else:
-                break
-        return False
-
-    per_epoch_val_losses = []
     for epoch in range(8):
-        val_losses = []
         model.train()
         pbar = tqdm(dataloader, desc=f"Epoch {epoch}")
         for q_ids, q_mask, p_ids, p_mask in pbar:
@@ -160,48 +142,30 @@ def main():
             scaler.update()
             optimizer.zero_grad()
 
-            val_loss = 0
-            val_count = 0
-            if global_step % 200 == 0:
+            if global_step % 100 == 0:
                 model.eval()
-                pbar_val = tqdm(val_dataloader, desc=f"Epoch {epoch}, validation")
-                for q_ids, q_mask, p_ids, p_mask in pbar_val:
+                with torch.inference_mode():
+                    q_ids, q_mask, p_ids, p_mask = next(iter(test_dataloader))
                     q_ids, q_mask = q_ids.to(device), q_mask.to(device)
-                    p_ids, p_mask = p_ids.to(device), p_mask.to(device)            
-                    with torch.inference_mode():
-                        q_out = model(input_ids=q_ids, attention_mask=q_mask)
-                        p_out = model(input_ids=p_ids, attention_mask=p_mask)
+                    p_ids, p_mask = p_ids.to(device), p_mask.to(device)
 
-                        q_emb = mean_pooling(q_out.last_hidden_state, q_mask)
-                        p_emb = mean_pooling(p_out.last_hidden_state, p_mask)
+                    q_out = model(input_ids=q_ids, attention_mask=q_mask)
+                    p_out = model(input_ids=p_ids, attention_mask=p_mask)
 
-                        val_loss += contrastive_loss(q_emb, p_emb).item()
-                        val_count += 1
+                    q_emb = mean_pooling(q_out.last_hidden_state, q_mask)
+                    p_emb = mean_pooling(p_out.last_hidden_state, p_mask)
 
-                val_loss /= val_count
-                val_losses.append(val_loss)
-                print(f"[Step {global_step}] Validation Loss: {val_loss:.4f}")
-                writer.add_scalar("val/loss", val_loss, global_step)
+                    test_loss = contrastive_loss(q_emb, p_emb).item()
+
+                print(f"[Step {global_step}] Test Loss (1 batch): {test_loss:.4f}")
+                writer.add_scalar("test/loss_single_batch", test_loss, global_step)
                 model.train()
 
-        avg_val_loss = np.mean(val_losses)
-        per_epoch_val_losses.append(avg_val_loss)
-        if should_stop(per_epoch_val_losses, patience=3):
-            print("Early stopping triggered")
-            break
-        pbar.set_postfix(loss=loss.item())
+            pbar.set_postfix(loss=loss.item())
 
-        save_path = f"checkpoints/epoch_{epoch}.pt"
-        os.makedirs('checkpoints', exist_ok=True)
-        torch.save({
-            'epoch': epoch,
-            'model_state_dict': model.module.state_dict() if isinstance(model, torch.nn.DataParallel) else model.state_dict(),
-            'optimizer_state_dict': optimizer.state_dict(),
-            # optionally also save loss, scheduler, etc.
-            'loss': loss
-        }, save_path)
-        #torch.save(model.module.state_dict() if isinstance(model, torch.nn.DataParallel) else model.state_dict(), save_path)
-        print(f"Saved checkpoint to {save_path}")
+        save_path = f"models/e5_finetuned_epoch{epoch}.pt"
+        torch.save(model.module.state_dict() if isinstance(model, torch.nn.DataParallel) else model.state_dict(), save_path)
+        print(f"Saved model to {save_path}")
 
 if __name__ == "__main__":
     main()
