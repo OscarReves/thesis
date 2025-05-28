@@ -98,7 +98,7 @@ def main():
     if True:
         print("DATASET LIMITED TO 10K FOR DRY RUN")
         print("CHANGE BOOL TO RUN PROPERLY")
-        tensor_dataset = tensor_dataset[:1000] # for dry run
+        tensor_dataset = tensor_dataset[:10000] # for dry run
 
 
     # Split sizes
