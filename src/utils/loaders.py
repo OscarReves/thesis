@@ -167,7 +167,7 @@ def load_news(path, silent=False):
         print(f"{len(dataset)} questions loaded")
     return dataset
 
-def load_retrieval_corpus():
+def load_retrieval_corpus(max_samples=None):
     dataset = load_dataset('ThatsGroes/synthetic-from-retrieval-tasks-danish')
     def unwrap_and_merge(example, idx):
         try:
@@ -187,6 +187,9 @@ def load_retrieval_corpus():
         with_indices=True,
         features=None,
     )
+
+    if max_samples:
+        dataset = dataset.select(range(max_samples))
 
     return dataset
 

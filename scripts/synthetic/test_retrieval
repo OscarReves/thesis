@@ -32,7 +32,7 @@ conda activate production_env
 export LD_LIBRARY_PATH=$CONDA_PREFIX/lib:$LD_LIBRARY_PATH
 
 # set config path(s) for open domain QA
-CONFIG_PATH=configs/webfaq/retrieval_test_E5_finetuned.yaml
+CONFIG_PATH=configs/synthetic/retrieval_test_E5_finetuned.yaml
 
 # test model 
-python3 -u -m scripts.webfaq.test_retrieval --config $CONFIG_PATH
+python3 -u -m scripts.tests.test_retrieval --config $CONFIG_PATH

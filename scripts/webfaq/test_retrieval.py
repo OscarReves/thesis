@@ -27,9 +27,10 @@ def main(config_path):
     test = config['test']
 
     # 1. Build index 
-    #documents = load_web_faq(documents_path, test=test, max_samples=max_samples)
-    documents = load_retrieval_corpus(max_samples=max_samples)
+    documents = load_web_faq(documents_path, test=test, max_samples=max_samples)
+    
 
+    
     embedder = get_embedder(embedder_name)
 
     if os.path.exists(index_path):
