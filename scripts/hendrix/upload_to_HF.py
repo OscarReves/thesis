@@ -16,7 +16,11 @@ def main():
 
     # Log in to the hub
     load_dotenv()
-    token = os.getenv("HUGGINGFACE_TOKEN")
+    token_env_name = 'HUGGINGFACE_TOKEN'
+    token = os.getenv(token_env_name)
+    if not token:
+        raise RuntimeError(f"{token_env_name} not found in environment")
+    
     login(token=token)
     print(whoami())
 
