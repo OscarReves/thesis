@@ -14,14 +14,14 @@ def main(config_path):
     docs_path = config["documents_path"]
     save_path = config['chunked_path']
     splitter_name = config['splitter_name']
-    prepend_with_title=config.get("prepend_with_title",True)
+    prepend_with_title=config['prepend_with_title']
 
     print("Loading documents...")
     documents = load_raw_articles(docs_path)
     
     splitter = get_splitter(splitter_name)
 
-    print("Chunking documents...")
+    print(f"Chunking documents WITH TITLE={prepend_with_title}...")
     # this should be expanded to inlcude arguments for chunk size etc
     # also, consider not chunking based on the tokenizer 
     chunk_and_save(documents, splitter, save_path, prepend_with_title=prepend_with_title)
