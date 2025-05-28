@@ -106,6 +106,11 @@ def main():
     val_size = int(0.01 * len(tensor_dataset))
     test_size = len(tensor_dataset) - (train_size + val_size)
 
+    print(f"Dataset sizes — total: {len(tensor_dataset)}")
+    print(f"Train: {len(train_dataset)}, Val: {len(val_dataset)}, Test: {len(test_dataset)}")
+    print(f"Split sizes: {[train_size, val_size, test_size]}")
+
+
     train_dataset, val_dataset, test_dataset = random_split(
         tensor_dataset, [train_size, val_size, test_size],
         generator=torch.Generator().manual_seed(42)
