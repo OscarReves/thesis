@@ -194,7 +194,7 @@ def main():
         avg_val_loss = np.mean(val_losses)
         # No reason to calculate the average, just take the final value 
         # Actually, val loss is super noisy, so take average 
-        #per_epoch_val_losses.append(val_loss)
+        per_epoch_val_losses.append(val_loss)
         if should_stop(per_epoch_val_losses, patience=3):
             print("Early stopping triggered")
             break
