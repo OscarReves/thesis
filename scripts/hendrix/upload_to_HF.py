@@ -11,7 +11,8 @@ def main():
     model = AutoModel.from_pretrained("intfloat/multilingual-e5-large")
     tokenizer = AutoTokenizer.from_pretrained("intfloat/multilingual-e5-large")
     print(f"Loading state dict from {save_path}")
-    state_dict = torch.load(save_path, map_location=torch.device('cpu'))
+    checkpoint = torch.load(save_path, map_location=torch.device('cpu'))
+    state_dict = checkpoint['model_state_dict']
     model.load_state_dict(state_dict)
 
     # Log in to the hub

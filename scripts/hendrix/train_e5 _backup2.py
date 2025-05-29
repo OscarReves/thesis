@@ -138,9 +138,9 @@ def main():
         return F.cross_entropy(logits, labels) # actually softmax THEN cross-entropy internally 
 
     def should_stop(val_losses, patience=3, min_delta=0.0):
-        best = min(val_losses[:-1]) # best loss excluding current
+        best = min(val_losses)
         count = 0
-        for loss in reversed(val_losses): 
+        for loss in reversed(val_losses[:-1]):
             if loss - best > min_delta:
                 count += 1
                 if count >= patience:
@@ -148,7 +148,7 @@ def main():
             else:
                 break
         return False
-    
+
     per_epoch_val_losses = []
     for epoch in range(8):
         val_losses = []
@@ -200,9 +200,7 @@ def main():
                 model.train()
 
         avg_val_loss = np.mean(val_losses)
-        # No reason to calculate the average, just take the final value 
-        # Actually, val loss is super noisy, so take average 
-        #per_epoch_val_losses.append(val_loss)
+        per_epoch_val_losses.append(avg_val_loss)
         if should_stop(per_epoch_val_losses, patience=3):
             print("Early stopping triggered")
             break

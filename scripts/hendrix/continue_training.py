@@ -30,6 +30,12 @@ def main():
 
     dataset = load_web_faq(dataset_path)
     device = torch.device("cuda")
+    
+    checkpoint = torch.load("checkpoints/epoch_5.pt")
+    model_state = checkpoint['model_state_dict']
+    optimizer_state = checkpoint['optimizer_state_dict']
+    start_epoch = checkpoint['epoch'] + 1  # resume after last epoch
+    
     model = AutoModel.from_pretrained("intfloat/multilingual-e5-large")
     model.train()
 
@@ -37,9 +43,15 @@ def main():
         print(f"Using {torch.cuda.device_count()} GPUs")
         model = torch.nn.DataParallel(model)
 
+    if isinstance(model, torch.nn.DataParallel):
+        model.module.load_state_dict(model_state)
+    else:
+        model.load_state_dict(model_state)
+
     model = model.to(device)
 
     optimizer = torch.optim.AdamW(model.parameters(), lr=2e-5)
+    optimizer.load_state_dict(optimizer_state)
     scaler = torch.amp.GradScaler(device='cuda')  # for mixed precision
 
     def mean_pooling(last_hidden_state, attention_mask):
@@ -66,27 +78,7 @@ def main():
         print(f"Loading pre-tokenized queries from disk at {query_inputs_path}")
         query_inputs = torch.load(query_inputs_path)
     else:
-        tokenizer = AutoTokenizer.from_pretrained("intfloat/multilingual-e5-large",use_fast=True)
-        # tokenize queries
-        queries = [f"query: {q}" for q in dataset["query"]]
-        query_inputs = {"input_ids": [], "attention_mask": []}
-        for q in tqdm(queries, desc="Tokenizing queries"):
-            encoded = tokenizer(q, padding="max_length", truncation=True, max_length=128, return_tensors="pt")
-            query_inputs["input_ids"].append(encoded["input_ids"])
-            query_inputs["attention_mask"].append(encoded["attention_mask"])
-        query_inputs["input_ids"] = torch.cat(query_inputs["input_ids"])
-        query_inputs["attention_mask"] = torch.cat(query_inputs["attention_mask"])
-        torch.save(query_inputs, query_inputs_path)
-        # tokenize passages
-        passages = [f"passage: {p}" for p in dataset["text"]]
-        passage_inputs = {"input_ids": [], "attention_mask": []}
-        for p in tqdm(passages, desc="Tokenizing passages"):
-            encoded = tokenizer(p, padding="max_length", truncation=True, max_length=128, return_tensors="pt")
-            passage_inputs["input_ids"].append(encoded["input_ids"])
-            passage_inputs["attention_mask"].append(encoded["attention_mask"])
-        passage_inputs["input_ids"] = torch.cat(passage_inputs["input_ids"])
-        passage_inputs["attention_mask"] = torch.cat(passage_inputs["attention_mask"])
-        torch.save(passage_inputs, passage_inputs_path)
+        raise AssertionError(f"Pre-tokenized passages not found on disk at {passage_inputs_path}")     
 
     # Zip and load into DataLoader
     tensor_dataset = TensorDataset(
@@ -96,7 +88,7 @@ def main():
         passage_inputs["attention_mask"]
     )
 
-    DRY_RUN = False
+    DRY_RUN = True
     if DRY_RUN:
         print("DATASET LIMITED TO 10K FOR DRY RUN")
         print("CHANGE BOOL TO RUN PROPERLY")
@@ -150,7 +142,7 @@ def main():
         return False
     
     per_epoch_val_losses = []
-    for epoch in range(8):
+    for epoch in range(start_epoch,start_epoch+8):
         val_losses = []
         model.train()
         pbar = tqdm(dataloader, desc=f"Epoch {epoch}")
@@ -209,6 +201,8 @@ def main():
         pbar.set_postfix(loss=loss.item())
 
         save_path = f"checkpoints/epoch_{epoch}.pt"
+        if DRY_RUN:
+            save_path = f"checkpoints/dry_run/epoch_{epoch}.pt"
         os.makedirs('checkpoints', exist_ok=True)
         torch.save({
             'epoch': epoch,
