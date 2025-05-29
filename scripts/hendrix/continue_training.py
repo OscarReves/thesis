@@ -88,7 +88,7 @@ def main():
         passage_inputs["attention_mask"]
     )
 
-    DRY_RUN = True
+    DRY_RUN = False
     if DRY_RUN:
         print("DATASET LIMITED TO 10K FOR DRY RUN")
         print("CHANGE BOOL TO RUN PROPERLY")
