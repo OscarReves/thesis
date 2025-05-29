@@ -206,6 +206,7 @@ def main():
         save_path = f"checkpoints/epoch_{epoch}.pt"
         if DRY_RUN:
             save_path = f"checkpoints/dry_run/epoch_{epoch}.pt"
+            os.makedirs('checkpoints/dry_run', exist_ok=True)    
         os.makedirs('checkpoints', exist_ok=True)
         torch.save({
             'epoch': epoch,
