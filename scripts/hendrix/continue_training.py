@@ -129,7 +129,7 @@ def main():
         labels = torch.arange(q.size(0), device=q.device)
         return F.cross_entropy(logits, labels) # actually softmax THEN cross-entropy internally 
 
-    def should_stop(val_losses, patience=3, min_delta=0.0):
+    def should_stop(val_losses, patience=3, min_delta=1e-3):
         if len(val_losses) > 1:
             best = min(val_losses[:-1]) # best loss excluding current
             count = 0
