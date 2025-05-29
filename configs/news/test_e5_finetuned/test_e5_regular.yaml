@@ -8,7 +8,7 @@ device: cuda
 save_path: results/news/test_e5_regular/
 directory: results/news/test_e5_regular/
 generator_name: gemma-9b
-n_questions: 16
+n_questions: 
 batch_size: 16
 pipeline: test_qa_with_retrieval
 mc_pipeline : qa_news_mc
