@@ -14,7 +14,7 @@ def main():
     checkpoint = torch.load(save_path, map_location=torch.device('cpu'))
     state_dict = checkpoint['model_state_dict']
     model.load_state_dict(state_dict)
-
+    
     # Log in to the hub
     load_dotenv()
     token_env_name = 'HUGGINGFACE_TOKEN'

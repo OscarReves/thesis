@@ -23,7 +23,7 @@ def main(config_path):
             
             # Append to log file
             with open("results/accuracy.txt", "a") as log_file:
-                log_file.write(f"{answers_path}\tAccuracy: {accuracy:.3f}\n")
+                log_file.write(f"{answers_path}\tAccuracy: {accuracy:.3g}\n")
 
     if os.path.exists(multiple_choice_dir):
         for mc_file in multiple_choice_dir.iterdir():
@@ -35,7 +35,7 @@ def main(config_path):
             
             # Append to log file
             with open("results/accuracy.txt", "a") as log_file:
-                log_file.write(f"{answers_path}\tAccuracy: {accuracy:.3f}\n")
+                log_file.write(f"{answers_path}\tAccuracy: {accuracy:.3g}\n")
     else:
         print(f"No multiple choice answers found in {dir}")
 
