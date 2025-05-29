@@ -7,8 +7,8 @@ retriever_name: e5
 device: cuda
 save_path: results/citizenship/gemma_test
 generator_name: gemma-9b
-n_questions: 1
-batch_size: 8
+n_questions: 
+batch_size: 32
 pipeline: test_qa_citizenship
 
 # for evaluation 
