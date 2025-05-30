@@ -126,6 +126,11 @@ def get_model_evals(path='results/citizenship/human_evaluation/100_balanced_ques
     model_evals = np.array([int(x[0]) if x and x[0].isdigit() else np.nan for x in questions['evaluation']])
     return model_evals
 
+def get_model_evals_mc(path='results/citizenship/human_evaluation/100_balanced_questions'):
+    questions = load_documents(path)
+    model_evals = np.array([int(gen[0] == ref[0]) for gen,ref in zip(questions['generated_answer'],questions['reference_answer'])])
+    return model_evals
+
 def get_eval_accuracy(
         human_path='results/citizenship/human_evaluation/human_annotation.csv',
         model_path='results/citizenship/human_evaluation/100_balanced_questions'

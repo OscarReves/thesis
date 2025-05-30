@@ -349,3 +349,31 @@ class Gemma9bGenerator(BaseGenerator):
         ]
 
         return self.generate_from_prompts(prompts=prompts)
+    
+class Gemma9bGeneratorNewPrompt(Gemma9bGenerator):
+    def __init__(self):
+        super().__init__()
+    
+    def generate_batch(self, questions, contexts, max_new_tokens=32):
+        system_prompt = (
+            "You are a helpful assistant. You respond to questions in Danish. "
+            "Respond briefly and accurately. Do not generate any extra questions or superfluous text. " 
+            "Be as concise as possible."
+            "The context may or may not be relevant."
+            "If the context is not relevant, simply respond from memory."
+        )
+
+        # system_prompt = (
+        #     "You are a helpful assistant. You respond to questions in Danish. "
+        #     "Respond briefly and accurately. Do not generate any extra questions or superfluous text. "
+        #     "Be as concise as possible."
+        # )
+
+        prompts = [
+            self.tokenizer.apply_chat_template([
+                {"role": "user", "content": f"{system_prompt}\nBesvar følgende spørgsmål ud fra kontekst:\nKontekst: {c}\nSpørgsmål: {q}"}
+            ], tokenize=False, add_generation_prompt=True)
+            for q, c in zip(questions, contexts)
+        ]
+
+        return self.generate_from_prompts(prompts=prompts)
