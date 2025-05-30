@@ -12,7 +12,7 @@ n_questions:
 batch_size: 16
 indexing_batch_size: 2048
 pipeline: test_qa_with_retrieval
-mc_pipeline : qa_citizenship_mc
+mc_pipeline : qa_news_mc
 
 evaluator_name: gemma-9b-binary
 evaluation_type: binary
