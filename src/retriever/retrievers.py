@@ -7,12 +7,10 @@ import torch.nn.functional as F
 from datasets.utils.logging import disable_progress_bar
 from rank_bm25 import BM25Okapi
 import re
-# from gensim.summarization.bm25 import BM25
-# from gensim.corpora import Dictionary
-# from gensim.similarities import SparseMatrixSimilarity
 import numpy as np
 import pickle
 import scipy.sparse as sp
+from src.embedder import get_embedder
 
 class E5Retriever:
     def __init__(self, index_path, documents, device=None, text_field='text', top_k = 5,
@@ -123,9 +121,12 @@ class E5Retriever:
 class E5RetrieverGPU(E5Retriever):
     # Has several benefits over the parent class:
     #   1. Moves index to gpu for faster search
-    #   2. Recieves an embed to allow for modular encoding of the queries 
-    def __init__(self, embedder, *args, **kwargs):
+    #   2. Recieves an embedder to allow for modular encoding of the queries 
+    def __init__(self, embedder=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        if embedder == None:
+            print("No embedder passed to retriever. Defaulting to E5Embedder for encoding queries")
+            embedder = get_embedder(name='e5') 
         self.embedder = embedder 
         #index_cpu = faiss.read_index(self.index)
         res = faiss.StandardGpuResources()

@@ -3,7 +3,7 @@ question_type: citizenship
 kb_path: /dtu/p1/oscrev/wiki/chunked_paragraph # path to knowledge base
 kb_type: wiki
 index_path: /dtu/p1/oscrev/wiki/index/index_paragraph
-retriever_name: e5
+retriever_name: e5-gpu
 device: cuda
 save_path: results/citizenship/test_e5_regular/
 directory: results/citizenship/test_e5_regular/
@@ -12,7 +12,7 @@ n_questions:
 batch_size: 16
 indexing_batch_size: 2048
 pipeline: test_qa_with_retrieval
-mc_pipeline : qa_news_mc
+mc_pipeline : qa_citizenship_mc
 
 evaluator_name: gemma-9b-binary
 evaluation_type: binary
