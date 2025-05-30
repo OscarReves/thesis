@@ -246,7 +246,7 @@ class Gemma9bGenerator(BaseGenerator):
     def generate_batch(self, questions, contexts, max_new_tokens=32):
         system_prompt = (
             "You are a helpful assistant. You respond to questions in Danish. "
-            "Respond briefly and accurately. Do not generate any extra questions or superfluous text. "
+            "Respond briefly and accurately. Do not generate any extra questions or superfluous text. " 
             "Be as concise as possible."
             "The context may or may not be relevant."
         )

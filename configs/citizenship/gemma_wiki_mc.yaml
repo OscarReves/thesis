@@ -8,11 +8,11 @@ device: cuda
 save_path: results/citizenship/gemma_wiki_mc
 generator_name: gemma-9b
 n_questions: 
-batch_size: 8
-pipeline: qa_citizenship_mc
+batch_size: 32
+pipeline: qa_news_mc
 
 # for evaluation 
 answers_path: results/citizenship/gemma_wiki_mc
-evaluator_name: nous-hermes-mistral-binary
+evaluator_name: gemma-9b-binary
 evaluation_type: multiple_choice
-evaluation_path: results/citizenship/gemma_wiki_mc
+evaluation_path: results/citizenship/evaluation_gemma_wiki_mc
