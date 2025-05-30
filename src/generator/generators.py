@@ -376,4 +376,6 @@ class Gemma9bGeneratorNewPrompt(Gemma9bGenerator):
             for q, c in zip(questions, contexts)
         ]
 
+        print(prompts[0])
+
         return self.generate_from_prompts(prompts=prompts)
