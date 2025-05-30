@@ -24,6 +24,7 @@ def main(config_path):
     pipeline_name = config.get('pipeline', 'test_qa_with_retrieval_wiki')
     silent = config.get('silent', True) # defaults to none 
     top_k = config.get('top_k', 5)
+    print(f"top_k = {top_k}")
 
     if kb_path:
         print("Loading knowledge base...")
