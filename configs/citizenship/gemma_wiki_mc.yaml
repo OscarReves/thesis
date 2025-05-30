@@ -15,4 +15,4 @@ pipeline: qa_news_mc
 answers_path: results/citizenship/gemma_wiki_mc
 evaluator_name: gemma-9b-binary
 evaluation_type: multiple_choice
-evaluation_path: results/citizenship/evaluation_gemma_wiki_mc
+evaluation_path: results/citizenship/gemma_wiki_mc
