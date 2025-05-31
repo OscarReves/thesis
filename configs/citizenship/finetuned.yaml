@@ -8,8 +8,8 @@ device: cuda
 save_path: results/citizenship/gemma_finetuned
 generator_name: gemma-9b
 n_questions: 
-batch_size: 8
-pipeline: test_qa_citizenship
+batch_size: 32
+pipeline: test_qa_retrieval
 top_k: 1
 
 # for evaluation 
