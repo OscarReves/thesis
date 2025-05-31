@@ -32,7 +32,7 @@ conda activate production_env
 export LD_LIBRARY_PATH=$CONDA_PREFIX/lib:$LD_LIBRARY_PATH
 
 # set config path(s) for open domain QA
-CONFIG=configs/citizenship/gemma_wiki_new_prompt.yaml
+CONFIG=configs/citizenship/finetuned.yaml
 
 
 python3 -u -m scripts.generalized.qa --config $CONFIG
