@@ -51,28 +51,28 @@ def main(config_path):
     print("Loading generator...")
     generator = get_generator(generator_name)
 
-    # print("Testing qa with retrieval...")
-    # #print("Available functions in pipeline_module:", dir(pipeline_module))
-    # #print("Trying to access:", pipeline_name)
-    # pipeline_func = getattr(pipeline_module, pipeline_name)
+    print("Testing qa with retrieval...")
+    #print("Available functions in pipeline_module:", dir(pipeline_module))
+    #print("Trying to access:", pipeline_name)
+    pipeline_func = getattr(pipeline_module, pipeline_name)
 
-    # for k in [10,25]:
-    #     retriever.set_top_k(k)
-    #     pipeline_func(
-    #         question_dataset = question_dataset, 
-    #         retriever = retriever, 
-    #         generator = generator,
-    #         save_path = save_path + "open_domain/" + f"top_{k}",
-    #         max_samples=max_samples,
-    #         batch_size=batch_size,
-    #         silent=silent)
+    for k in [1,5,10]:
+        retriever.set_top_k(k)
+        pipeline_func(
+            question_dataset = question_dataset, 
+            retriever = retriever, 
+            generator = generator,
+            save_path = save_path + "open_domain/" + f"top_{k}",
+            max_samples=max_samples,
+            batch_size=batch_size,
+            silent=silent)
 
     print("Testing qa with retrieval (Mutiple Choice)...")
     #print("Available functions in pipeline_module:", dir(pipeline_module))
     #print("Trying to access:", pipeline_name)
     pipeline_func = getattr(pipeline_module, mc_pipeline_name)
 
-    for k in [10]:
+    for k in [1,5,10]:
         retriever.set_top_k(k)
         pipeline_func(
             question_dataset = question_dataset, 
