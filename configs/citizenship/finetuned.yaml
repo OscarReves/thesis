@@ -9,7 +9,7 @@ save_path: results/citizenship/gemma_finetuned
 generator_name: gemma-9b
 n_questions: 
 batch_size: 32
-pipeline: test_qa_retrieval
+pipeline: test_qa_with_retrieval
 top_k: 1
 
 # for evaluation 
