@@ -246,6 +246,8 @@ def load_questions_by_type(path, type, silent=False):
         return load_citizenship_questions(silent)
     if type == "mkqa":
         return load_mkqa(silent)
+    if type == "custom":
+        return load_documents(path)
 
 # == For saving == 
 
