@@ -15,4 +15,4 @@ pipeline: test_qa_no_context
 answers_path: results/custom/valde_question
 evaluator_name: gemma-9b-binary
 evaluation_type: binary
-evaluation_path: results/citizenship/evaluation_valde_question
+evaluation_path: results/custom/evaluation_valde_question
