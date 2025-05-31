@@ -72,7 +72,7 @@ def main(config_path):
     #print("Trying to access:", pipeline_name)
     pipeline_func = getattr(pipeline_module, mc_pipeline_name)
 
-    for k in [10,25]:
+    for k in [10]:
         retriever.set_top_k(k)
         pipeline_func(
             question_dataset = question_dataset, 
