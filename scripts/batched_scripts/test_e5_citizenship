@@ -38,10 +38,10 @@ yaml=configs/citizenship/test_e5/test_regular.yaml
 # python3 -u -m scripts.wiki.build_index --config $yaml
 
 # run qa for multiple values of k retrieval
-python3 -u -m scripts.generalized.qa_multiple --config $yaml
+#python3 -u -m scripts.generalized.qa_multiple --config $yaml
 
 # evaluate every answer 
-python3 -u -m scripts.experiments.test_evaluate --config $yaml
+#python3 -u -m scripts.experiments.test_evaluate --config $yaml
 
 # score all answers
 python3 -u -m scripts.experiments.test_score --config $yaml
