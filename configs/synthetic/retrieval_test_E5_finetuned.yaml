@@ -1,9 +1,9 @@
-documents_path: 
-index_path: /dtu/p1/oscrev/synthetic/index_E5_finetuned_full
+documents_path:  
+index_path: /dtu/p1/oscrev/synthetic/index_E5_finetuned_new
 embedder_name: e5-finetuned
 device: cuda
 retriever_name: e5-gpu
-save_path: results/synthetic/results_E5_finetuned_full_1000
+save_path: results/synthetic/results_E5_finetuned_new
 batch_size: 2048
 max_samples: 
 test: True
