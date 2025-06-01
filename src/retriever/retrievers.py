@@ -122,8 +122,8 @@ class E5RetrieverGPU(E5Retriever):
     # Has several benefits over the parent class:
     #   1. Moves index to gpu for faster search
     #   2. Recieves an embedder to allow for modular encoding of the queries 
-    def __init__(self, embedder=None, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, embedder=None, **kwargs):
+        super().__init__(**kwargs)
         if embedder == None:
             print("No embedder passed to retriever. Defaulting to E5Embedder for encoding queries")
             embedder = get_embedder(name='e5') 
