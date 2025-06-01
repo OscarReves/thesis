@@ -12,8 +12,8 @@ import torch
 def main():
     # evaluates every open-domain answer in a directory
     kb = load_knowledge_base(
-        kb_path = '/dtu/p1/oscrev/wiki/chunked_paragraph',
-        kb_type = 'wiki'
+        path = '/dtu/p1/oscrev/wiki/chunked_paragraph',
+        type = 'wiki'
         )
     retriever = get_retriever(
         name='e5',
