@@ -131,7 +131,7 @@ def load_mkqa(silent=False):
 
 # == For loading processed data == 
 
-def load_documents(path, silent=False):
+def load_documents(path, silent=False, use_cache=False):
     # for loading chunked documents
     dataset = load_dataset("json", data_files=path, split='train')
     if not silent:
