@@ -45,48 +45,55 @@ def main():
         "reference_answer": "answer",
     })
 
-    for generator_name in generator_names:
-        generator = get_generator(generator_name)
-        save_path = Path('results/citizenship/model_evaluation/answers') / generator_name
+    # for generator_name in generator_names:
+    #     generator = get_generator(generator_name)
+    #     save_path = Path('results/citizenship/model_evaluation/answers') / generator_name
 
-        if generator_name == 'yi-34b':
-            batch_size = 8
-        else:
-            batch_size = 32
+    #     if generator_name == 'yi-34b':
+    #         batch_size = 8
+    #     else:
+    #         batch_size = 32
 
-        test_qa_citizenship(
-            question_dataset=questions,
-            retriever=retriever,
-            generator=generator,
-            save_path=save_path,
-            max_samples=1,
-            batch_size=batch_size
-        )
-
-        # Free memory
-        del generator
-        torch.cuda.empty_cache()
-        if torch.backends.cuda.is_built():
-            torch.cuda.ipc_collect()
-
-    # for evaluator_name in evaluator_names:
-    #     evaluator = get_evaluator(evaluator_name)
-    #     answers = load_documents(answers_path)
-
-    #     save_path = Path('results/citizenship/model_evaluation/model_evaluations') / evaluator_name
-
-    #     evaluate_answers(
-    #         answer_dataset = answers,
-    #         evaluator = evaluator,
-    #         save_path = save_path,
+    #     test_qa_citizenship(
+    #         question_dataset=questions,
+    #         retriever=retriever,
+    #         generator=generator,
+    #         save_path=save_path,
+    #         max_samples=1,
     #         batch_size=batch_size
-    #         )
+    #     )
 
     #     # Free memory
-    #     del evaluator
+    #     del generator
     #     torch.cuda.empty_cache()
     #     if torch.backends.cuda.is_built():
     #         torch.cuda.ipc_collect()
+
+    answers_path = 'results/citizenship/model_evaluation/answers'
+    for evaluator_name in evaluator_names:
+            evaluator = get_evaluator(evaluator_name)
+            for file in Path(answers_path).iterdir():
+
+                answers = load_documents(file)
+                save_path = Path('results/citizenship/model_evaluation/evaluations') / evaluator_name / file.name
+
+                if evaluator_name == 'yi-34b-binary':
+                    batch_size = 8
+                else:
+                    batch_size = 32
+
+                evaluate_answers(
+                    answer_dataset = answers,
+                    evaluator = evaluator,
+                    save_path = save_path,
+                    batch_size=batch_size
+                    )
+
+            # Free memory
+            del evaluator
+            torch.cuda.empty_cache()
+            if torch.backends.cuda.is_built():
+                torch.cuda.ipc_collect()
     
 if __name__ == "__main__":
     main()
