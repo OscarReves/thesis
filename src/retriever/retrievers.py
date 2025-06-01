@@ -141,7 +141,7 @@ class E5RetrieverGPU(E5Retriever):
         return I.tolist()
 
 class E5RetrieverFinetuned(E5Retriever):
-    def __init__(self, index_path, documents, device=None, text_field='text', top_k=5):
+    def __init__(self, index_path, documents, device=None, text_field='text', top_k=5, embeddder=None):
         super().__init__(index_path, documents, device, text_field, top_k,
                          model_name='coffeecat69/E5_finetuned_epoch7')
 
