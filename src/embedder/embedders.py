@@ -148,7 +148,7 @@ class E5EmbedderLocal(E5Embedder):
 
 class E5Finetuned(E5Embedder):
     def __init__(self, device='cuda', model_name='coffeecat69/e5_finetuned_epoch8'):
-        super().__init__(device, model_name)
+        super().__init__(device, model_name='coffeecat69/e5_finetuned_epoch8')
 
 class E5Large(E5Embedder):
     def __init__(self, device='cuda', model_name='intfloat/multilingual-e5-large'):
