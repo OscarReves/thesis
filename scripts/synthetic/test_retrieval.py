@@ -64,23 +64,23 @@ def main(config_path):
     if not os.path.exists(save_path):
         print(f"No retrieval results found at {save_path}, retrieving new results...")
 
-        # retriever = get_retriever(
-        #     retriever_name,
-        #     embedder = embedder,
-        #     documents = documents,
-        #     index_path = index_path,
-        #     device = device,
-        #     top_k = 1000
-        #     )
-        
         retriever = get_retriever(
             retriever_name,
-            #embedder = embedder,
+            embedder = embedder,
             documents = documents,
             index_path = index_path,
             device = device,
-            top_k = 100
+            top_k = 1000
             )
+        
+        # retriever = get_retriever(
+        #     retriever_name,
+        #     #embedder = embedder,
+        #     documents = documents,
+        #     index_path = index_path,
+        #     device = device,
+        #     top_k = 100
+        #     )
 
         results = []
         for i in tqdm(range(0, len(documents), batch_size), 
