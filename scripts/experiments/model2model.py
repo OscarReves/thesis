@@ -45,29 +45,29 @@ def main():
         "reference_answer": "answer",
     })
 
-    # for generator_name in generator_names:
-    #     generator = get_generator(generator_name)
-    #     save_path = Path('results/citizenship/model_evaluation/answers') / generator_name
+    for generator_name in generator_names:
+        generator = get_generator(generator_name)
+        save_path = Path('results/citizenship/model_evaluation/answers') / generator_name
 
-    #     if generator_name == 'yi-34b':
-    #         batch_size = 8
-    #     else:
-    #         batch_size = 32
+        if generator_name == 'yi-34b':
+            batch_size = 8
+        else:
+            batch_size = 32
 
-    #     test_qa_citizenship(
-    #         question_dataset=questions,
-    #         retriever=retriever,
-    #         generator=generator,
-    #         save_path=save_path,
-    #         max_samples=1,
-    #         batch_size=batch_size
-    #     )
+        test_qa_citizenship(
+            question_dataset=questions,
+            retriever=retriever,
+            generator=generator,
+            save_path=save_path,
+            max_samples=2,
+            batch_size=batch_size
+        )
 
-    #     # Free memory
-    #     del generator
-    #     torch.cuda.empty_cache()
-    #     if torch.backends.cuda.is_built():
-    #         torch.cuda.ipc_collect()
+        # Free memory
+        del generator
+        torch.cuda.empty_cache()
+        if torch.backends.cuda.is_built():
+            torch.cuda.ipc_collect()
 
     answers_path = 'results/citizenship/model_evaluation/answers'
     for evaluator_name in evaluator_names:

@@ -7,8 +7,12 @@ import evaluate
 
 # === Question Answering Accuracy ===
 
+# def is_correct(sample):
+#     return sample['evaluation'].split()[0] == '1'
+
+# changed to give leniency when an answer is badly formatted
 def is_correct(sample):
-    return sample['evaluation'].split()[0] == '1'
+    return sample['evaluation'][0] == '1'
 
 def is_false(sample):
     return sample['evaluation'].split()[0] == '0'
