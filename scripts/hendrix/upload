@@ -4,7 +4,8 @@
 #SBATCH --job-name=plot
 #number of independent tasks we are going to start in this script
 #SBATCH --output=results.out   # %j will be replaced with the job ID
-#SBATCH --ntasks=1 
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:l40s:1
 #number of cpus we want to allocate for each program
 #Note that a program will be killed once it exceeds this time!
 #SBATCH --time=0-00:20:00
@@ -18,4 +19,4 @@ module load python/3.9.6
 source production_env/bin/activate
 
 # Run program 
-python3 -u -m "$1"
+python3 -u -m scripts.hendrix.upload_to_HF
