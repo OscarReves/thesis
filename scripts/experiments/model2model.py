@@ -74,7 +74,7 @@ def main():
             evaluator = get_evaluator(evaluator_name)
             for file in Path(answers_path).iterdir():
 
-                answers = load_documents(file)
+                answers = load_documents(str(file))
                 save_path = Path('results/citizenship/model_evaluation/evaluations') / evaluator_name / file.name
 
                 if evaluator_name == 'yi-34b-binary':
