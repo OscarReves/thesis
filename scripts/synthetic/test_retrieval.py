@@ -26,6 +26,11 @@ def main(config_path):
     max_samples = config.get('max_samples')
     test = config['test']
 
+    print("##### TEST CONFIG #####")
+    print(f"# retriever_name: {retriever_name}")
+    print(f"# embedder_name: {embedder_name}")
+    print(f"# max_samples: {max_samples}")
+
     # 1. Build index 
     #documents = load_web_faq(documents_path, test=test, max_samples=max_samples)
     documents = load_retrieval_corpus(max_samples=max_samples)

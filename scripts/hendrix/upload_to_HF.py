@@ -13,7 +13,7 @@ def main():
     print(f"Loading state dict from {save_path}")
     checkpoint = torch.load(save_path, map_location=torch.device('cpu'))
     state_dict = checkpoint['model_state_dict']
-    model.load_state_dict(state_dict)
+    model.load_state_dict(state_dict) # is it possible that this didn't work? Because of module?
     
     # Log in to the hub
     load_dotenv()
