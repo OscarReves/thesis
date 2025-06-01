@@ -49,12 +49,12 @@ def main(config_path):
             index_path= index_path
         )
 
-        indexer.index_documents(documents)
+        #indexer.index_documents(documents)
 
-        # indexer.index_documents_with_uid(
-        #     documents=documents,
-        #     batch_size=batch_size
-        # )
+        indexer.index_documents_with_uid(
+            documents=documents,
+            batch_size=batch_size
+        )
 
         # indexer.index_pretokenized(
         #     documents=documents,
