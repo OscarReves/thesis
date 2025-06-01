@@ -5,7 +5,7 @@ from src.embedder import get_embedder
 from src.retriever import get_retriever
 from src.evaluator import get_evaluator
 from src.generator import get_generator
-from src.pipeline import evaluate_answers, test_qa_with_retrieval
+from src.pipeline import evaluate_answers, test_qa_citizenship
 from pathlib import Path
 import torch
 
@@ -54,7 +54,7 @@ def main():
         else:
             batch_size = 32
 
-        test_qa_with_retrieval(
+        test_qa_citizenship(
             question_dataset=questions,
             retriever=retriever,
             generator=generator,
