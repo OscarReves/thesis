@@ -43,6 +43,7 @@ class E5Embedder:
         self.device = torch.device(device)
         self.tokenizer = AutoTokenizer.from_pretrained(model_name)
         self.model = AutoModel.from_pretrained(model_name, torch_dtype=torch.float16).to(self.device)
+        print(f"Loaded model {model_name} as embedder")
         self.model.eval()
         #torch.set_float32_matmul_precision('high') # is this necessary?
 

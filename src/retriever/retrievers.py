@@ -128,6 +128,7 @@ class E5RetrieverGPU(E5Retriever):
             print("No embedder passed to retriever. Defaulting to E5Embedder for encoding queries")
             embedder = get_embedder(name='e5') 
         self.embedder = embedder 
+        print(f"Embedder for retrieval: {embedder}")
         #index_cpu = faiss.read_index(self.index)
         res = faiss.StandardGpuResources()
         self.index = faiss.index_cpu_to_gpu(res, 0, self.index) # move the index to gpu
