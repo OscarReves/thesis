@@ -34,6 +34,8 @@ def main(config_path):
     # 1. Build index 
     #documents = load_web_faq(documents_path, test=test, max_samples=max_samples)
     documents = load_retrieval_corpus(max_samples=max_samples)
+    documents = documents.filter(lambda x: x['query'] != '') # filter for missing queries 
+
 
     embedder = get_embedder(embedder_name)
 
@@ -46,11 +48,13 @@ def main(config_path):
             embedder= embedder,
             index_path= index_path
         )
-        
-        indexer.index_documents_with_uid(
-            documents=documents,
-            batch_size=batch_size
-        )
+
+        indexer.index_documents(documents)
+
+        # indexer.index_documents_with_uid(
+        #     documents=documents,
+        #     batch_size=batch_size
+        # )
 
         # indexer.index_pretokenized(
         #     documents=documents,
@@ -105,7 +109,7 @@ def main(config_path):
     
     # 3. Evaluate 
     results = load_documents(save_path)
-    results = results.filter(lambda x: x['query'] != '') # filter for missing queries 
+    #results = results.filter(lambda x: x['query'] != '') # filter for missing queries 
 
     # for k in [1,5,10,25,50,100,1000]:
     #     accuracy = get_retrieval_accuracy(results, k = k)
