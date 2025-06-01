@@ -1,9 +1,9 @@
 documents_path: /dtu/p1/oscrev/webfaq_danish
-index_path: /dtu/p1/oscrev/webfaq/index_E5_finetuned_test_full
+index_path: /dtu/p1/oscrev/webfaq/index_E5_epoch2
 embedder_name: e5-finetuned
 device: cuda
 retriever_name: e5-finetuned
-save_path: results/webfaq/results_E5_finetuned_test_new
+save_path: results/webfaq/results_E5_epoch2
 batch_size: 2048
 max_samples: 10000
 test: True
