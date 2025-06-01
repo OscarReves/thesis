@@ -37,7 +37,7 @@ def main(config_path):
     if OVERWRITE == False:
         if os.path.exists(index_path):
             print(f"Index already exists at {index_path}")
-        pass
+            pass
     else:
         print(f"No index found at {index_path}, building index...")
         indexer = FaissIndexer(

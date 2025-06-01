@@ -7,3 +7,4 @@ save_path: results/synthetic/results_E5_epoch2
 batch_size: 2048
 max_samples: 
 test: True
+overwrite: True
