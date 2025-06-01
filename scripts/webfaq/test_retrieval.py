@@ -38,25 +38,25 @@ def main(config_path):
         if os.path.exists(index_path):
             print(f"Index already exists at {index_path}")
             pass
-    else:
-        print(f"No index found at {index_path}, building index...")
-        indexer = FaissIndexer(
-            embedder= embedder,
-            index_path= index_path
-        )
-        
-        indexer.index_documents_with_uid(
-            documents=documents,
-            batch_size=batch_size
-        )
+        else:
+            print(f"No index found at {index_path}, building index...")
+            indexer = FaissIndexer(
+                embedder= embedder,
+                index_path= index_path
+            )
+            
+            indexer.index_documents_with_uid(
+                documents=documents,
+                batch_size=batch_size
+            )
 
-        # indexer.index_pretokenized(
-        #     documents=documents,
-        #     tokenized_path='data/training/tokenized_e5_inputs.pt',
-        #     batch_size=1024
-        # )
+            # indexer.index_pretokenized(
+            #     documents=documents,
+            #     tokenized_path='data/training/tokenized_e5_inputs.pt',
+            #     batch_size=1024
+            # )
 
-        print(f"Index built and saved to {index_path}")
+            print(f"Index built and saved to {index_path}")
 
     # 2. Retrieve 
     if OVERWRITE or not os.path.exists(save_path):
