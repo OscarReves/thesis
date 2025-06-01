@@ -7,3 +7,4 @@ save_path: results/webfaq/results_E5_epoch2
 batch_size: 2048
 max_samples: 10000
 test: True
+overwrite: True
