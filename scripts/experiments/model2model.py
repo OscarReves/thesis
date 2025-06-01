@@ -27,14 +27,14 @@ def main():
         'gemma-9b',
         'nous-hermes-mistral',
         'suzume-llama3',
-        'yi-34b',
+        #'yi-34b',
         'snakmodel'
     ]
     evaluator_names = [
         'nous-hermes-mistral-binary',
         'gemma-9b-binary',
         "suzume-llama3-binary",
-        "yi-34b-binary",
+        #"yi-34b-binary",
         "snakmodel-binary",
     ]
     batch_size = 8
