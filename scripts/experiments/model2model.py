@@ -40,15 +40,13 @@ def main():
 
     # iterate through directory 
     questions_path = 'results/citizenship/human_evaluation/100_balanced_questions'
-    generator = get_generator(generator_name)
     questions = load_documents(questions_path)
     questions = questions.rename_columns({
         "reference_answer": "answer",
     })
 
     for generator_name in generator_names:
-
-
+        generator = get_generator(generator_name)
         save_path = Path('results/citizenship/model_evaluation/answers') / generator_name
 
         if generator_name == 'yi-34b':
