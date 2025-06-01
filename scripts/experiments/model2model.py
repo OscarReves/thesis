@@ -8,6 +8,7 @@ from src.generator import get_generator
 from src.pipeline import evaluate_answers, test_qa_citizenship
 from pathlib import Path
 import torch
+import gc
 
 def main():
     # evaluates every open-domain answer in a directory
@@ -65,6 +66,7 @@ def main():
 
         # Free memory
         del generator
+        gc.collect()
         torch.cuda.empty_cache()
         if torch.backends.cuda.is_built():
             torch.cuda.ipc_collect()
