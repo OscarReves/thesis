@@ -7,7 +7,7 @@ import os
 def main():
     
     # Load model
-    save_path = 'checkpoints/epoch_2.pt'
+    save_path = 'checkpoints/epoch_5.pt'
     model = AutoModel.from_pretrained("intfloat/multilingual-e5-large")
     tokenizer = AutoTokenizer.from_pretrained("intfloat/multilingual-e5-large")
     print(f"Loading state dict from {save_path}")
@@ -27,11 +27,11 @@ def main():
     print(whoami())
 
     # save before uploading. Was this the error the whole time?
-    model.save_pretrained("models/e5_finetuned_epoch2")
+    model.save_pretrained("models/e5_finetuned_epoch5")
 
     # Upload to the hub
-    model.push_to_hub("e5_finetuned_epoch2")
-    tokenizer.push_to_hub("e5_finetuned_epoch2")
+    model.push_to_hub("e5_finetuned_epoch5")
+    tokenizer.push_to_hub("e5_finetuned_epoch5")
 
 if __name__ == "__main__":
     main()
