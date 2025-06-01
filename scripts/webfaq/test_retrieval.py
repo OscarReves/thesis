@@ -26,8 +26,13 @@ def main(config_path):
     max_samples = config.get('max_samples')
     test = config['test']
     OVERWRITE = config.get('overwrite',False)
-    print(f"OVERWRITE = {OVERWRITE}")
-
+    
+    print("##### TEST CONFIG #####")
+    print(f"# retriever_name: {retriever_name}")
+    print(f"# embedder_name: {embedder_name}")
+    print(f"# max_samples: {max_samples}")
+    print(f"# OVERWRITE: {OVERWRITE}")
+    
     # 1. Build index 
     documents = load_web_faq(documents_path, test=test, max_samples=max_samples)
     embedder = get_embedder(embedder_name)
