@@ -7,7 +7,7 @@ import os
 def main():
     
     # Load model
-    save_path = 'models/e5_finetuned_epoch2.pt'
+    save_path = 'checkpoints/epoch_2.pt'
     model = AutoModel.from_pretrained("intfloat/multilingual-e5-large")
     tokenizer = AutoTokenizer.from_pretrained("intfloat/multilingual-e5-large")
     print(f"Loading state dict from {save_path}")
