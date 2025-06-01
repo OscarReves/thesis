@@ -1,9 +1,9 @@
 documents_path:  
-index_path: /dtu/p1/oscrev/synthetic/index_E5_regular_embedder_passed_to_retriever
-embedder_name: e5
+index_path: /dtu/p1/oscrev/synthetic/index_E5_local
+embedder_name: e5-local
 device: cuda
 retriever_name: e5-gpu
-save_path: results/synthetic/results_E5_regular_regular_embedder_passed_to_retriever
+save_path: results/synthetic/results_E5_local
 batch_size: 2048
 max_samples: 
 test: True
