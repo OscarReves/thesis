@@ -60,7 +60,7 @@ def main():
             retriever=retriever,
             generator=generator,
             save_path=save_path,
-            max_samples=2,
+            #max_samples=2,
             batch_size=batch_size
         )
 
