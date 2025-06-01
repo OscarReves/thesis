@@ -5,6 +5,6 @@ device: cuda
 retriever_name: e5-finetuned
 save_path: results/synthetic/results_E5_epoch8
 batch_size: 2048
-max_samples: 50000
+max_samples: 
 test: True
 overwrite: True
