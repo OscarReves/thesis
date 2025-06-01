@@ -196,15 +196,30 @@ def load_retrieval_corpus(max_samples=None):
 def load_web_faq(path, test=False, max_samples=None):
     dataset = load_from_disk(path)
     if test:
-        train_size = int(0.8 * len(dataset))
-        test_size = len(dataset) - train_size
-        # Generate shuffled indices with PyTorch
+        # Split sizes
+        total_samples=len(dataset)
+        train_size = int(0.8 * total_samples)
+        val_size = int(0.01 * total_samples)
+        test_size = total_samples - (train_size + val_size)
+        # # Generate shuffled indices with PyTorch
+        # generator = torch.Generator().manual_seed(42)
+        # perm = torch.randperm(len(dataset), generator=generator).tolist()
+
+        # # Split indices
+        # train_indices = perm[:train_size]
+        # test_indices = perm[train_size:]
+
         generator = torch.Generator().manual_seed(42)
         perm = torch.randperm(len(dataset), generator=generator).tolist()
 
-        # Split indices
         train_indices = perm[:train_size]
-        test_indices = perm[train_size:]
+        val_indices = perm[train_size:train_size + val_size]
+        test_indices = perm[train_size + val_size:]
+
+        train_dataset = torch.utils.data.Subset(dataset, train_indices)
+        val_dataset = torch.utils.data.Subset(dataset, val_indices)
+        test_dataset = torch.utils.data.Subset(dataset, test_indices)
+
 
         # Create HF subsets using .select()
         train_dataset = dataset.select(train_indices)
