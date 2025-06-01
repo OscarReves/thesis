@@ -102,7 +102,7 @@ def get_BERTscore(dataset):
 # === Human Annotation === 
 
 def get_human_votes(path_to_csv='results/citizenship/human_evaluation/human_annotation.csv'):
-    # returns an array whose entries correspond to the human evaluation by majority vote
+    # returns an array whose entries correspond to the human evaluation
     df = pd.read_csv(path_to_csv, index_col=False, header=0)
     df = df.fillna(1/df.shape[0]) # regard blank answers as average 
     df = df.drop('Tidsstempel', axis=1)
@@ -156,15 +156,28 @@ def get_eval_metrics(
 
 def get_annotater_agreement(path='results/citizenship/human_evaluation/human_annotation.csv'):
     votes = get_human_votes(path)
+    n = votes.shape[0]
     def agreement(p1,p2):
         return np.mean(p1 == p2)
     mean = 0
-    for i in range(3):
-        for j in range(i,3):
+    for i in range(n):
+        for j in range(i,n):
             if i != j:
-                print(i,j)
                 mean += agreement(votes[i],votes[j])
-    return mean/len(votes)
+    pairs = (n * (n-1)) / 2 # binomial
+    return mean/pairs # average across pairs
+
+def get_annotater_agreement_with_majority(path='results/citizenship/human_evaluation/human_annotation.csv'):
+    votes = get_human_votes(path)
+    n = votes.shape[0]
+    gold = get_human_evals(path)
+    def agreement(p1,p2):
+        return np.mean(p1 == p2)
+    mean = 0
+    for i in range(n):
+        mean += agreement(votes[i],gold)
+    return mean/n # average across pairs
+
 
 def get_model_agreements(path='results/citizenship/human_evaluation/model_evaluations/', 
                          include_human=True,
