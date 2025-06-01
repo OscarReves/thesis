@@ -198,6 +198,7 @@ def load_web_faq(path, test=False, max_samples=None):
     if test:
         # Split sizes
         total_samples=len(dataset)
+        print(f"Length of dataset before split: {total_samples}")
         train_size = int(0.8 * total_samples)
         val_size = int(0.01 * total_samples)
         test_size = total_samples - (train_size + val_size)
@@ -225,10 +226,11 @@ def load_web_faq(path, test=False, max_samples=None):
         train_dataset = dataset.select(train_indices)
         test_dataset = dataset.select(test_indices)
         dataset = test_dataset
+        print(f"Length of dataset after split: {len(dataset)}")
 
     if max_samples:
         dataset = dataset.select(range(max_samples))
-    print(f"Loaded {len(dataset)} documents from {test} dataset")
+    print(f"Loaded {len(dataset)} documents from dataset (TEST = {test})")
     column_renames = {
     "question": "query",
     "answer": "text"

@@ -25,16 +25,18 @@ def main(config_path):
     batch_size = config['batch_size']
     max_samples = config.get('max_samples')
     test = config['test']
+    OVERWRITE = config.get('overwrite',False)
+    print(f"OVERWRITE = {OVERWRITE}")
 
     # 1. Build index 
     documents = load_web_faq(documents_path, test=test, max_samples=max_samples)
-    
-
-    
     embedder = get_embedder(embedder_name)
 
-    if os.path.exists(index_path):
-        print(f"Index already exists at {index_path}")
+
+    
+    if OVERWRITE == False:
+        if os.path.exists(index_path):
+            print(f"Index already exists at {index_path}")
         pass
     else:
         print(f"No index found at {index_path}, building index...")
@@ -57,7 +59,7 @@ def main(config_path):
         print(f"Index built and saved to {index_path}")
 
     # 2. Retrieve 
-    if not os.path.exists(save_path):
+    if OVERWRITE or not os.path.exists(save_path):
         print(f"No retrieval results found at {save_path}, retrieving new results...")
 
         retriever = get_retriever(
