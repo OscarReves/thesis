@@ -45,7 +45,7 @@ class E5Embedder:
         self.model = AutoModel.from_pretrained(model_name, torch_dtype=torch.float16).to(self.device)
         print(f"Loaded model {model_name} as embedder")
         self.model.eval()
-        #torch.set_float32_matmul_precision('high') # is this necessary?
+        torch.set_float32_matmul_precision('high') # is this necessary?
 
     def encode(self, documents, batch_size=64):  # bump batch size if your GPU allows
         texts = [f"passage: {t}" for t in documents['text']] # for very large batch sizes this is likely ineffecient. Consider .map 
