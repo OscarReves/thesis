@@ -1,6 +1,6 @@
 documents_path:  
 index_path: /dtu/p1/oscrev/synthetic/index_E5_epoch3
-embedder_name: e5
+embedder_name: e5-large
 device: cuda
 retriever_name: e5-gpu
 save_path: results/synthetic/results_E5_epoch3
