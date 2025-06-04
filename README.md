@@ -1,6 +1,6 @@
 ## Danish-language RAG 
 
-This repository was used to generate results for an MSc thesis
+This repository was used to generate results for the following [MSc Thesis](./NeuroNLP_Final_Project_Report.pdf)
 
 It has been made public in order to be viewable by the examinators
 
