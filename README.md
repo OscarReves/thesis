@@ -1,6 +1,6 @@
 ## Danish-language RAG 
 
-This repository was used to generate results for the following [MSc Thesis](https://github.com/OscarReves/thesis/blob/main/Thesis%20(Edited).pdf)
+This repository was used to generate results for the following [MSc Thesis](https://github.com/OscarReves/thesis/blob/main/report.pdf)
 
 It has been made public in order to be viewable by the examinators
 
