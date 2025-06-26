@@ -233,7 +233,7 @@ class BaseGenerator:
     
 
 
-    def cfg_answer(self, questions, contexts, options, alpha=0):
+    def cfg_answer(self, questions, contexts, options, alpha=1):
         
         mc_no_context_prompt = self.get_mc_prompt_no_context(questions, options)
         mc_prompt = self.get_mc_prompt(questions, contexts, options)
@@ -356,7 +356,10 @@ class Gemma9bGenerator(BaseGenerator):
             model_name="google/gemma-2-9b-it",
             save_name="gemma-2-9b-it"
             )
-        #self.eos_token = self.tokenizer.eos_token
+        if self.tokenizer.pad_token is None:
+            self.tokenizer.pad_token = self.tokenizer.eos_token
+        self.model.config.pad_token_id = self.tokenizer.pad_token_id
+
 
     # requires its own prompt formatting since the 'system' role is not supported in chat_template    
     def generate_batch(self, questions, contexts, max_new_tokens=32):
