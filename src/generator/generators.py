@@ -298,7 +298,8 @@ class BaseGenerator:
 
     def find_nan_prompt(self, prompts):
         for i, prompt in enumerate(prompts):
-            inputs = self.tokenizer(prompt, return_tensors="pt", padding=True, truncation=True).to(self.model.device)
+            max_length = self.model.config.max_position_embeddings
+            inputs = self.tokenizer(prompt, return_tensors="pt", padding=True, truncation=True, max_length=max_length).to(self.model.device)
             with torch.inference_mode():
                 outputs = self.model(**inputs)
             if torch.isnan(outputs.logits).any():
