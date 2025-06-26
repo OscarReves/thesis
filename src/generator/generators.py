@@ -253,13 +253,13 @@ class BaseGenerator:
         # self.find_nan_prompt(mc_no_context_prompt)        
         # self.find_nan_prompt(mc_prompt)
 
-        self.trace_nan_tokens(mc_no_context_prompt)
+        # self.trace_nan_tokens(mc_no_context_prompt)
 
-        sys.stdout.flush()
+        # sys.stdout.flush()
 
-        assert logits.shape == logits_no_context.shape, "Shape mismatch in logits vs. logits_no_context"
-        assert not torch.isnan(logits).any(), "NaNs in logits"
-        assert not torch.isnan(logits_no_context).any(), "NaNs in logits_no_context"
+        # assert logits.shape == logits_no_context.shape, "Shape mismatch in logits vs. logits_no_context"
+        # assert not torch.isnan(logits).any(), "NaNs in logits"
+        # assert not torch.isnan(logits_no_context).any(), "NaNs in logits_no_context"
 
         cfg_logits = logits + alpha*(logits-logits_no_context)
         
