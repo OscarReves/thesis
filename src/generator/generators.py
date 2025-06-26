@@ -4,7 +4,7 @@ from tqdm import tqdm
 import numpy as np
 import os 
 import gc
-
+import sys
     
 class BaseGenerator:
     def __init__(self, model_name, save_name = None):
@@ -248,6 +248,8 @@ class BaseGenerator:
             print("With context:", repr(a[-80:]))
             print("No context: ", repr(b[-80:]))
             print("---")
+
+        sys.stdout.flush()
 
 
         assert logits.shape == logits_no_context.shape, "Shape mismatch in logits vs. logits_no_context"
