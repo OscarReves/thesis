@@ -241,6 +241,15 @@ class BaseGenerator:
         logits_no_context = self.get_logits(mc_no_context_prompt)
         logits = self.get_logits(mc_prompt)
 
+        print("logits full shape:", logits.shape)  # should be [batch, seq_len, vocab]
+        print("logits_no_context full shape:", logits_no_context.shape)
+
+        for a, b in zip(mc_prompt, mc_no_context_prompt):
+            print("With context:", repr(a[-80:]))
+            print("No context: ", repr(b[-80:]))
+            print("---")
+
+
         assert logits.shape == logits_no_context.shape, "Shape mismatch in logits vs. logits_no_context"
 
         cfg_logits = logits + alpha*(logits-logits_no_context)
