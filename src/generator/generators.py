@@ -262,7 +262,7 @@ class BaseGenerator:
         with torch.inference_mode():
             outputs = self.model(**inputs)
 
-        return outputs.logits
+        return outputs.logits[:, -1, :] # extract last logit (equivalent to next token)
 
 
     def generate_from_prompts(self, prompts, max_new_tokens=256):
