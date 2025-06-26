@@ -280,7 +280,7 @@ class BaseGenerator:
         tokens = self.tokenizer.batch_decode(token_ids.unsqueeze(1))
         return tokens
     
-    def get_logits(self, prompts):
+    def get_logits_old(self, prompts):
         if self.tokenizer.pad_token is None:
             self.tokenizer.pad_token = self.tokenizer.eos_token
 
@@ -298,6 +298,30 @@ class BaseGenerator:
 
         #return outputs.logits[:, -1, :] # extract last logit (equivalent to next token)
         return outputs.logits
+
+    def get_logits(self, prompts):
+        if self.tokenizer.pad_token is None:
+            self.tokenizer.pad_token = self.tokenizer.eos_token
+
+        max_length = self.model.config.max_position_embeddings
+        inputs = self.tokenizer(
+            prompts,
+            return_tensors="pt",
+            padding=True,
+            truncation=True,
+            max_length=max_length
+        ).to(self.model.device)
+
+        with torch.inference_mode():
+            out = self.model.generate(
+                **inputs,
+                max_new_tokens=1,
+                output_scores=True,                 # turn on score recording
+                return_dict_in_generate=True
+            )
+        #return outputs.logits[:, -1, :] # extract last logit (equivalent to next token)
+        logits  = torch.stack(out.scores) 
+        return logits
 
     def find_nan_prompt(self, prompts):
         for i, prompt in enumerate(prompts):
