@@ -13,16 +13,16 @@ class BaseGenerator:
         
         # self.eos_token = "<|im_end|>" # also shouldn't be necesary? All cauusal models should have eos pre-defined
         self.system_prompt = (
-            "You are a helpful assistant. You respond to questions in Danish. "
-            "Respond briefly and accurately. Do not generate any extra questions or superfluous text. "
-            "Be as concise as possible."
+            "You are a helpful assistant. You respond to questions in Danish.\n"
+            "Respond briefly and accurately. Do not generate any extra questions or superfluous text.\n"
+            "Be as concise as possible.\n"
         )
 
         if not os.path.exists(model_path):
             print(f"Model not found locally. Downloading {model_name} from Hugging Face...")
             os.makedirs(model_path, exist_ok=True)
 
-            self.tokenizer = AutoTokenizer.from_pretrained(model_name)
+            self.tokenizer = AutoTokenizer.from_pretrained(model_name,trust_remote_code=True)
             self.tokenizer.save_pretrained(model_path)
             self.tokenizer.padding_side = "left"
 
@@ -35,7 +35,7 @@ class BaseGenerator:
 
         else:
             print(f"Loading model {model_name} from: {model_path}")
-            self.tokenizer = AutoTokenizer.from_pretrained(model_path, local_files_only=True)
+            self.tokenizer = AutoTokenizer.from_pretrained(model_path, local_files_only=True,trust_remote_code=True)
             self.tokenizer.padding_side = "left"
             self.model = AutoModelForCausalLM.from_pretrained(
                 model_path,
@@ -183,14 +183,14 @@ class BaseGenerator:
     def get_mc_prompt_no_context(self, questions, options):
         user_prompts = [
             (
-                "Svar kun med bogstavet for den rigtige mulighed."
-                "#SPØRGSMÅL"
-                f"{q}"
-                "#SVARMULIGHEDER"
-                f"A: {o[0]}"
-                f"B: {o[1]}"
-                f"C: {o[2]}"
-                "#SVAR"
+                "Svar kun med bogstavet for den rigtige mulighed.\n"
+                "#SPØRGSMÅL\n"
+                f"{q}\n"
+                "#SVARMULIGHEDER\n"
+                f"A: {o[0]}\n"
+                f"B: {o[1]}\n"
+                f"C: {o[2]}\n"
+                "#SVAR\n"
                 "Svaret er mulighed "
             )
             for q, o in zip(questions, options)
@@ -208,17 +208,17 @@ class BaseGenerator:
     def get_mc_prompt(self, questions, contexts, options):
         user_prompts = [
             (
-                "Givet konteksten, svar kun med bogstavet for den rigtige mulighed."
-                "#KONTEKST"
-                f"{c}"
-                "#SPØRGSMÅL"
-                f"{q}"
-                "#SVARMULIGHEDER"
-                f"A: {o[0]}"
-                f"B: {o[1]}"
-                f"C: {o[2]}"
-                "#SVAR"
-                "Svaret er mulighed "
+                "Givet konteksten, svar kun med bogstavet for den rigtige mulighed.\n"
+                "#KONTEKST\n"
+                f"{c}\n"
+                "#SPØRGSMÅL\n"
+                f"{q}\n"
+                "#SVARMULIGHEDER\n"
+                f"A: {o[0]}\n"
+                f"B: {o[1]}\n"
+                f"C: {o[2]}\n"
+                "#SVAR\n"
+                "Svaret er mulighed\n"
             )
             for q, c, o in zip(questions, contexts, options)
         ]
@@ -233,7 +233,7 @@ class BaseGenerator:
     
 
 
-    def cfg_answer(self, questions, contexts, options, alpha=1):
+    def cfg_answer(self, questions, contexts, options, alpha=0.1):
         
         mc_no_context_prompt = self.get_mc_prompt_no_context(questions, options)
         mc_prompt = self.get_mc_prompt(questions, contexts, options)

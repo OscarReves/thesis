@@ -217,7 +217,7 @@ def qa_citizenship_mc_no_context(question_dataset, retriever, generator, save_pa
     
     save_to_json(results, save_path, result_type="answers with context")
 
-def test_cfg(question_dataset, retriever, generator, save_path, alpha=1,
+def test_cfg(question_dataset, retriever, generator, save_path, alpha=0.1,
              batch_size = 16, silent=True, max_samples=None):
     if max_samples:
         question_dataset = question_dataset.select(range(max_samples))
