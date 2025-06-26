@@ -218,7 +218,7 @@ class BaseGenerator:
                 f"B: {o[1]}\n"
                 f"C: {o[2]}\n"
                 "#SVAR\n"
-                "Svaret er mulighed\n"
+                "Svaret er mulighed "
             )
             for q, c, o in zip(questions, contexts, options)
         ]
@@ -294,7 +294,7 @@ class BaseGenerator:
         ).to(self.model.device)
 
         with torch.inference_mode():
-            outputs = self.model(**inputs)
+            outputs = self.model(input_ids=inputs["input_ids"], attention_mask=inputs["attention_mask"])
 
         #return outputs.logits[:, -1, :] # extract last logit (equivalent to next token)
         return outputs.logits
