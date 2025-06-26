@@ -253,11 +253,11 @@ class BaseGenerator:
 
     def decode_logits(self, logits):
         token_ids = torch.argmax(logits, dim=-1)
-        tokens = self.tokenizer.batch_decode(token_ids)
+        tokens = self.tokenizer.batch_decode(token_ids.unsqueeze(1))
         return tokens
 
     def get_logits(self, prompts):
-        inputs = self.tokenizer(prompts, return_tensors="pt", padding=True, truncation=True).to(self.model.device)
+        inputs = self.tokenizer(prompts, return_tensors="pt", padding=True, truncation=False).to(self.model.device)
 
         with torch.inference_mode():
             outputs = self.model(**inputs)
