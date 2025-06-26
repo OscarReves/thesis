@@ -6,7 +6,7 @@ index_path: /dtu/p1/oscrev/wiki/index/index_paragraph
 retriever_name: e5
 device: cuda
 save_path: results/cfg/cfg_test
-generator_name: gemma-9b-it
+generator_name: gemma-9b
 n_questions: 32
 batch_size: 8
 pipeline: test_cfg
