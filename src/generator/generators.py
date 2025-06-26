@@ -249,13 +249,17 @@ class BaseGenerator:
             print("No context: ", repr(b[-80:]))
             print("---")
 
-        sys.stdout.flush()
 
 
         assert logits.shape == logits_no_context.shape, "Shape mismatch in logits vs. logits_no_context"
 
         cfg_logits = logits + alpha*(logits-logits_no_context)
         
+        print("cfg_logits min:", cfg_logits.min().item())
+        print("cfg_logits max:", cfg_logits.max().item())
+        sys.stdout.flush()
+
+
         res =  {
             'answers' : self.decode_logits(logits),
             'guided_answers' : self.decode_logits(cfg_logits)
