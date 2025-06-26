@@ -241,6 +241,9 @@ class BaseGenerator:
         logits_no_context = self.get_logits(mc_no_context_prompt)
         logits = self.get_logits(mc_prompt)
 
+        assert logits.shape == logits_no_context.shape, "Shape mismatch in logits vs. logits_no_context"
+
+
         cfg_logits = logits + alpha*(logits-logits_no_context)
         
         res =  {
@@ -257,7 +260,7 @@ class BaseGenerator:
         return tokens
 
     def get_logits(self, prompts):
-        inputs = self.tokenizer(prompts, return_tensors="pt", padding=True, truncation=False).to(self.model.device)
+        inputs = self.tokenizer(prompts, return_tensors="pt", padding=True, truncation=True).to(self.model.device)
 
         with torch.inference_mode():
             outputs = self.model(**inputs)
