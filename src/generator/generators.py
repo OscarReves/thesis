@@ -252,6 +252,9 @@ class BaseGenerator:
 
         self.find_nan_prompt(mc_no_context_prompt)        
         self.find_nan_prompt(mc_prompt)
+
+        self.trace_nan_tokens(mc_prompt)
+
         sys.stdout.flush()
 
         assert logits.shape == logits_no_context.shape, "Shape mismatch in logits vs. logits_no_context"
@@ -306,6 +309,33 @@ class BaseGenerator:
                 print("⚠️ NaNs in example:", i)
                 print(prompt)
                 break
+
+    def trace_nan_tokens(self, prompt):
+        self.model.eval()
+
+        # Tokenize
+        inputs = self.tokenizer(prompt, return_tensors="pt", padding=True, truncation=True,
+                                max_length=getattr(self.model.config, "max_position_embeddings", 2048)).to(self.model.device)
+
+        with torch.inference_mode():
+            outputs = self.model(**inputs)
+
+        logits = outputs.logits  # (1, seq_len, vocab_size)
+        nan_mask = torch.isnan(logits)  # (1, seq_len, vocab_size)
+        nan_positions = nan_mask.any(dim=-1)[0]  # (seq_len,)
+
+        input_ids = inputs["input_ids"][0]
+        tokens = self.tokenizer.convert_ids_to_tokens(input_ids)
+
+        print("\n🧪 NaN token trace:")
+        for i, (tok, is_nan) in enumerate(zip(tokens, nan_positions)):
+            flag = "⚠️" if is_nan.item() else "  "
+            print(f"{flag} Token {i:>3}: {tok}")
+
+        if nan_positions.any():
+            print("\n⚠️ NaNs detected in logits.")
+        else:
+            print("\n✅ No NaNs detected.")
 
 
 
