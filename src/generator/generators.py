@@ -243,7 +243,6 @@ class BaseGenerator:
 
         assert logits.shape == logits_no_context.shape, "Shape mismatch in logits vs. logits_no_context"
 
-
         cfg_logits = logits + alpha*(logits-logits_no_context)
         
         res =  {
@@ -275,7 +274,8 @@ class BaseGenerator:
         with torch.inference_mode():
             outputs = self.model(**inputs)
 
-        return outputs.logits[:, -1, :] # extract last logit (equivalent to next token)
+        #return outputs.logits[:, -1, :] # extract last logit (equivalent to next token)
+        return outputs.logits
 
 
     def generate_from_prompts(self, prompts, max_new_tokens=256):
