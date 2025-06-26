@@ -244,16 +244,16 @@ class BaseGenerator:
         print("logits full shape:", logits.shape)  # should be [batch, seq_len, vocab]
         print("logits_no_context full shape:", logits_no_context.shape)
 
-        for a, b in zip(mc_prompt, mc_no_context_prompt):
-            print("With context:", repr(a[-80:]))
-            print("No context: ", repr(b[-80:]))
-            print("---")
+        # for a, b in zip(mc_prompt, mc_no_context_prompt):
+        #     print("With context:", repr(a[-80:]))
+        #     print("No context: ", repr(b[-80:]))
+        #     print("---")
 
 
-        self.find_nan_prompt(mc_no_context_prompt)        
-        self.find_nan_prompt(mc_prompt)
+        # self.find_nan_prompt(mc_no_context_prompt)        
+        # self.find_nan_prompt(mc_prompt)
 
-        self.trace_nan_tokens(mc_prompt)
+        self.trace_nan_tokens(mc_no_context_prompt)
 
         sys.stdout.flush()
 
