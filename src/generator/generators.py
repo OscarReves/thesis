@@ -250,6 +250,8 @@ class BaseGenerator:
             print("---")
 
 
+        self.find_nan_prompt(mc_no_context_prompt)        
+        self.find_nan_prompt(mc_prompt)
 
         assert logits.shape == logits_no_context.shape, "Shape mismatch in logits vs. logits_no_context"
         assert not torch.isnan(logits).any(), "NaNs in logits"
@@ -293,6 +295,17 @@ class BaseGenerator:
 
         #return outputs.logits[:, -1, :] # extract last logit (equivalent to next token)
         return outputs.logits
+
+    def find_nan_prompt(self, prompts):
+        for i, prompt in enumerate(prompts):
+            inputs = self.tokenizer(prompt, return_tensors="pt", padding=True, truncation=True, max_length=max_length).to(self.model.device)
+            with torch.inference_mode():
+                outputs = self.model(**inputs)
+            if torch.isnan(outputs.logits).any():
+                print("⚠️ NaNs in example:", i)
+                print(prompt)
+                break
+
 
 
     def generate_from_prompts(self, prompts, max_new_tokens=256):
