@@ -217,3 +217,33 @@ def qa_citizenship_mc_no_context(question_dataset, retriever, generator, save_pa
     
     save_to_json(results, save_path, result_type="answers with context")
 
+def test_cfg(question_dataset, retriever, generator, save_path, alpha=1,
+             batch_size = 16, silent=True, max_samples=None):
+    if max_samples:
+        question_dataset = question_dataset.select(range(max_samples))
+    results = []
+    
+    for i in tqdm(range(0, len(question_dataset), batch_size), 
+                  desc=f"Answering questions in batches of {batch_size}"):
+        batch = question_dataset[i:i+batch_size]
+        questions = batch['question']
+        options = batch['options']
+
+        contexts = retriever.retrieve(questions)
+
+        answers = generator.cfg_answer(questions, contexts, options, alpha)
+
+        answers_no_guidance = answers['answers']
+        answers_with_guidance = answers['guided_answers']
+        
+        reference_answer = batch['mc_answer']
+
+        results.extend([{
+            "question"         : q,
+            "context"          : c,
+            "generated_answer" : a,
+            "generated_answer_with_guidance" : ga,
+            "reference_answer" : ra
+        } for q, c, a, ga, ra in zip(questions, contexts, answers_no_guidance, answers_with_guidance, reference_answer)])
+    
+    save_to_json(results, save_path, result_type="answers with CFG")

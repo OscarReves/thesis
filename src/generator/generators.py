@@ -179,6 +179,92 @@ class BaseGenerator:
 
         return self.generate_from_prompts(prompts=prompts)
     
+
+    def get_mc_prompt_no_context(self, questions, options):
+        user_prompts = [
+            (
+                "Svar kun med bogstavet for den rigtige mulighed."
+                "#SPØRGSMÅL"
+                f"{q}"
+                "#SVARMULIGHEDER"
+                f"A: {o[0]}"
+                f"B: {o[1]}"
+                f"C: {o[2]}"
+                "#SVAR"
+                "Svaret er mulighed "
+            )
+            for q, o in zip(questions, options)
+        ]
+
+        prompts = [
+            self.tokenizer.apply_chat_template([
+                {"role": "system", "content": self.system_prompt},
+                {"role": "user", "content": up}
+            ], tokenize=False, add_generation_prompt=True)
+            for up in user_prompts
+        ]
+        return prompts
+    
+    def get_mc_prompt(self, questions, contexts, options):
+        user_prompts = [
+            (
+                "Givet konteksten, svar kun med bogstavet for den rigtige mulighed."
+                "#KONTEKST"
+                f"{c}"
+                "#SPØRGSMÅL"
+                f"{q}"
+                "#SVARMULIGHEDER"
+                f"A: {o[0]}"
+                f"B: {o[1]}"
+                f"C: {o[2]}"
+                "#SVAR"
+                "Svaret er mulighed "
+            )
+            for q, c, o in zip(questions, contexts, options)
+        ]
+        prompts = [
+            self.tokenizer.apply_chat_template([
+                {"role": "system", "content": self.system_prompt},
+                {"role": "user", "content": up}
+            ], tokenize=False, add_generation_prompt=True)
+            for up in user_prompts
+        ]
+        return prompts
+    
+
+
+    def cfg_answer(self, questions, contexts, options, alpha=0):
+        
+        mc_no_context_prompt = self.get_mc_prompt_no_context(questions, options)
+        mc_prompt = self.get_mc_prompt(questions, contexts, options)
+        
+        logits_no_context = self.get_logits(mc_no_context_prompt)
+        logits = self.get_logits(mc_prompt)
+
+        cfg_logits = logits + alpha*(logits-logits_no_context)
+        
+        res =  {
+            'answers' : self.decode_logits(logits),
+            'guided_answers' : self.decode_logits(cfg_logits)
+            }
+        
+        return res
+
+
+    def decode_logits(self, logits):
+        token_ids = torch.argmax(logits, dim=-1)
+        tokens = self.tokenizer.batch_decode(token_ids)
+        return tokens
+
+    def get_logits(self, prompts):
+        inputs = self.tokenizer(prompts, return_tensors="pt", padding=True, truncation=True).to(self.model.device)
+
+        with torch.inference_mode():
+            outputs = self.model(**inputs)
+
+        return outputs.logits
+
+
     def generate_from_prompts(self, prompts, max_new_tokens=256):
         inputs = self.tokenizer(prompts, return_tensors="pt", padding=True, truncation=True).to(self.model.device)
 
@@ -248,7 +334,7 @@ class Gemma9bGenerator(BaseGenerator):
             "You are a helpful assistant. You respond to questions in Danish. "
             "Respond briefly and accurately. Do not generate any extra questions or superfluous text. " 
             "Be as concise as possible."
-            #"The context may or may not be relevant."
+            "The context may or may not be relevant."
         )
 
         # system_prompt = (
@@ -350,6 +436,57 @@ class Gemma9bGenerator(BaseGenerator):
 
         return self.generate_from_prompts(prompts=prompts)
     
+    def get_mc_prompt_no_context(self, questions, options):
+        user_prompts = [
+            (
+                "Svar kun med bogstavet for den rigtige mulighed."
+                "#SPØRGSMÅL"
+                f"{q}"
+                "#SVARMULIGHEDER"
+                f"A: {o[0]}"
+                f"B: {o[1]}"
+                f"C: {o[2]}"
+                "#SVAR"
+                "Svaret er mulighed "
+            )
+            for q, o in zip(questions, options)
+        ]
+
+        prompts = [
+            self.tokenizer.apply_chat_template([
+                {"role": "user", "content": self.system_prompt + "\n" + up}
+            ], tokenize=False, add_generation_prompt=True)
+            for up in user_prompts
+        ]
+        return prompts
+    
+    def get_mc_prompt(self, questions, contexts, options):
+        user_prompts = [
+            (
+                "Givet konteksten, svar kun med bogstavet for den rigtige mulighed."
+                "#KONTEKST"
+                f"{c}"
+                "#SPØRGSMÅL"
+                f"{q}"
+                "#SVARMULIGHEDER"
+                f"A: {o[0]}"
+                f"B: {o[1]}"
+                f"C: {o[2]}"
+                "#SVAR"
+                "Svaret er mulighed "
+            )
+            for q, c, o in zip(questions, contexts, options)
+        ]
+        prompts = [
+            self.tokenizer.apply_chat_template([
+                {"role": "user", "content": self.system_prompt + "\n" + up}
+            ], tokenize=False, add_generation_prompt=True)
+            for up in user_prompts
+        ]
+        return prompts
+    
+
+
 class Gemma9bGeneratorNewPrompt(Gemma9bGenerator):
     def __init__(self):
         super().__init__()

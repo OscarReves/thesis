@@ -128,7 +128,7 @@ def main():
 
     def mean_pooling(last_hidden, mask):
         mask = mask.unsqueeze(-1).expand(last_hidden.size()).float()
-        return (last_hidden * mask).sum(dim=1) / mask.sum(dim=1)
+        return (last_hidden * mask).sum(dim=1) / mask.sum(dim=1) # clamping would be good to avoid nan
 
     def contrastive_loss(q, p, temperature=0.05):
         q = F.normalize(q, dim=1)
