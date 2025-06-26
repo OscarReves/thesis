@@ -252,6 +252,7 @@ class BaseGenerator:
 
         self.find_nan_prompt(mc_no_context_prompt)        
         self.find_nan_prompt(mc_prompt)
+        sys.stdout.flush()
 
         assert logits.shape == logits_no_context.shape, "Shape mismatch in logits vs. logits_no_context"
         assert not torch.isnan(logits).any(), "NaNs in logits"
@@ -261,7 +262,6 @@ class BaseGenerator:
         
         print("cfg_logits min:", cfg_logits.min().item())
         print("cfg_logits max:", cfg_logits.max().item())
-        sys.stdout.flush()
 
 
         res =  {
@@ -298,7 +298,7 @@ class BaseGenerator:
 
     def find_nan_prompt(self, prompts):
         for i, prompt in enumerate(prompts):
-            inputs = self.tokenizer(prompt, return_tensors="pt", padding=True, truncation=True, max_length=max_length).to(self.model.device)
+            inputs = self.tokenizer(prompt, return_tensors="pt", padding=True, truncation=True).to(self.model.device)
             with torch.inference_mode():
                 outputs = self.model(**inputs)
             if torch.isnan(outputs.logits).any():
