@@ -252,6 +252,8 @@ class BaseGenerator:
 
 
         assert logits.shape == logits_no_context.shape, "Shape mismatch in logits vs. logits_no_context"
+        assert not torch.isnan(logits).any(), "NaNs in logits"
+        assert not torch.isnan(logits_no_context).any(), "NaNs in logits_no_context"
 
         cfg_logits = logits + alpha*(logits-logits_no_context)
         
