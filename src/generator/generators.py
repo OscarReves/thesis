@@ -238,8 +238,8 @@ class BaseGenerator:
         mc_no_context_prompt = self.get_mc_prompt_no_context(questions, options)
         mc_prompt = self.get_mc_prompt(questions, contexts, options)
         
-        logits_no_context = self.get_logits(mc_no_context_prompt)
-        logits = self.get_logits(mc_prompt)
+        logits_no_context = self.get_logits(mc_no_context_prompt)[:, -1, :]
+        logits = self.get_logits(mc_prompt)[:, -1, :]
 
         print("logits full shape:", logits.shape)  # should be [batch, seq_len, vocab]
         print("logits_no_context full shape:", logits_no_context.shape)
