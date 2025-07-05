@@ -1,4 +1,4 @@
-from .generators import NousHermesMistralGenerator, SuzumeLlama3Generator, Yi34BGenerator, Gemma9bGenerator, SnakModelGenerator, Gemma9bGeneratorNewPrompt
+from .generators import NousHermesMistralGenerator, SuzumeLlama3Generator, Yi34BGenerator, Gemma9bGenerator, SnakModelGenerator, Gemma9bGeneratorNewPrompt, TinyLlamaGenerator
 
 GENERATOR_REGISTRY = {
     "nous-hermes-mistral"   : NousHermesMistralGenerator,
@@ -6,7 +6,8 @@ GENERATOR_REGISTRY = {
     "yi-34b"                : Yi34BGenerator,
     "gemma-9b"              : Gemma9bGenerator,
     "gemma-new"             : Gemma9bGeneratorNewPrompt,
-    "snakmodel"             : SnakModelGenerator
+    "snakmodel"             : SnakModelGenerator,
+    "tinyllama"             : TinyLlamaGenerator
 }
 
 def get_generator(name, **kwargs):
