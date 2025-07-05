@@ -9,4 +9,6 @@ def main():
     correct_answer="Paris"
     incorrect_answer="London"
     generator.check_if_flipped(context,prompt,correct_answer,incorrect_answer)
-    
+
+if __name__ == "__main__":
+    main()
