@@ -512,7 +512,7 @@ class BaseGenerator:
         context_prompt = self.format_prompt_with_context_mc(question=question, context=context, options=options)
         print(f"Context prompt:\n{context_prompt}")
 
-        no_context_prompt = self.format_prompt_no_context(question=question, options=options)
+        no_context_prompt = self.format_prompt_no_context_mc(question=question, options=options)
 
         context_ids = tokenizer.encode(context_prompt, return_tensors="pt").to(device)
         prompt_ids = tokenizer.encode(no_context_prompt, return_tensors="pt").to(device)

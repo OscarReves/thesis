@@ -1,8 +1,8 @@
 from src.generator import get_generator
 
 def main():
-    # import gemma
-    generator = get_generator('gemma-9b')
+    # import generator
+    generator = get_generator('suzume-llama3')
     # extract logits
     context = "The capital of France is in England."
     prompt = "The capital of France is"
