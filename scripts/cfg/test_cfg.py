@@ -46,8 +46,13 @@ def main():
         for tok, p in zip(top_tokens, top_probs[0]):
             print(f"{tok!r} -> {p.item():.4f}")
 
-        london_p = probs[0][tokenizer.encode("London")[1]]
-        paris_p = probs[0][tokenizer.encode("Paris")[1]]
+        # london_p = probs[0][tokenizer.encode("London")[1]]
+        # paris_p = probs[0][tokenizer.encode("Paris")[1]]
+        tok_london = tokenizer("London", add_special_tokens=False).input_ids[0]
+        tok_paris  = tokenizer("Paris",  add_special_tokens=False).input_ids[0]
+
+        london_p = probs[0, tok_london]
+        paris_p  = probs[0, tok_paris]
         print(f" > London: {london_p}")
         print(f" > Paris: {paris_p}")
         if london_p > paris_p:
