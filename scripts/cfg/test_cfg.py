@@ -13,7 +13,7 @@ def main():
     import torch
     import torch.nn.functional as F
 
-    model_name = "TinyLlama/TinyLlama-1.1B-Chat-v1.0"
+    model_name = "lightblue/suzume-llama-3-8B-multilingual"
     tokenizer = AutoTokenizer.from_pretrained(model_name)
     model = AutoModelForCausalLM.from_pretrained(model_name, torch_dtype=torch.float16 if torch.cuda.is_available() else torch.float32)
     model.eval()
