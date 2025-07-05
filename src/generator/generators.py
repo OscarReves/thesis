@@ -535,10 +535,11 @@ class BaseGenerator:
             for tok, p in zip(top_tokens, top_probs[0]):
                 print(f"{tok!r} -> {p.item():.4f}")
 
-            correct_p = probs[0][tokenizer.encode(correct_answer)[1]]
-            incorrect_p = probs[0][tokenizer.encode(incorrect_answer)[1]]
-            print(f" > {correct_answer}: {correct_p}")
-            print(f" > {incorrect_answer}: {incorrect_p}")
+            tok_correct = tokenizer(correct_answer, add_special_tokens=False).input_ids[0]
+            tok_incorrect  = tokenizer(incorrect_answer,  add_special_tokens=False).input_ids[0]
+
+            correct_p = probs[0, tok_correct]
+            incorrect_p  = probs[0, tok_incorrect]
             if incorrect_p > correct_p:
                 print(" > > FLIPPED!")
 

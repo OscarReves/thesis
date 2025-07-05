@@ -13,7 +13,7 @@ def main():
     import torch
     import torch.nn.functional as F
 
-    model_name = "lightblue/suzume-llama-3-8B-multilingual"
+    model_name = "google/gemma-2-9b-it"
     tokenizer = AutoTokenizer.from_pretrained(model_name)
     model = AutoModelForCausalLM.from_pretrained(model_name, torch_dtype=torch.float16 if torch.cuda.is_available() else torch.float32)
     model.eval()
