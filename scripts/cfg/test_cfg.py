@@ -4,6 +4,14 @@ def main():
     from transformers import AutoTokenizer, AutoModelForCausalLM
     import torch
     import torch.nn.functional as F
+    from huggingface_hub import login
+    from dotenv import load_dotenv
+    import os
+
+    # login required for gemma download 
+    load_dotenv()  
+    hf_token = os.getenv("HUGGINGFACE_TOKEN")
+    login(token=hf_token)
 
     model_name = "google/gemma-2-9b-it"
     tokenizer = AutoTokenizer.from_pretrained(model_name)
