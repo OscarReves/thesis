@@ -265,7 +265,7 @@ def load_knowledge_base(path, type, silent=False):
     if type == "news":
         return load_documents(path, silent)
 
-def load_questions_by_type(path, type, silent=False):
+def load_questions_by_type(path, type, silent=False, split = False):
     if type == "squad":
         return load_squad(path, silent)
     if type == "squad_with_title":
@@ -275,7 +275,7 @@ def load_questions_by_type(path, type, silent=False):
     if type == "news":
         return load_news(path, silent)
     if type == "citizenship":
-        return load_citizenship_questions(silent)
+        return load_citizenship_questions(silent, split)
     if type == "mkqa":
         return load_mkqa(silent)
     if type == "custom":
