@@ -418,6 +418,7 @@ class BaseGenerator:
         # for tok, p in zip(top_tokens, top_probs[0]):
         #     print(f"{tok!r} -> {p.item():.4f}")
 
+        print(top_tokens[0])
         return top_tokens[0]
 
 

@@ -238,6 +238,8 @@ def test_cfg(question_dataset, retriever, generator, save_path, alpha=3.0,
         #answers_with_guidance = answers['guided_answers']
         
         reference_answer = question_dataset['mc_answer'][i]
+        print(f"Answer: {answer}")
+        print(f"Reference answer: {reference_answer}")
         if answer == reference_answer:
             correct + 1
 
