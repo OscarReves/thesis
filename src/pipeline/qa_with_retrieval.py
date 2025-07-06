@@ -254,6 +254,6 @@ def test_cfg(question_dataset, retriever, generator, save_path, alpha=3.0,
     
     #save_to_json(results, save_path, result_type="answers with CFG")
     accuracy = correct / len(question_dataset)
-    print(f"Accuracy: {accuracy}")
+    print(f"Alpa: {alpha} / Accuracy: {accuracy}")
 
 
