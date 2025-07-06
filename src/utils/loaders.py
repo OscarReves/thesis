@@ -122,7 +122,7 @@ def load_citizenship_questions(silent=False, split=False):
             print(
                 f"Loaded {len(ds)} questions : train {len(train_ds)}, test {len(test_ds)}"
             )
-        return train_ds, test_ds
+        return train_test
 
     if not silent:
         print(f"Loaded {len(records)} questions")
