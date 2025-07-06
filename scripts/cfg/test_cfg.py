@@ -17,7 +17,7 @@ def main():
 
     model = generator.model
     tokenizer = generator.tokenizer
-    device = generator.device 
+    device = model.device 
 
     system_prompt = (
         "You are a helpful assistant. You respond to questions in Danish.\n"
