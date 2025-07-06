@@ -13,12 +13,11 @@ def main():
     hf_token = os.getenv("HUGGINGFACE_TOKEN")
     login(token=hf_token)
 
-    model_name = "google/gemma-2-9b-it"
-    tokenizer = AutoTokenizer.from_pretrained(model_name)
-    model = AutoModelForCausalLM.from_pretrained(model_name, torch_dtype=torch.float16 if torch.cuda.is_available() else torch.float32)
-    model.eval()
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model.to(device)
+    generator = get_generator('gemma-9b')
+
+    model = generator.model
+    tokenizer = generator.tokenizer
+    device = generator.device 
 
     system_prompt = (
         "You are a helpful assistant. You respond to questions in Danish.\n"
@@ -114,9 +113,11 @@ def main():
             if incorrect_p > correct_p:
                 print(" > > FLIPPED!")
 
-        print(f"device = {device}")
-        model.to(device)
-        check_if_flipped_mc(model, tokenizer, context, question, options, correct_answer="A", incorrect_answer="B")
+    print(f"device = {device}")
+    model.to(device)
+    check_if_flipped_mc(model, tokenizer, context, question, options, correct_answer="A", incorrect_answer="B")
+
+
 
 if __name__ == "__main__":
     main()
