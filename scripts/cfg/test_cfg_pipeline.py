@@ -33,7 +33,7 @@ def main():
         retriever=retriever,
         generator=generator,
         save_path=None,
-        alpha=3.0,
+        alpha=0.5,
         max_samples=4
     )
     
