@@ -232,7 +232,7 @@ def test_cfg(question_dataset, retriever, generator, save_path, alpha=3.0,
 
         contexts = retriever.retrieve([question])
 
-        answer = generator.generate_answer_cfg(question, contexts, options, alpha)
+        answer = generator.generate_answer_cfg(contexts, question, options, alpha)
 
         #answers_no_guidance = answers['answers']
         #answers_with_guidance = answers['guided_answers']
@@ -253,5 +253,5 @@ def test_cfg(question_dataset, retriever, generator, save_path, alpha=3.0,
     #save_to_json(results, save_path, result_type="answers with CFG")
     accuracy = correct / len(question_dataset)
     print(accuracy)
-    
+
 
