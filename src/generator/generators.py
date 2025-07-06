@@ -291,8 +291,8 @@ class BaseGenerator:
             f"A: {options[0]}\n"
             f"B: {options[1]}\n"
             f"C: {options[2]}\n"
-            "#SVAR\n"
-            "Svaret er mulighed "
+            #"#SVAR\n"
+            #"Svaret er mulighed "
             )
         
         
@@ -316,8 +316,8 @@ class BaseGenerator:
             f"A: {options[0]}\n"
             f"B: {options[1]}\n"
             f"C: {options[2]}\n"
-            "#SVAR\n"
-            "Svaret er mulighed "
+            #"#SVAR\n"
+            #"Svaret er mulighed "
             )
         
         
@@ -401,13 +401,22 @@ class BaseGenerator:
         probs_ctxt = F.softmax(logits_with_context)
         probs_cfg = F.softmax(adjusted_logits, dim=-1)
 
-        probs = probs_cfg
-        top_k = 3
-        top_probs, top_indices = torch.topk(probs, top_k, dim=-1)
-        top_tokens = [tokenizer.decode([idx]) for idx in top_indices[0]]
-        print(f"Top {top_k} tokens:")
-        for tok, p in zip(top_tokens, top_probs[0]):
-            print(f"{tok!r} -> {p.item():.4f}")
+        for probs, lbl in [(probs_orig, "orig"), (probs_ctxt, "ctxt"), (probs_cfg, "cfg")]:
+            print(f"---- {lbl} ----")
+            top_k = 3
+            top_probs, top_indices = torch.topk(probs, top_k, dim=-1)
+            top_tokens = [tokenizer.decode([idx]) for idx in top_indices[0]]
+            print(f"Top {top_k} tokens:")
+            for tok, p in zip(top_tokens, top_probs[0]):
+                print(f"{tok!r} -> {p.item():.4f}")
+
+        # probs = probs_cfg
+        # top_k = 3
+        # top_probs, top_indices = torch.topk(probs, top_k, dim=-1)
+        # top_tokens = [tokenizer.decode([idx]) for idx in top_indices[0]]
+        # print(f"Top {top_k} tokens:")
+        # for tok, p in zip(top_tokens, top_probs[0]):
+        #     print(f"{tok!r} -> {p.item():.4f}")
 
         return top_tokens[0]
 
