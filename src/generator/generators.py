@@ -377,17 +377,19 @@ class BaseGenerator:
             if incorrect_p > correct_p:
                 print(" > > FLIPPED!")
 
-    def generate_answer_cfg(self, context, question, options, alpha = 3.0):
+    def generate_answer_cfg(self, context, question, options, alpha = 3.0, silent=True):
 
         model = self.model
         device = model.device
         tokenizer = self.tokenizer
 
         context_prompt = self.format_prompt_with_context_mc(question=question, context=context, options=options)
-        print(f"Context prompt:\n{context_prompt}")
+        if not silent:
+            print(f"Context prompt:\n{context_prompt}")
 
         no_context_prompt = self.format_prompt_no_context_mc(question=question, options=options)
-        print(f"No context prompt:\n{no_context_prompt}")
+        if not silent:
+            print(f"No context prompt:\n{no_context_prompt}")
 
         context_ids = tokenizer.encode(context_prompt, return_tensors="pt").to(device)
         prompt_ids = tokenizer.encode(no_context_prompt, return_tensors="pt").to(device)
@@ -401,24 +403,22 @@ class BaseGenerator:
         probs_ctxt = F.softmax(logits_with_context)
         probs_cfg = F.softmax(adjusted_logits, dim=-1)
 
-        for probs, lbl in [(probs_orig, "orig"), (probs_ctxt, "ctxt"), (probs_cfg, "cfg")]:
-            print(f"---- {lbl} ----")
+        if not silent:
+            for probs, lbl in [(probs_orig, "orig"), (probs_ctxt, "ctxt"), (probs_cfg, "cfg")]:
+                print(f"---- {lbl} ----")
+                top_k = 3
+                top_probs, top_indices = torch.topk(probs, top_k, dim=-1)
+                top_tokens = [tokenizer.decode([idx]) for idx in top_indices[0]]
+                print(f"Top {top_k} tokens:")
+                for tok, p in zip(top_tokens, top_probs[0]):
+                    print(f"{tok!r} -> {p.item():.4f}")
+
+        if silent:
+            probs = probs_cfg
             top_k = 3
             top_probs, top_indices = torch.topk(probs, top_k, dim=-1)
             top_tokens = [tokenizer.decode([idx]) for idx in top_indices[0]]
-            print(f"Top {top_k} tokens:")
-            for tok, p in zip(top_tokens, top_probs[0]):
-                print(f"{tok!r} -> {p.item():.4f}")
 
-        # probs = probs_cfg
-        # top_k = 3
-        # top_probs, top_indices = torch.topk(probs, top_k, dim=-1)
-        # top_tokens = [tokenizer.decode([idx]) for idx in top_indices[0]]
-        # print(f"Top {top_k} tokens:")
-        # for tok, p in zip(top_tokens, top_probs[0]):
-        #     print(f"{tok!r} -> {p.item():.4f}")
-
-        print(top_tokens[0])
         return top_tokens[0]
 
 
