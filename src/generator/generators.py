@@ -157,177 +157,6 @@ class BaseGenerator:
 
         return self.generate_from_prompts(prompts=prompts)
 
-    # def rewrite_questions(self, questions, contexts, max_new_tokens=256):
-    #     system_prompt = (
-    #         "You are a helpful assistant. You respond to prompts in Danish. "
-    #         "Respond briefly and accurately."
-    #         "Be as concise as possible."
-    #     )
-
-    #     prompts = [
-    #         self.tokenizer.apply_chat_template([
-    #             {"role": "system", "content": system_prompt},
-    #             {"role": "user", "content": f"""
-    #             You are an expert question disambiguator.
-    #             Using the context, rewrite the following question so that it would be unambiguous in the absence of the context.
-    #             The question should be answerable as a stand-alone question, but should not include the answer. 
-
-    #             Context: {c}
-                 
-    #             Question: {q}
-    #             """}
-    #         ], tokenize=False, add_generation_prompt=True)
-    #         for q, c in zip(questions, contexts)
-    #     ]
-
-    #     inputs = self.tokenizer(prompts, return_tensors="pt", padding=True, truncation=True).to(self.model.device)
-
-    #     return self.generate_from_prompts(prompts=prompts)
-    
-
-    # def get_mc_prompt_no_context(self, questions, options):
-    #     user_prompts = [
-    #         (
-    #             "Svar kun med bogstavet for den rigtige mulighed.\n"
-    #             "#SPØRGSMÅL\n"
-    #             f"{q}\n"
-    #             "#SVARMULIGHEDER\n"
-    #             f"A: {o[0]}\n"
-    #             f"B: {o[1]}\n"
-    #             f"C: {o[2]}\n"
-    #             "#SVAR\n"
-    #             "Svaret er mulighed "
-    #         )
-    #         for q, o in zip(questions, options)
-    #     ]
-
-    #     prompts = [
-    #         self.tokenizer.apply_chat_template([
-    #             {"role": "system", "content": self.system_prompt},
-    #             {"role": "user", "content": up}
-    #         ], tokenize=False, add_generation_prompt=True)
-    #         for up in user_prompts
-    #     ]
-    #     return prompts
-    
-    # def get_mc_prompt(self, questions, contexts, options):
-    #     user_prompts = [
-    #         (
-    #             "Givet konteksten, svar kun med bogstavet for den rigtige mulighed.\n"
-    #             "#KONTEKST\n"
-    #             f"{c}\n"
-    #             "#SPØRGSMÅL\n"
-    #             f"{q}\n"
-    #             "#SVARMULIGHEDER\n"
-    #             f"A: {o[0]}\n"
-    #             f"B: {o[1]}\n"
-    #             f"C: {o[2]}\n"
-    #             "#SVAR\n"
-    #             "Svaret er mulighed "
-    #         )
-    #         for q, c, o in zip(questions, contexts, options)
-    #     ]
-    #     prompts = [
-    #         self.tokenizer.apply_chat_template([
-    #             {"role": "system", "content": self.system_prompt},
-    #             {"role": "user", "content": up}
-    #         ], tokenize=False, add_generation_prompt=True)
-    #         for up in user_prompts
-    #     ]
-    #     return prompts
-    
-
-
-    # def cfg_answer(self, questions, contexts, options, alpha=0.1):
-        
-    #     mc_no_context_prompt = self.get_mc_prompt_no_context(questions, options)
-    #     mc_prompt = self.get_mc_prompt(questions, contexts, options)
-        
-    #     logits_no_context = self.get_logits(mc_no_context_prompt)[:, -1, :]
-    #     logits = self.get_logits(mc_prompt)[:, -1, :]
-
-    #     print("logits full shape:", logits.shape)  # should be [batch, seq_len, vocab]
-    #     print("logits_no_context full shape:", logits_no_context.shape)
-
-    #     # for a, b in zip(mc_prompt, mc_no_context_prompt):
-    #     #     print("With context:", repr(a[-80:]))
-    #     #     print("No context: ", repr(b[-80:]))
-    #     #     print("---")
-
-
-    #     # self.find_nan_prompt(mc_no_context_prompt)        
-    #     # self.find_nan_prompt(mc_prompt)
-
-    #     # self.trace_nan_tokens(mc_no_context_prompt)
-
-    #     # sys.stdout.flush()
-
-    #     # assert logits.shape == logits_no_context.shape, "Shape mismatch in logits vs. logits_no_context"
-    #     # assert not torch.isnan(logits).any(), "NaNs in logits"
-    #     # assert not torch.isnan(logits_no_context).any(), "NaNs in logits_no_context"
-
-    #     cfg_logits = logits + alpha*(logits-logits_no_context)
-        
-    #     print("cfg_logits min:", cfg_logits.min().item())
-    #     print("cfg_logits max:", cfg_logits.max().item())
-
-
-    #     res =  {
-    #         'answers' : self.decode_logits(logits),
-    #         'guided_answers' : self.decode_logits(cfg_logits)
-    #         }
-        
-    #     return res
-
-
-    # def decode_logits(self, logits):
-    #     token_ids = torch.argmax(logits, dim=-1)
-    #     tokens = self.tokenizer.batch_decode(token_ids.unsqueeze(1))
-    #     return tokens
-    
-    # def get_logits_old(self, prompts):
-    #     if self.tokenizer.pad_token is None:
-    #         self.tokenizer.pad_token = self.tokenizer.eos_token
-
-    #     max_length = self.model.config.max_position_embeddings
-    #     inputs = self.tokenizer(
-    #         prompts,
-    #         return_tensors="pt",
-    #         padding=True,
-    #         truncation=True,
-    #         max_length=max_length
-    #     ).to(self.model.device)
-
-    #     with torch.inference_mode():
-    #         outputs = self.model(input_ids=inputs["input_ids"], attention_mask=inputs["attention_mask"])
-
-    #     #return outputs.logits[:, -1, :] # extract last logit (equivalent to next token)
-    #     return outputs.logits
-
-    # def get_logits(self, prompts):
-    #     if self.tokenizer.pad_token is None:
-    #         self.tokenizer.pad_token = self.tokenizer.eos_token
-
-    #     max_length = self.model.config.max_position_embeddings
-    #     inputs = self.tokenizer(
-    #         prompts,
-    #         return_tensors="pt",
-    #         padding=True,
-    #         truncation=True,
-    #         max_length=max_length
-    #     ).to(self.model.device)
-
-    #     with torch.inference_mode():
-    #         out = self.model.generate(
-    #             **inputs,
-    #             max_new_tokens=1,
-    #             output_scores=True,                 # turn on score recording
-    #             return_dict_in_generate=True
-    #         )
-    #     #return outputs.logits[:, -1, :] # extract last logit (equivalent to next token)
-    #     logits  = torch.stack(out.scores) 
-    #     return logits
-
 
     def generate_from_prompts(self, prompts, max_new_tokens=256):
         inputs = self.tokenizer(prompts, return_tensors="pt", padding=True, truncation=True).to(self.model.device)
@@ -385,6 +214,7 @@ class BaseGenerator:
             print(f" > {incorrect_answer}: {incorrect_p}")
             if incorrect_p > correct_p:
                 print(" > > FLIPPED!")
+
 
     def format_prompt_with_context(self, context, prompt, truncated_answer_sentence):
         messages = [
@@ -546,6 +376,42 @@ class BaseGenerator:
             print(f" > {incorrect_answer}: {incorrect_p}")
             if incorrect_p > correct_p:
                 print(" > > FLIPPED!")
+
+    def generate_answer_cfg(self, context, question, options, alpha = 3.0):
+
+        model = self.model
+        device = model.device
+        tokenizer = self.tokenizer
+
+        context_prompt = self.format_prompt_with_context_mc(question=question, context=context, options=options)
+        print(f"Context prompt:\n{context_prompt}")
+
+        no_context_prompt = self.format_prompt_no_context_mc(question=question, options=options)
+        print(f"No context prompt:\n{no_context_prompt}")
+
+        context_ids = tokenizer.encode(context_prompt, return_tensors="pt").to(device)
+        prompt_ids = tokenizer.encode(no_context_prompt, return_tensors="pt").to(device)
+
+        with torch.no_grad():
+            logits_with_context = model(context_ids).logits[:, -1, :]
+            logits_without_context = model(prompt_ids).logits[:, -1, :]
+
+        adjusted_logits = logits_with_context + alpha * (logits_with_context - logits_without_context)
+        probs_orig = F.softmax(logits_without_context)
+        probs_ctxt = F.softmax(logits_with_context)
+        probs_cfg = F.softmax(adjusted_logits, dim=-1)
+
+        probs = probs_cfg
+        top_k = 3
+        top_probs, top_indices = torch.topk(probs, top_k, dim=-1)
+        top_tokens = [tokenizer.decode([idx]) for idx in top_indices[0]]
+        print(f"Top {top_k} tokens:")
+        for tok, p in zip(top_tokens, top_probs[0]):
+            print(f"{tok!r} -> {p.item():.4f}")
+
+        return top_tokens[0]
+
+
 
 class TinyLlamaGenerator(BaseGenerator):
     def __init__(self):

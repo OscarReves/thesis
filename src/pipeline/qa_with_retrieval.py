@@ -247,3 +247,4 @@ def test_cfg(question_dataset, retriever, generator, save_path, alpha=0.1,
         } for q, c, a, ga, ra in zip(questions, contexts, answers_no_guidance, answers_with_guidance, reference_answer)])
     
     save_to_json(results, save_path, result_type="answers with CFG")
+

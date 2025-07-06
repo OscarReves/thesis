@@ -117,7 +117,8 @@ def main():
     #model.to(device)
     #check_if_flipped_mc(model, tokenizer, context, question, options, correct_answer="A", incorrect_answer="B")
 
-    generator.check_if_flipped_mc(context, question, options, correct_answer="A", incorrect_answer="B")
+    #generator.check_if_flipped_mc(context, question, options, correct_answer="A", incorrect_answer="B")
+    generator.generate_answer_cfg(context, question, options)
 
 
 if __name__ == "__main__":
