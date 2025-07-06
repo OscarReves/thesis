@@ -86,7 +86,7 @@ def load_squad_as_kb(path, silent=False):
     print(f"Loaded {len(records)} questions")
     return Dataset.from_list(records)
 
-def load_citizenship_questions(silent=False):
+def load_citizenship_questions(silent=False, split=False):
     dataset = load_dataset("sorenmulli/citizenship-test-da", "default")
     correct_mapping = {'A': 0, 'B': 1, 'C': 2}
     records = []
@@ -109,6 +109,21 @@ def load_citizenship_questions(silent=False):
             "mc_answer": mc_answer
         })
     
+    ds = Dataset.from_list(records)
+
+    if split:
+        seed: int = 42,
+        train_ratio: float = 0.8
+        train_test = ds.train_test_split(
+            test_size=1 - train_ratio, seed=seed, shuffle=True
+        )
+        train_ds, test_ds = train_test["train"], train_test["test"]
+        if not silent:
+            print(
+                f"Loaded {len(ds)} questions : train {len(train_ds)}, test {len(test_ds)}"
+            )
+        return train_ds, test_ds
+
     if not silent:
         print(f"Loaded {len(records)} questions")
     return Dataset.from_list(records)

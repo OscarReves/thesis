@@ -12,7 +12,8 @@ def main():
     documents = load_knowledge_base(kb_path, kb_type) # is now abstracted 
 
     print("Loading questions...")
-    question_dataset = load_questions_by_type(None, type = 'citizenship')
+    question_dataset = load_questions_by_type(None, type = 'citizenship', split=True)
+    question_dataset = question_dataset['train']
 
 
     print("Loading retriever...")
