@@ -291,8 +291,8 @@ class BaseGenerator:
             f"A: {options[0]}\n"
             f"B: {options[1]}\n"
             f"C: {options[2]}\n"
-            #"#SVAR\n"
-            #"Svaret er mulighed "
+            "#SVAR\n"
+            "Svaret er mulighed "
             )
         
         
@@ -316,8 +316,8 @@ class BaseGenerator:
             f"A: {options[0]}\n"
             f"B: {options[1]}\n"
             f"C: {options[2]}\n"
-            #"#SVAR\n"
-            #"Svaret er mulighed "
+            "#SVAR\n"
+            "Svaret er mulighed "
             )
         
         
