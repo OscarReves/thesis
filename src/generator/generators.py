@@ -42,12 +42,24 @@ class BaseGenerator:
             print(f"Loading model {model_name} from: {model_path}")
             self.tokenizer = AutoTokenizer.from_pretrained(model_path, local_files_only=True,trust_remote_code=True)
             self.tokenizer.padding_side = "left"
+            # self.model = AutoModelForCausalLM.from_pretrained(
+            #     model_path,
+            #     torch_dtype=torch.float16,
+            #     device_map="auto",
+            #     local_files_only=True
+            # )
+            # self.model.eval()
             self.model = AutoModelForCausalLM.from_pretrained(
                 model_path,
-                torch_dtype=torch.float16,
-                device_map="auto",
-                local_files_only=True
-            )
+                torch_dtype=torch.bfloat16,          # use H100 tensor cores
+                attn_implementation="flash_attention_2",
+                device_map="auto"
+            ).to(self.model.device).eval()
+
+            # Optional graph-capture compile (needs PyTorch ≥2.5)
+            self.model = torch.compile(self.model, mode="reduce_overhead")
+            os.environ["TOKENIZERS_PARALLELISM"] = "false"
+
 
     def generate_answer(self, question, context, max_new_tokens=128):
         # this is a little hacky, but leave it for now 
