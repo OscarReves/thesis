@@ -53,12 +53,13 @@ class BaseGenerator:
                 model_path,
                 torch_dtype=torch.bfloat16,          # use H100 tensor cores
                 #attn_implementation="flash_attention_2",
-                device_map="auto"
+                device_map="auto",
+                low_cpu_mem_usage=True
             ).eval()
             
 
             # Optional graph-capture compile (needs PyTorch ≥2.5)
-            self.model = torch.compile(self.model, mode="reduce-overhead")
+            self.model = torch.compile(self.model, mode="reduce-overhead", cudagraphs=False)
             os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 
