@@ -50,6 +50,13 @@ class BaseGenerator:
             #     local_files_only=True
             # )
             # self.model.eval()
+            # 1️⃣ enable TF32
+            torch.set_float32_matmul_precision('high')
+
+            # 2️⃣ optional: warm-up so KV-cache lives on GPU
+            dummy = torch.ones(1, 1, device="cuda", dtype=torch.long)
+            self.model(dummy, use_cache=True)
+            
             self.model = AutoModelForCausalLM.from_pretrained(
                 model_path,
                 torch_dtype=torch.bfloat16,          # use H100 tensor cores
@@ -533,7 +540,7 @@ class BaseGenerator:
         ).to(self.model.device)                 # (B, L)
 
         with torch.no_grad():
-            logits = self.model(**enc).logits   # (B, L, V)
+            logits = self.model(**enc, use_cache=False).logits   # (B, L, V)
 
         return logits[:, -1, :]                 # (B, V)
 
