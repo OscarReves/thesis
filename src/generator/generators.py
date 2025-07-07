@@ -522,7 +522,7 @@ class BaseGenerator:
             truncation=False,
         ).to(self.model.device)                 # (B, L)
 
-        with torch.no_grad():
+        with torch.inference_mode():
             logits = self.model(**enc, use_cache=False).logits   # (B, L, V)
 
         return logits[:, -1, :]                 # (B, V)
