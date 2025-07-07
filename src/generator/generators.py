@@ -562,7 +562,8 @@ class BaseGenerator:
         
         logits_with_context = self.get_logits(context_prompts)
         logits_without_context = self.get_logits(no_context_prompts)
-        adjusted_logits = logits_with_context #+ alpha * (logits_with_context - logits_without_context)
+        print(f"alpha = {alpha}")
+        adjusted_logits = logits_with_context + alpha * (logits_with_context - logits_without_context)
         
 
         answers = {
