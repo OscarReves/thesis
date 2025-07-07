@@ -43,7 +43,7 @@ def test_cfg(question_dataset, retriever, generator, save_path, alpha=3.0,
     print(f"Alpha: {alpha} / Accuracy: {accuracy}")
 
 def test_cfg_batched(question_dataset, retriever, generator, save_path, alpha=3.0,
-             batch_size = 1, silent=True, max_samples=None):
+             batch_size = 16, silent=True, max_samples=None):
     
     if max_samples:
         question_dataset = question_dataset.select(range(max_samples))
