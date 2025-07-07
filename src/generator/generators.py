@@ -54,7 +54,8 @@ class BaseGenerator:
                 torch_dtype=torch.bfloat16,          # use H100 tensor cores
                 #attn_implementation="flash_attention_2",
                 device_map="auto"
-            ).to(self.model.device).eval()
+            ).eval()
+            
 
             # Optional graph-capture compile (needs PyTorch ≥2.5)
             self.model = torch.compile(self.model, mode="reduce_overhead")
@@ -583,7 +584,7 @@ class BaseGenerator:
     #         }
         
     #     return answers
-    @torch.no_grad()
+    @torch.inference_mode()
     def cfg_batch(self, contexts, questions, options, alpha, silent=True):
         # 1. build both prompt variants first
         ctx_prompts, noc_prompts = [], []
