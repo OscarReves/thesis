@@ -37,7 +37,7 @@ def main():
             save_path=None,
             alpha=alpha,
             max_samples=100,
-            batch_size=16
+            batch_size=1
         )
     
 
