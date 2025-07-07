@@ -541,7 +541,7 @@ class BaseGenerator:
             for row in top_idx
         ]
     
-    def cfg_batch(self, contexts, questions, options, alpha = 3.0, silent = True):
+    def cfg_batch(self, contexts, questions, options, alpha, silent = True):
         model = self.model
         device = model.device
         tokenizer = self.tokenizer

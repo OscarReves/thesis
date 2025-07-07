@@ -42,7 +42,7 @@ def test_cfg(question_dataset, retriever, generator, save_path, alpha=3.0,
     accuracy = correct / len(question_dataset)
     print(f"Alpha: {alpha} / Accuracy: {accuracy}")
 
-def test_cfg_batched(question_dataset, retriever, generator, save_path, alpha=3.0,
+def test_cfg_batched(question_dataset, retriever, generator, save_path, alpha,
              batch_size = 16, silent=True, max_samples=None):
     
     if max_samples:
@@ -58,7 +58,7 @@ def test_cfg_batched(question_dataset, retriever, generator, save_path, alpha=3.
 
         contexts = retriever.retrieve(questions)
 
-        answers = generator.cfg_batch(questions, contexts, options)
+        answers = generator.cfg_batch(questions, contexts, options, alpha)
         if i == 0:
             print(f"Answers: {answers}")
 
