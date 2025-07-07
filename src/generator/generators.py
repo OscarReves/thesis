@@ -60,7 +60,7 @@ class BaseGenerator:
                 model_path,
                 torch_dtype=torch.bfloat16,          # use H100 tensor cores
                 #attn_implementation="flash_attention_2",
-                device_map="auto",
+                device_map={"": 0},
                 low_cpu_mem_usage=True
             ).eval()
             
