@@ -34,7 +34,7 @@ class BaseGenerator:
 
             self.model = AutoModelForCausalLM.from_pretrained(
                 model_name,
-                torch_dtype=torch.float16,
+                torch_dtype=torch.bfloat16,
                 device_map="auto",
             )
             self.model.save_pretrained(model_path)
@@ -45,13 +45,13 @@ class BaseGenerator:
             self.tokenizer.padding_side = "left"
             self.model = AutoModelForCausalLM.from_pretrained(
                 model_path,
-                torch_dtype=torch.float16,
+                torch_dtype=torch.bfloat16,
                 device_map="auto",
                 local_files_only=True
             )
             self.model.eval()
-            # 1️⃣ enable TF32
-            #torch.set_float32_matmul_precision('high')
+            # enable TF32
+            torch.set_float32_matmul_precision('high')
 
 
 
