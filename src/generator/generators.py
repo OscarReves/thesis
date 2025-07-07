@@ -52,7 +52,7 @@ class BaseGenerator:
             self.model = AutoModelForCausalLM.from_pretrained(
                 model_path,
                 torch_dtype=torch.bfloat16,          # use H100 tensor cores
-                attn_implementation="flash_attention_2",
+                #attn_implementation="flash_attention_2",
                 device_map="auto"
             ).to(self.model.device).eval()
 
