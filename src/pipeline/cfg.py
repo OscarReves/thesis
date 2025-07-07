@@ -50,7 +50,7 @@ def test_cfg_batched(question_dataset, retriever, generator, save_path, alpha=3.
     
     correct = 0
 
-    for i in tqdm(range(0, len(question_dataset)), 
+    for i in tqdm(range(0, len(question_dataset), batch_size), 
                   desc=f"Answering questions in batches of {batch_size}"):
         batch = question_dataset[i:i+batch_size]
         questions = batch['question']
