@@ -512,8 +512,8 @@ class BaseGenerator:
 
 
         answers = {
-            'no_context_answer' : self.decode_logits(logits_without_context),
-            'cfg_answer' : self.decode_logits(adjusted_logits)
+            'no_context_answers' : self.decode_logits(logits_without_context),
+            'cfg_answers' : self.decode_logits(adjusted_logits)
             }
         
         return answers
