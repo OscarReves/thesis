@@ -399,8 +399,8 @@ class BaseGenerator:
             logits_without_context = model(prompt_ids).logits[:, -1, :]
 
         adjusted_logits = logits_with_context + alpha * (logits_with_context - logits_without_context)
-        probs_orig = F.softmax(logits_without_context)
-        probs_ctxt = F.softmax(logits_with_context)
+        probs_orig = F.softmax(logits_without_context, dim=-1)
+        probs_ctxt = F.softmax(logits_with_context, dim=-1)
         probs_cfg = F.softmax(adjusted_logits, dim=-1)
 
         if not silent:
@@ -421,7 +421,102 @@ class BaseGenerator:
 
         return top_tokens[0]
 
+    # def get_logits(self, prompt):
+    #     token_ids = self.tokenizer.encode(prompt, return_tensors="pt").to(self.model.device)
+    #     with torch.no_grad():
+    #         logits = self.model(token_ids).logits[:, -1, :]
+        
+    #     return logits
+    
+    # def decode_logits(self, logits, top_k=1):
+    #     # return top-k tokens 
+    #     probs = F.softmax(logits, dim=-1)
+    #     top_probs, top_indices = torch.topk(probs, top_k, dim=-1)
+    #     top_tokens = [self.tokenizer.decode([idx]) for idx in top_indices[0]]
+    #     return top_tokens
+    def get_logits(self, prompts):
+        """
+        Args
+        ----
+        prompts : str | list[str]  
+            Single prompt or a batch of prompts.
 
+        Returns
+        -------
+        torch.Tensor  # (batch, vocab)
+            Logits for the *last* non-padding token in each prompt.
+        """
+        if isinstance(prompts, str):
+            prompts = [prompts]
+
+        # Batch-encode with left-padding (or whatever your model expects)
+        enc = self.tokenizer(
+            prompts,
+            return_tensors="pt",
+            padding=True,
+            truncation=False,
+        ).to(self.model.device)
+
+        with torch.no_grad():
+            all_logits = self.model(**enc).logits         # (B, L, V)
+
+        # Index logits at each sequence’s final (non-pad) position
+        seq_ends = (enc["input_ids"] != self.tokenizer.pad_token_id).sum(1) - 1
+        batch_idx = torch.arange(len(prompts), device=seq_ends.device)
+        last_logits = all_logits[batch_idx, seq_ends]     # (B, V)
+
+        return last_logits
+
+    def decode_logits(self, logits, top_k=1):
+        """
+        Args
+        ----
+        logits : torch.Tensor  # (batch, vocab)
+        top_k  : int
+
+        Returns
+        -------
+        list[list[str]]
+            Top-k decoded tokens for each element in the batch.
+        """
+        probs = F.softmax(logits, dim=-1)                 # (B, V)
+        _, top_idx = torch.topk(probs, top_k, dim=-1)      # (B, k)
+
+        return [
+            [self.tokenizer.decode([idx.item()]) for idx in row]
+            for row in top_idx
+        ]
+    
+    def cfg_batch(self, contexts, questions, options, alpha = 3.0, silent = True):
+        model = self.model
+        device = model.device
+        tokenizer = self.tokenizer
+
+        context_prompts = []
+        no_context_prompts = []
+
+        for question, context, option in zip(questions, contexts, options):
+            context_prompt = self.format_prompt_with_context_mc(question=question, context=context, options=option)
+            if not silent:
+                print(f"Context prompt:\n{context_prompt}")
+            context_prompts.append(context_prompt)
+
+            no_context_prompt = self.format_prompt_no_context_mc(question=question, options=option)
+            if not silent:
+                print(f"No context prompt:\n{no_context_prompt}")
+            no_context_prompts.append(no_context_prompt)
+        
+        logits_with_context = self.get_logits(context_prompts)
+        logits_without_context = self.get_logits(no_context_prompt)
+        adjusted_logits = logits_with_context + alpha * (logits_with_context - logits_without_context)
+
+
+        answers = {
+            'no_context_answer' : self.decode_logits(logits_without_context),
+            'cfg_answer' : self.decode_logits(adjusted_logits)
+            }
+        
+        return answers
 
 class TinyLlamaGenerator(BaseGenerator):
     def __init__(self):
