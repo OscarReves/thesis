@@ -59,6 +59,8 @@ class BaseGenerator:
             
 
             # Optional graph-capture compile (needs PyTorch ≥2.5)
+            import torch._dynamo
+            torch._dynamo.config.cudagraphs = False  
             self.model = torch.compile(self.model, mode="reduce-overhead", cudagraphs=False)
             os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
