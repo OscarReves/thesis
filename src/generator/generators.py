@@ -494,21 +494,6 @@ class BaseGenerator:
     #         for row in top_idx
     #     ]
     def get_logits(self, prompts):
-        """
-        Args
-        ----
-        prompts : str | list[str]
-
-        Returns
-        -------
-        torch.Tensor  # shape (batch, vocab)
-            Logits for the last *real* token in each prompt.
-
-        Policy
-        ------
-        We assume **left padding** (`tokenizer.padding_side == "left"`),
-        so the final column always corresponds to the last non-pad token.
-        """
         if isinstance(prompts, str):
             prompts = [prompts]
 
@@ -528,17 +513,6 @@ class BaseGenerator:
         return logits[:, -1, :]                 # (B, V)
 
     def decode_logits(self, logits, top_k=1):
-        """
-        Args
-        ----
-        logits : torch.Tensor  # (batch, vocab)
-        top_k  : int
-
-        Returns
-        -------
-        list[list[str]]
-            Top-k decoded tokens per batch element.
-        """
         probs = F.softmax(logits, dim=-1)               # (B, V)
         _, top_idx = torch.topk(probs, top_k, dim=-1)   # (B, k)
 
