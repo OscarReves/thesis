@@ -434,38 +434,92 @@ class BaseGenerator:
     #     top_probs, top_indices = torch.topk(probs, top_k, dim=-1)
     #     top_tokens = [self.tokenizer.decode([idx]) for idx in top_indices[0]]
     #     return top_tokens
+
+    # def get_logits(self, prompts):
+    #     """
+    #     Args
+    #     ----
+    #     prompts : str | list[str]  
+    #         Single prompt or a batch of prompts.
+
+    #     Returns
+    #     -------
+    #     torch.Tensor  # (batch, vocab)
+    #         Logits for the *last* non-padding token in each prompt.
+    #     """
+    #     if isinstance(prompts, str):
+    #         prompts = [prompts]
+
+    #     # Batch-encode with left-padding (or whatever your model expects)
+    #     enc = self.tokenizer(
+    #         prompts,
+    #         return_tensors="pt",
+    #         padding=True,
+    #         truncation=False,
+    #     ).to(self.model.device)
+
+    #     with torch.no_grad():
+    #         all_logits = self.model(**enc).logits         # (B, L, V)
+
+    #     # Index logits at each sequence’s final (non-pad) position
+    #     seq_ends = (enc["input_ids"] != self.tokenizer.pad_token_id).sum(1) - 1
+    #     batch_idx = torch.arange(len(prompts), device=seq_ends.device)
+    #     last_logits = all_logits[batch_idx, seq_ends]     # (B, V)
+
+    #     return last_logits
+
+    # def decode_logits(self, logits, top_k=1):
+    #     """
+    #     Args
+    #     ----
+    #     logits : torch.Tensor  # (batch, vocab)
+    #     top_k  : int
+
+    #     Returns
+    #     -------
+    #     list[list[str]]
+    #         Top-k decoded tokens for each element in the batch.
+    #     """
+    #     probs = F.softmax(logits, dim=-1)                 # (B, V)
+    #     _, top_idx = torch.topk(probs, top_k, dim=-1)      # (B, k)
+
+    #     return [
+    #         [self.tokenizer.decode([idx.item()]) for idx in row]
+    #         for row in top_idx
+    #     ]
     def get_logits(self, prompts):
         """
         Args
         ----
-        prompts : str | list[str]  
-            Single prompt or a batch of prompts.
+        prompts : str | list[str]
 
         Returns
         -------
-        torch.Tensor  # (batch, vocab)
-            Logits for the *last* non-padding token in each prompt.
+        torch.Tensor  # shape (batch, vocab)
+            Logits for the last *real* token in each prompt.
+
+        Policy
+        ------
+        We assume **left padding** (`tokenizer.padding_side == "left"`),
+        so the final column always corresponds to the last non-pad token.
         """
         if isinstance(prompts, str):
             prompts = [prompts]
 
-        # Batch-encode with left-padding (or whatever your model expects)
+        # Make sure tokenizer is set for left padding
+        self.tokenizer.padding_side = "left"
+
         enc = self.tokenizer(
             prompts,
             return_tensors="pt",
             padding=True,
             truncation=False,
-        ).to(self.model.device)
+        ).to(self.model.device)                 # (B, L)
 
         with torch.no_grad():
-            all_logits = self.model(**enc).logits         # (B, L, V)
+            logits = self.model(**enc).logits   # (B, L, V)
 
-        # Index logits at each sequence’s final (non-pad) position
-        seq_ends = (enc["input_ids"] != self.tokenizer.pad_token_id).sum(1) - 1
-        batch_idx = torch.arange(len(prompts), device=seq_ends.device)
-        last_logits = all_logits[batch_idx, seq_ends]     # (B, V)
-
-        return last_logits
+        return logits[:, -1, :]                 # (B, V)
 
     def decode_logits(self, logits, top_k=1):
         """
@@ -477,10 +531,10 @@ class BaseGenerator:
         Returns
         -------
         list[list[str]]
-            Top-k decoded tokens for each element in the batch.
+            Top-k decoded tokens per batch element.
         """
-        probs = F.softmax(logits, dim=-1)                 # (B, V)
-        _, top_idx = torch.topk(probs, top_k, dim=-1)      # (B, k)
+        probs = F.softmax(logits, dim=-1)               # (B, V)
+        _, top_idx = torch.topk(probs, top_k, dim=-1)   # (B, k)
 
         return [
             [self.tokenizer.decode([idx.item()]) for idx in row]
