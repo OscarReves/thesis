@@ -43,33 +43,16 @@ class BaseGenerator:
             print(f"Loading model {model_name} from: {model_path}")
             self.tokenizer = AutoTokenizer.from_pretrained(model_path, local_files_only=True,trust_remote_code=True)
             self.tokenizer.padding_side = "left"
-            # self.model = AutoModelForCausalLM.from_pretrained(
-            #     model_path,
-            #     torch_dtype=torch.float16,
-            #     device_map="auto",
-            #     local_files_only=True
-            # )
-            # self.model.eval()
-            # 1️⃣ enable TF32
-            torch.set_float32_matmul_precision('high')
-
-            # 2️⃣ optional: warm-up so KV-cache lives on GPU
-            dummy = torch.ones(1, 1, device="cuda", dtype=torch.long)
-            
             self.model = AutoModelForCausalLM.from_pretrained(
                 model_path,
-                torch_dtype=torch.bfloat16,          # use H100 tensor cores
-                #attn_implementation="flash_attention_2",
-                device_map={"": 0},
-                low_cpu_mem_usage=True
-            ).eval()
-            
+                torch_dtype=torch.float16,
+                device_map="auto",
+                local_files_only=True
+            )
+            self.model.eval()
+            # 1️⃣ enable TF32
+            #torch.set_float32_matmul_precision('high')
 
-            # Optional graph-capture compile (needs PyTorch ≥2.5)
-
-            self.model(dummy, use_cache=True)
-            self.model = torch.compile(self.model, mode="reduce-overhead")
-            os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 
     def generate_answer(self, question, context, max_new_tokens=128):
