@@ -65,7 +65,7 @@ def test_cfg_batched(question_dataset, retriever, generator, save_path, alpha=3.
         no_context_answers = answers['no_context_answers']
         
         for cfg_answer, no_context_answer, reference_answer in zip(cfg_answers,no_context_answers,reference_answers):
-            if i == 1:
+            if i == 0:
                 print("Samples from first batch:\n"
                     f"no_context_answer: {no_context_answer}\n"
                     f"cfg_answer: {cfg_answer}\n"

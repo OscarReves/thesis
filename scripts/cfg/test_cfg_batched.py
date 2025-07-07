@@ -29,16 +29,16 @@ def main():
     print("Loading generator...")
     generator = get_generator('gemma-9b')
 
-    alpha=1.0
-    test_cfg_batched(
-        question_dataset=question_dataset,
-        retriever=retriever,
-        generator=generator,
-        save_path=None,
-        alpha=alpha,
-        max_samples=100,
-        batch_size=16
-    )
+    for alpha in [-1.0, -0.5, 0, 0.5 , 1.0]:
+        test_cfg_batched(
+            question_dataset=question_dataset,
+            retriever=retriever,
+            generator=generator,
+            save_path=None,
+            alpha=alpha,
+            max_samples=100,
+            batch_size=16
+        )
     
 
 if __name__ == "__main__":
