@@ -58,7 +58,7 @@ class BaseGenerator:
             
 
             # Optional graph-capture compile (needs PyTorch ≥2.5)
-            self.model = torch.compile(self.model, mode="reduce_overhead")
+            self.model = torch.compile(self.model, mode="reduce-overhead")
             os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 
