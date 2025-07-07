@@ -37,8 +37,8 @@ def main():
             generator=generator,
             save_path=None,
             alpha=alpha,
-            max_samples=10,
-            batch_size=1
+            max_samples=16,
+            batch_size=16
         )
     
 
