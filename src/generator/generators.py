@@ -1,6 +1,7 @@
 from transformers import AutoTokenizer, AutoModelForCausalLM, AutoConfig
 import torch
 import torch.nn.functional as F
+import torch._dynamo
 from tqdm import tqdm
 import numpy as np
 import os 
@@ -59,7 +60,7 @@ class BaseGenerator:
             
 
             # Optional graph-capture compile (needs PyTorch ≥2.5)
-            import torch._dynamo
+
             torch._dynamo.config.cudagraphs = False  
             self.model = torch.compile(self.model, mode="reduce-overhead", cudagraphs=False)
             os.environ["TOKENIZERS_PARALLELISM"] = "false"
