@@ -63,7 +63,15 @@ def test_cfg_batched(question_dataset, retriever, generator, save_path, alpha=3.
         reference_answers = batch['mc_answer']
         
         for answer, reference_answer in zip(answers,reference_answers):
-            if answer[0] == reference_answer[0]:
+            cfg_answer = answer['cfg_answer']
+            no_context_answer = answer['no_context_answer']
+            if i == 1:
+                print("Samples from first batch:\n"
+                    f"no_context_answer: {no_context_answer}\n"
+                    f"cfg_answer: {cfg_answer}\n"
+                    f"reference_answer: {reference_answer}\n"
+                    )
+            if cfg_answer[0] == reference_answer[0]:
                 correct += 1
 
 
