@@ -55,7 +55,6 @@ class BaseGenerator:
 
             # 2️⃣ optional: warm-up so KV-cache lives on GPU
             dummy = torch.ones(1, 1, device="cuda", dtype=torch.long)
-            self.model(dummy, use_cache=True)
             
             self.model = AutoModelForCausalLM.from_pretrained(
                 model_path,
@@ -68,6 +67,7 @@ class BaseGenerator:
 
             # Optional graph-capture compile (needs PyTorch ≥2.5)
 
+            self.model(dummy, use_cache=True)
             self.model = torch.compile(self.model, mode="reduce-overhead")
             os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
