@@ -51,7 +51,7 @@ def test_cfg_batched(question_dataset, retriever, generator, save_path, alpha,
     correct = 0
 
     for i in tqdm(range(0, len(question_dataset), batch_size), 
-                  desc=f"Answering questions in batches of {batch_size}"):
+                  desc=f"Answering questions in batches of {batch_size} with alpha = {alpha}"):
         batch = question_dataset[i:i+batch_size]
         questions = batch['question']
         options = batch['options']

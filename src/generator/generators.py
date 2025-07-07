@@ -541,36 +541,58 @@ class BaseGenerator:
             for row in top_idx
         ]
     
-    def cfg_batch(self, contexts, questions, options, alpha, silent = True):
-        model = self.model
-        device = model.device
-        tokenizer = self.tokenizer
+    # def cfg_batch(self, contexts, questions, options, alpha, silent = True):
+    #     model = self.model
+    #     device = model.device
+    #     tokenizer = self.tokenizer
 
-        context_prompts = []
-        no_context_prompts = []
+    #     context_prompts = []
+    #     no_context_prompts = []
 
-        for question, context, option in zip(questions, contexts, options):
-            context_prompt = self.format_prompt_with_context_mc(question=question, context=context, options=option)
-            if not silent:
-                print(f"Context prompt:\n{context_prompt}")
-            context_prompts.append(context_prompt)
+    #     for question, context, option in zip(questions, contexts, options):
+    #         context_prompt = self.format_prompt_with_context_mc(question=question, context=context, options=option)
+    #         if not silent:
+    #             print(f"Context prompt:\n{context_prompt}")
+    #         context_prompts.append(context_prompt)
 
-            no_context_prompt = self.format_prompt_no_context_mc(question=question, options=option)
-            if not silent:
-                print(f"No context prompt:\n{no_context_prompt}")
-            no_context_prompts.append(no_context_prompt)
+    #         no_context_prompt = self.format_prompt_no_context_mc(question=question, options=option)
+    #         if not silent:
+    #             print(f"No context prompt:\n{no_context_prompt}")
+    #         no_context_prompts.append(no_context_prompt)
         
-        logits_with_context = self.get_logits(context_prompts)
-        logits_without_context = self.get_logits(no_context_prompts)
-        adjusted_logits = logits_with_context + alpha * (logits_with_context - logits_without_context)
+    #     logits_with_context = self.get_logits(context_prompts)
+    #     logits_without_context = self.get_logits(no_context_prompts)
+    #     adjusted_logits = logits_with_context + alpha * (logits_with_context - logits_without_context)
         
 
-        answers = {
-            'no_context_answers' : self.decode_logits(logits_without_context),
-            'cfg_answers' : self.decode_logits(adjusted_logits)
-            }
+    #     answers = {
+    #         'no_context_answers' : self.decode_logits(logits_without_context),
+    #         'cfg_answers' : self.decode_logits(adjusted_logits)
+    #         }
         
-        return answers
+    #     return answers
+    @torch.no_grad()
+    def cfg_batch(self, contexts, questions, options, alpha, silent=True):
+        # 1. build both prompt variants first
+        ctx_prompts, noc_prompts = [], []
+        for q, c, opt in zip(questions, contexts, options):
+            ctx_prompts.append(self.format_prompt_with_context_mc(q, c, opt))
+            noc_prompts.append(self.format_prompt_no_context_mc(q, opt))
+
+        # 2. single forward pass (batch = 2 * len(questions))
+        all_prompts = ctx_prompts + noc_prompts
+        all_logits = self.get_logits(all_prompts)            # (2B, V)
+
+        B = len(questions)
+        logits_ctx, logits_noc = all_logits[:B], all_logits[B:]
+
+        # 3. classifier-free guidance
+        adjusted = logits_ctx + alpha * (logits_ctx - logits_noc)
+
+        return {
+            "no_context_answers": self.decode_logits(logits_noc),
+            "cfg_answers":        self.decode_logits(adjusted),
+        }
 
 class TinyLlamaGenerator(BaseGenerator):
     def __init__(self):
