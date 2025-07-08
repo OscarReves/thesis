@@ -58,6 +58,7 @@ def test_cfg_batched(question_dataset, retriever, generator, save_path, alpha,
         options = batch['options']
 
         contexts, scores = retriever.retrieve_with_score(questions)
+        print(f"Scores: {scores}")
 
         reference_answers = batch['mc_answer']
         answers = generator.cfg_batch(questions, contexts, options, alpha, reference_answers)
@@ -97,7 +98,7 @@ def test_cfg_batched(question_dataset, retriever, generator, save_path, alpha,
             "cfg_answer" : cfg,
             "reference_answer" : ra,
             "algebraic_alpha": a,
-            "retrieval_score" : s
+            "retrieval_score" : s.tolist()
         } for q, c, cfg, noc, ra, a, ac, s in zip(questions, 
             contexts, cfg_answers, no_context_answers, reference_answers, alphas, answers_with_context, scores)])
     
