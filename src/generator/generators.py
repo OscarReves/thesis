@@ -578,7 +578,9 @@ class BaseGenerator:
             answers_with_context=answers_with_context,
             reference_answers=reference_answers,
             logits_with_context=logits_ctx,
-            cfg_logits=adjusted
+            cfg_logits=adjusted,
+            no_context_logits=logits_noc,
+            no_context_answers=no_context_answers
         )
 
         return {
