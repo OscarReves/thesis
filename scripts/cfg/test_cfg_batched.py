@@ -29,14 +29,15 @@ def main():
     print("Loading generator...")
     generator = get_generator('gemma-9b')
 
-    for alpha in [-3.0, -1.0, -0.5, 0, 1.0, 3.0]:
+    #for alpha in [-3.0, -1.0, -0.5, 0, 1.0, 3.0]:
+    for alpha in [-0.5]:
         test_cfg_batched(
             question_dataset=question_dataset,
             retriever=retriever,
             generator=generator,
             save_path=None,
             alpha=alpha,
-            max_samples=None,
+            max_samples=16,
             batch_size=16
         )
     

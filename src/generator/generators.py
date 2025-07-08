@@ -552,7 +552,7 @@ class BaseGenerator:
         
     #     return answers
     @torch.inference_mode()
-    def cfg_batch(self, contexts, questions, options, alpha, silent=True):
+    def cfg_batch(self, contexts, questions, options, alpha, reference_answers, silent=True):
         # 1. build both prompt variants first
         ctx_prompts, noc_prompts = [], []
         for q, c, opt in zip(questions, contexts, options):
@@ -569,10 +569,45 @@ class BaseGenerator:
         # 3. classifier-free guidance
         adjusted = logits_ctx + alpha * (logits_ctx - logits_noc)
 
+        cfg_answers = self.decode_logits(adjusted)
+        no_context_answers = self.decode_logits(logits_noc)
+        answers_with_context = self.decode_logits(logits_ctx)
+
+        # 4. solve for guidance scale algebraically 
+        alphas = self.solve_for_alpha(
+            answers_with_context=answers_with_context,
+            reference_answers=reference_answers,
+            logits_with_context=logits_ctx,
+            cfg_logits=adjusted
+        )
+
         return {
-            "no_context_answers": self.decode_logits(logits_noc),
-            "cfg_answers":        self.decode_logits(adjusted),
+            "no_context_answers":   no_context_answers,
+            "answers_with_context": answers_with_context,
+            "cfg_answers":          cfg_answers,
+            "alphas":               alphas 
         }
+    
+    def solve_for_alpha(self, answers_with_context, reference_answers, logits_with_context, cfg_logits):
+        # probably there is a way to vectorize this. Maybe not necessary?
+        alphas = []
+        for ans, ref, logits_ctx, logits_cfg in zip(
+            answers_with_context, reference_answers, logits_with_context, cfg_logits): 
+            # get token ids 
+            ref_idx = self.tokenizer.encode(ref)[1]
+            ans_idx = self.tokenizer.encode(ans)[1]
+            
+            # get logits 
+            tc = logits_with_context[0][ref_idx]
+            fc = logits_with_context[0][ans_idx]
+            tcfg = cfg_logits[0][ref_idx]
+            fcfg = cfg_logits[0][ans_idx]
+            
+            # solve for alpha required to flip answer
+            alpha = (fc - tc) / (tcfg-fcfg) # this method ignores the third answer (and all other logits)
+            alphas.append(alpha)
+
+        return alphas
 
 class TinyLlamaGenerator(BaseGenerator):
     def __init__(self):

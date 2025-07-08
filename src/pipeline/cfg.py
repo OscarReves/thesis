@@ -49,6 +49,7 @@ def test_cfg_batched(question_dataset, retriever, generator, save_path, alpha,
         question_dataset = question_dataset.select(range(max_samples))
     
     correct = 0
+    results = []
 
     for i in tqdm(range(0, len(question_dataset), batch_size), 
                   desc=f"Answering questions in batches of {batch_size} with alpha = {alpha}"):
@@ -65,6 +66,8 @@ def test_cfg_batched(question_dataset, retriever, generator, save_path, alpha,
         reference_answers = batch['mc_answer']
         cfg_answers = answers['cfg_answers']
         no_context_answers = answers['no_context_answers']
+        answers_with_context = answers['answers_with_context']
+        alphas = answers['alphas']
         
         for cfg_answer, no_context_answer, reference_answer in zip(cfg_answers,no_context_answers,reference_answers):
             # if i == 0:
@@ -77,14 +80,26 @@ def test_cfg_batched(question_dataset, retriever, generator, save_path, alpha,
                 correct += 1
 
 
-        # results.extend([{
-        #     "question"         : q,
-        #     "context"          : c,
-        #     "generated_answer" : a,
-        #     "generated_answer_with_guidance" : ga,
-        #     "reference_answer" : ra
-        # } for q, c, a, ga, ra in zip(questions, contexts, answers_no_guidance, answers_with_guidance, reference_answer)])
+            # Should include:
+            # - cfg_answer
+            # - no_context_answer
+            # - context_answer
+            # - reference_answer 
+            # - retrieval score
+            # - algebraic alpha 
+
+
+        results.extend([{
+            "question"         : q,
+            "context"          : c,
+            "answer_with_context" : ac,
+            "no_context_answer" : noc,
+            "cfg_answer" : cfg,
+            "reference_answer" : ra,
+            "alpha": a
+        } for q, c, cfg, noc, ra, a, ac in zip(questions, 
+            contexts, cfg_answers, no_context_answers, reference_answers, alphas, answers_with_context)])
     
-    #save_to_json(results, save_path, result_type="answers with CFG")
+    save_to_json(results, save_path, result_type="answers with CFG")
     accuracy = correct / len(question_dataset)
     print(f"Alpha: {alpha} / Accuracy: {accuracy}")
