@@ -593,20 +593,23 @@ class BaseGenerator:
         alphas = []
         for ans, ref, logits_ctx, logits_cfg in zip(
             answers_with_context, reference_answers, logits_with_context, cfg_logits): 
-            # get token ids 
-            print(f"ans = {ans}")
-            ref_idx = self.tokenizer.encode(ref[0])[1]
-            ans_idx = self.tokenizer.encode(ans[0])[1]
+            if ans[0] == ref[0]:
+                alpha = 0.0
             
-            # get logits 
-            tc = logits_with_context[0][ref_idx] # indexed incorrectly? 
-            fc = logits_with_context[0][ans_idx]
-            tcfg = cfg_logits[0][ref_idx]
-            fcfg = cfg_logits[0][ans_idx]
-            print(f"tc, fc, tcfg, fcfg = {(tc,fc,tcfg,fcfg)}")
+            else:
+                # get token ids 
+                print(f"ans = {ans}")
+                ref_idx = self.tokenizer.encode(ref[0])[1]
+                ans_idx = self.tokenizer.encode(ans[0])[1]
+                
+                # get logits 
+                tc = logits_with_context[0][ref_idx] # indexed incorrectly? 
+                fc = logits_with_context[0][ans_idx]
+                tcfg = cfg_logits[0][ref_idx]
+                fcfg = cfg_logits[0][ans_idx]
 
-            # solve for alpha required to flip answer
-            alpha = (fc - tc) / (tcfg-fcfg) # this method ignores the third answer (and all other logits)
+                # solve for alpha required to flip answer
+                alpha = (fc - tc) / (tcfg-fcfg) # this method ignores the third answer (and all other logits)
             alphas.append(alpha.item()) # cast to float
 
         return alphas
