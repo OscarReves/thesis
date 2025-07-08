@@ -57,7 +57,7 @@ def test_cfg_batched(question_dataset, retriever, generator, save_path, alpha,
         questions = batch['question']
         options = batch['options']
 
-        contexts = retriever.retrieve(questions)
+        contexts, scores = retriever.retrieve_with_scores(questions)
 
         reference_answers = batch['mc_answer']
         answers = generator.cfg_batch(questions, contexts, options, alpha, reference_answers)
@@ -96,9 +96,10 @@ def test_cfg_batched(question_dataset, retriever, generator, save_path, alpha,
             "no_context_answer" : noc,
             "cfg_answer" : cfg,
             "reference_answer" : ra,
-            "alpha": a
-        } for q, c, cfg, noc, ra, a, ac in zip(questions, 
-            contexts, cfg_answers, no_context_answers, reference_answers, alphas, answers_with_context)])
+            "algebraic_alpha": a,
+            "retrieval_score" : s
+        } for q, c, cfg, noc, ra, a, ac, s in zip(questions, 
+            contexts, cfg_answers, no_context_answers, reference_answers, alphas, answers_with_context, scores)])
     
     save_to_json(results, save_path, result_type="answers with CFG")
     accuracy = correct / len(question_dataset)

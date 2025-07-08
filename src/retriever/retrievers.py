@@ -65,6 +65,19 @@ class E5Retriever:
         
         return results
     
+    def retrieve_with_score(self, questions):
+        queries = [f"query: {q}" for q in questions]
+        q_embs = self.embed(queries)
+        faiss.normalize_L2(q_embs)
+        scores, I = self.index.search(q_embs, self.top_k)
+        results = []
+        for idxs in I:
+            subset = self.dataset.select(idxs)
+            contexts = subset["text"]
+            results.append(contexts)
+        
+        return results, scores
+
     def retrieve_with_uid(self, questions):
         queries = [f"query: {q}" for q in questions]
         q_embs = self.embed(queries)

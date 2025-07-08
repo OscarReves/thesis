@@ -22,7 +22,7 @@ def main():
         documents = documents,
         index_path = index_path,
         device = 'cuda',
-        top_k = 5,
+        top_k = 1,
         )
 
 
@@ -37,7 +37,7 @@ def main():
             generator=generator,
             save_path='results/cfg/test',
             alpha=alpha,
-            max_samples=None,
+            max_samples=16,
             batch_size=16
         )
     
