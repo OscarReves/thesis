@@ -599,12 +599,12 @@ class BaseGenerator:
             ans_idx = self.tokenizer.encode(ans[0])[1]
             
             # get logits 
-            tc = logits_with_context[0][ref_idx]
-            print(f"tc.shape = {tc.shape}")
+            tc = logits_with_context[0][ref_idx] # indexed incorrectly? 
             fc = logits_with_context[0][ans_idx]
             tcfg = cfg_logits[0][ref_idx]
             fcfg = cfg_logits[0][ans_idx]
-            
+            print(f"tc, fc, tcfg, fcfg = {(tc,fc,tcfg,fcfg)}")
+
             # solve for alpha required to flip answer
             alpha = (fc - tc) / (tcfg-fcfg) # this method ignores the third answer (and all other logits)
             alphas.append(alpha.item()) # cast to float
