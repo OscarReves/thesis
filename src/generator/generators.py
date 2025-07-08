@@ -596,10 +596,9 @@ class BaseGenerator:
             if ans[0] == ref[0]:
                 alpha = 0.0
                 alphas.append(alpha)
-                
+
             else:
                 # get token ids 
-                print(f"ans = {ans}")
                 ref_idx = self.tokenizer.encode(ref[0])[1]
                 ans_idx = self.tokenizer.encode(ans[0])[1]
                 
