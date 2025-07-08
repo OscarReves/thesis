@@ -102,7 +102,7 @@ def test_cfg_batched(question_dataset, retriever, generator, save_path, alpha,
             "retrieval_score" : s.tolist(),
             #"logits_ctx" : lc.tolist(),
             #"logits_noc" : ln.tolist()
-        } for q, c, cfg, noc, ra, a, ac, s, lc, ln in zip(questions, 
+        } for q, c, cfg, noc, ra, a, ac, s, in zip(questions, 
             contexts, cfg_answers, no_context_answers, reference_answers, alphas, answers_with_context, 
             scores,)]) #logits_ctx, logits_noc)])
     
