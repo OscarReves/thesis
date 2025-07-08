@@ -568,7 +568,7 @@ class BaseGenerator:
 
         # 3. classifier-free guidance
         if retrieval_scores is not None:
-            alpha = torch.tensor(1.44551635 * retrieval_scores -0.8996598139219305 + 0.1).to(self.model.device) # dynamic alpha 
+            alpha = torch.tensor(2.95075172 * retrieval_scores -1.4346342623299382 + 0.1).to(self.model.device) # dynamic alpha 
             print(f"Aphas = {alpha}")
         adjusted = logits_ctx + alpha * (logits_ctx - logits_noc)
 
