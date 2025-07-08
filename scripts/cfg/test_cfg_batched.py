@@ -35,7 +35,7 @@ def main():
             question_dataset=question_dataset,
             retriever=retriever,
             generator=generator,
-            save_path=None,
+            save_path='results/cfg/test',
             alpha=alpha,
             max_samples=16,
             batch_size=16
