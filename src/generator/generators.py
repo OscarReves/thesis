@@ -585,17 +585,39 @@ class BaseGenerator:
             "no_context_answers":   no_context_answers,
             "answers_with_context": answers_with_context,
             "cfg_answers":          cfg_answers,
-            "alphas":               alphas 
+            "alphas":               alphas,
+            "logits_ctx":           logits_ctx,
+            "logits_noc":           logits_noc 
         }
     
-    def solve_for_alpha(self, answers_with_context, reference_answers, logits_with_context, cfg_logits):
+    def solve_for_alpha(self, answers_with_context, reference_answers, logits_with_context, cfg_logits, no_context_logits, no_context_answers):
         # probably there is a way to vectorize this. Maybe not necessary?
         alphas = []
-        for ans, ref, logits_ctx, logits_cfg in zip(
-            answers_with_context, reference_answers, logits_with_context, cfg_logits): 
+        for ans, ref, logits_ctx, logits_cfg, logits_n, ans_n in zip(
+            answers_with_context, reference_answers, logits_with_context, cfg_logits, no_context_logits, no_context_answers): 
             if ans[0] == ref[0]:
-                alpha = 0.0
-                alphas.append(alpha)
+                #alpha = 0.0
+                #alphas.append(alpha)
+                # get token ids 
+                if ans_n[0] != ref[0]: # if answer without context is wrong
+                    ref_idx = self.tokenizer.encode(ref[0])[1]
+                    ans_n_idx = self.tokenizer.encode(ans_n[0])[1]
+                    
+                    # get logits 
+                    tc = logits_with_context[0][ref_idx] # indexed incorrectly? 
+                    fc = logits_with_context[0][ans_n_idx]
+                    tcfg = cfg_logits[0][ref_idx]
+                    fcfg = cfg_logits[0][ans_n_idx]
+
+                    # solve for alpha required to flip answer
+                    neg_beta = (fc - tc) / (tcfg-fcfg) # this method ignores the third answer (and all other logits)
+                    alpha = neg_beta - 1
+                    alphas.append(alpha.item()) # cast to float
+
+                else:
+                    alpha = -1.0
+                    alphas.append(alpha)
+
 
             else:
                 # get token ids 

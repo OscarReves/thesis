@@ -69,7 +69,9 @@ def test_cfg_batched(question_dataset, retriever, generator, save_path, alpha,
         no_context_answers = answers['no_context_answers']
         answers_with_context = answers['answers_with_context']
         alphas = answers['alphas']
-        
+        logits_ctx = answers['logits_ctx']
+        logits_noc = answers['logits_noc']
+
         for cfg_answer, no_context_answer, reference_answer in zip(cfg_answers,no_context_answers,reference_answers):
             # if i == 0:
             #     print("Samples from first batch:\n"
@@ -98,9 +100,12 @@ def test_cfg_batched(question_dataset, retriever, generator, save_path, alpha,
             "cfg_answer" : cfg,
             "reference_answer" : ra,
             "algebraic_alpha": a,
-            "retrieval_score" : s.tolist()
-        } for q, c, cfg, noc, ra, a, ac, s in zip(questions, 
-            contexts, cfg_answers, no_context_answers, reference_answers, alphas, answers_with_context, scores)])
+            "retrieval_score" : s.tolist(),
+            "logits_ctx" : lc.tolist(),
+            "logits_noc" : ln.tolist()
+        } for q, c, cfg, noc, ra, a, ac, s, lc, ln in zip(questions, 
+            contexts, cfg_answers, no_context_answers, reference_answers, alphas, answers_with_context, 
+            scores, logits_ctx, logits_noc)])
     
     save_to_json(results, save_path, result_type="answers with CFG")
     accuracy = correct / len(question_dataset)
