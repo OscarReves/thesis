@@ -600,13 +600,14 @@ class BaseGenerator:
             
             # get logits 
             tc = logits_with_context[0][ref_idx]
+            print(f"tc.shape = {tc.shape}")
             fc = logits_with_context[0][ans_idx]
             tcfg = cfg_logits[0][ref_idx]
             fcfg = cfg_logits[0][ans_idx]
             
             # solve for alpha required to flip answer
             alpha = (fc - tc) / (tcfg-fcfg) # this method ignores the third answer (and all other logits)
-            alphas.append(alpha)
+            alphas.append(alpha.item()) # cast to float
 
         return alphas
 
