@@ -595,7 +595,8 @@ class BaseGenerator:
             answers_with_context, reference_answers, logits_with_context, cfg_logits): 
             if ans[0] == ref[0]:
                 alpha = 0.0
-            
+                alphas.append(alpha)
+                
             else:
                 # get token ids 
                 print(f"ans = {ans}")
@@ -610,7 +611,7 @@ class BaseGenerator:
 
                 # solve for alpha required to flip answer
                 alpha = (fc - tc) / (tcfg-fcfg) # this method ignores the third answer (and all other logits)
-            alphas.append(alpha.item()) # cast to float
+                alphas.append(alpha.item()) # cast to float
 
         return alphas
 
