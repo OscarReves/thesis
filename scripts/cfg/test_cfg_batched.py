@@ -37,7 +37,7 @@ def main():
             generator=generator,
             save_path='results/cfg/test',
             alpha=alpha,
-            max_samples=None,
+            max_samples=16,
             batch_size=16
         )
     
