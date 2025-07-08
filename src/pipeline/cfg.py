@@ -59,11 +59,11 @@ def test_cfg_batched(question_dataset, retriever, generator, save_path, alpha,
 
         contexts = retriever.retrieve(questions)
 
-        answers = generator.cfg_batch(questions, contexts, options, alpha)
+        reference_answers = batch['mc_answer']
+        answers = generator.cfg_batch(questions, contexts, options, alpha, reference_answers)
         # if i == 0:
         #     print(f"Answers: {answers}")
 
-        reference_answers = batch['mc_answer']
         cfg_answers = answers['cfg_answers']
         no_context_answers = answers['no_context_answers']
         answers_with_context = answers['answers_with_context']
