@@ -594,6 +594,7 @@ class BaseGenerator:
         for ans, ref, logits_ctx, logits_cfg in zip(
             answers_with_context, reference_answers, logits_with_context, cfg_logits): 
             # get token ids 
+            print(f"ans = {ans}")
             ref_idx = self.tokenizer.encode(ref[0])[1]
             ans_idx = self.tokenizer.encode(ans[0])[1]
             
