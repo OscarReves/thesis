@@ -552,7 +552,7 @@ class BaseGenerator:
         
     #     return answers
     @torch.inference_mode()
-    def cfg_batch(self, contexts, questions, options, alpha, reference_answers, silent=True):
+    def cfg_batch(self, contexts, questions, options, alpha, reference_answers, retrieval_scores=None, silent=True):
         # 1. build both prompt variants first
         ctx_prompts, noc_prompts = [], []
         for q, c, opt in zip(questions, contexts, options):
@@ -567,6 +567,8 @@ class BaseGenerator:
         logits_ctx, logits_noc = all_logits[:B], all_logits[B:]
 
         # 3. classifier-free guidance
+        if retrieval_scores:
+            alpha = 3.31529067 * retrieval_scores -1.3410987260332883 # dynamic alpha 
         adjusted = logits_ctx + alpha * (logits_ctx - logits_noc)
 
         cfg_answers = self.decode_logits(adjusted)
@@ -583,13 +585,15 @@ class BaseGenerator:
             no_context_answers=no_context_answers
         )
 
+        
+
         return {
             "no_context_answers":   no_context_answers,
             "answers_with_context": answers_with_context,
             "cfg_answers":          cfg_answers,
             "alphas":               alphas,
-            "logits_ctx":           logits_ctx,
-            "logits_noc":           logits_noc 
+            #"logits_ctx":           logits_ctx,
+            #"logits_noc":           logits_noc 
         }
     
     def solve_for_alpha(self, answers_with_context, reference_answers, logits_with_context, cfg_logits, no_context_logits, no_context_answers):

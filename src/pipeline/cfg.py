@@ -58,10 +58,9 @@ def test_cfg_batched(question_dataset, retriever, generator, save_path, alpha,
         options = batch['options']
 
         contexts, scores = retriever.retrieve_with_score(questions)
-        print(f"Scores: {scores}")
 
         reference_answers = batch['mc_answer']
-        answers = generator.cfg_batch(questions, contexts, options, alpha, reference_answers)
+        answers = generator.cfg_batch(questions, contexts, options, alpha, reference_answers, scores)
         # if i == 0:
         #     print(f"Answers: {answers}")
 
@@ -69,8 +68,8 @@ def test_cfg_batched(question_dataset, retriever, generator, save_path, alpha,
         no_context_answers = answers['no_context_answers']
         answers_with_context = answers['answers_with_context']
         alphas = answers['alphas']
-        logits_ctx = answers['logits_ctx']
-        logits_noc = answers['logits_noc']
+        #logits_ctx = answers['logits_ctx']
+        #logits_noc = answers['logits_noc']
 
         for cfg_answer, no_context_answer, reference_answer in zip(cfg_answers,no_context_answers,reference_answers):
             # if i == 0:
@@ -101,11 +100,11 @@ def test_cfg_batched(question_dataset, retriever, generator, save_path, alpha,
             "reference_answer" : ra,
             "algebraic_alpha": a,
             "retrieval_score" : s.tolist(),
-            "logits_ctx" : lc.tolist(),
-            "logits_noc" : ln.tolist()
+            #"logits_ctx" : lc.tolist(),
+            #"logits_noc" : ln.tolist()
         } for q, c, cfg, noc, ra, a, ac, s, lc, ln in zip(questions, 
             contexts, cfg_answers, no_context_answers, reference_answers, alphas, answers_with_context, 
-            scores, logits_ctx, logits_noc)])
+            scores,)]) #logits_ctx, logits_noc)])
     
     save_to_json(results, save_path, result_type="answers with CFG")
     accuracy = correct / len(question_dataset)
