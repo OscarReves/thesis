@@ -60,7 +60,7 @@ def test_cfg_batched(question_dataset, retriever, generator, save_path, alpha,
         contexts, scores = retriever.retrieve_with_score(questions)
 
         reference_answers = batch['mc_answer']
-        answers = generator.cfg_batch(questions, contexts, options, alpha, reference_answers, scores)
+        answers = generator.cfg_batch(questions, contexts, options, alpha, reference_answers)
         # if i == 0:
         #     print(f"Answers: {answers}")
 
